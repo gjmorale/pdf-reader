@@ -50,7 +50,6 @@ class PageContent
 			while line[last_index, line.length - last_index].match(field.regex){|m|
 					xi = last_index + m.offset(0)[0]
 					xf = last_index + m.offset(0)[1]
-					text = m.to_s
 					last_index = xf
 					position = TextNode.new(xi, xf-1, y) 
 					field.position = position
@@ -184,6 +183,7 @@ class PageContent
 	def downwards_search(header, y, result)
 		# Content line to be evaluated
 		line = @content.lines[y]
+		puts line
 		# Acceptable field to be recognized (E.j: +1,234,567.89)
 		regex = result.regex
 		# The right-most index where the field could be
@@ -284,6 +284,7 @@ class PageContent
 		(balance/n)/(last_index + 1)
 	end
 
+=begin
 	# Check Results
 	# result: result being evaluated
 	# result_n: result to be checked
@@ -293,23 +294,43 @@ class PageContent
 	def check_result(result, result_n)
 		line = @content.lines[result.position.y]
 		limit = result.edges.xf
-		while found = (result.result == Result::NOT_FOUND) and limit+1 < result_n.edges.xf
+		found = false
+		while not found = (result.border.xf+1 == result_n.border.xi)
 			limit += 1
 			chunk = RegexHelper.strip_wildchar line[result.edges.xi..limit]
 			chunk_n = RegexHelper.strip_wildchar line[limit+1..result_n.edges.xf]
 			if chunk.match result.regex and chunk_n.match result_n.regex
 				result_n.result = chunk_n
 				result_n.edges.xi = limit + 1
-				result_n.position.xi = RegexHelper.index(line[limit+1..result_n.edges.xf])
-				result_n.position.xf = RegexHelper.rindex(line[limit+1..result_n.edges.xf])
+				result_n.position.xi = limit + 1 + RegexHelper.index(line[limit+1..result_n.edges.xf])
+				result_n.position.xf = limit + 1 + RegexHelper.rindex(line[limit+1..result_n.edges.xf])
 				result.result = chunk
 				result.edges.xf = limit
-				result.position.xi = RegexHelper.index(line[result.edges.xi..limit])
-				result.position.xf = RegexHelper.rindex(line[result.edges.xi..limit])
+				result.position.xi = result.edges.xi + RegexHelper.index(line[result.edges.xi..limit])
+				result.position.xf = result.edges.xi + RegexHelper.rindex(line[result.edges.xi..limit])
 			end
 			puts "#{line[result.edges.xi..result.edges.xf]}"
 			puts "#{line[result_n.edges.xi..result_n.edges.xf]}"
+			puts line
 		end
 		return found
+	end
+=end
+
+	# Check Results
+	# result: result being evaluated
+	# result_n: result to be checked
+	# Sets a limit between both results and moves it to the right
+	# until both recognize a result and sets it.
+	# Pre-Condition: result_n.result != Result::NOT_FOUND
+	def check_result(result, result_n)
+		line = @content.lines[result.position.y]
+		if result.position.xf >= result_n.edges.xi
+			new_edge = result.position.xf + 1
+			result_n.edges.xi = new_edge
+			new_result = line[new_edge..result_n.position.xf]
+			result_n.result = RegexHelper.strip_wildchar new_result
+			result_n.position.xi = RegexHelper.index new_result
+		end
 	end
 end

@@ -106,12 +106,14 @@ class Reader
 	def correct_results(headers, rows)
 		headers.reverse_each.with_index do |header, col|
 			unless col == 0
-				puts "#{header} => #{headers[-col]}"
 				next_header = headers[-col]
 				rows.times do |row|
 					r = header.results[row]
 					next_r = next_header.results[row]
-					header.recalculate_position if @page_content.check_result(r, next_r)
+					if @page_content.check_result(r, next_r)
+						header.recalculate_position 
+						next_header.recalculate_position
+					end
 				end
 			end
 		end

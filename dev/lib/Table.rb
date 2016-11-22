@@ -17,7 +17,7 @@ class Table
 
 	def calculate_offset(page_content)
 		if page_content.search(@offset)
-			return y = @offset.position.coords[2]
+			return @offset.position.coords[2]
 		else
 			raise StopIteration, "Offset #{@offset} is not present in the document page"
 		end
@@ -68,6 +68,7 @@ class Table
 				header.border.xf = @headers[i+1].position.xi-1
 				header.border.xi = @headers[i-1].position.xf+1
 			end
+			header.print_borders
 		end
 	end
 
@@ -145,10 +146,18 @@ class Table
 			reader.get_column(header, @fixed_count)
 			if @headers.size-i >= 2
 				next_header = @headers[@headers.size-i-2] 
-				next_header.border.xf = header.border.xi-1
+				next_header.border.xf = header.position.xi-1
 			end
 		end
 		reader.correct_results(@headers, @fixed_count)
+		set_borders
+		print_borders
+	end
+
+	def print_borders
+		@headers.each do |header|
+			header.print_borders
+		end
 	end
 
 end

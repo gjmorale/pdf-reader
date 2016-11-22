@@ -143,6 +143,7 @@ class HeaderField < Field
 		border.xi = xi_max
 		position.xf = xf_min
 		border.xf = xf_max
+		print_borders
 		changed
 	end
 
@@ -155,6 +156,19 @@ class HeaderField < Field
 			result.result = Result::NOT_FOUND
 			@results << result
 		end
+	end
+
+	def print_borders
+		p_line = " "
+		past_n = 0
+		[border.xi, position.xi, position.xf, border.xf].each.with_index do |n,i|
+			p_line << " "*(n - past_n -1) if n - past_n >= 1
+			symbol = ">" if i < 2
+			symbol = "<" if i >= 2
+			p_line << symbol if n != past_n
+			past_n = n
+		end
+		puts p_line << "             : #{text}"
 	end
 
 end
