@@ -19,9 +19,26 @@ end
 @fields = Setup.bank.declare_fields
 =end
 
-Setup.bank.prepare
-Setup.bank.execute
-Setup.bank.results
+#Setup.bank.prepare
+#Setup.bank.execute
+#Setup.bank.results
+
+a = ["123","¶56","789","a¶a"]
+b = Multiline.new(a)
+d = b
+c = b[1..2]
+puts "#{c}"
+if b.match /2356/
+  puts "WRONG"
+end
+if c.match /2356/
+  puts "RIGHT"
+end
+puts "#{b.to_s}"
+d = b.delete('¶')
+puts "#{d.to_s}"
+
+puts "INDEX: " + b.rindex(/¶/).to_s
 
 #reader = Reader.new(Dir["test_cases/*.pdf"][0])
 #reader.mock_content(File.read('test_cases/test.txt'))
