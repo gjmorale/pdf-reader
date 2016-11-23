@@ -2,6 +2,10 @@ class MultiMatchData
 	attr_accessor :offset
 	attr_accessor :width
 
+	def initialize 
+		@offset = []
+	end
+
 	def offset index = 0
 		@offset
 	end
@@ -9,6 +13,7 @@ end
 
 class Multiline < String
 	attr_reader :line_size
+	attr_reader :strings
 
 	def self.generate str
 		if str.is_a? Array
@@ -59,7 +64,8 @@ class Multiline < String
 	end
 
 	def match regex
-		if str.is_a? Array
+		return false unless regex
+		if regex.is_a? Array
 			return nil if @strings.size < regex.size
 			matches = [] 
 			index = 0
@@ -75,8 +81,8 @@ class Multiline < String
 			return false if index != regex.size
 			if block_given?
 				m = MultiMatchData.new
-				m.offset[0] = xi
-				m.offset[1] = xf
+				m.offset[0] = matches.map {|match| match[0]}.min
+				m.offset[1] = matches.map {|match| match[1]}.max
 				m.width = y
 				yield(m) 
 			else

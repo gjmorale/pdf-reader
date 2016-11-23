@@ -47,7 +47,7 @@ class PageContent
 		@content.lines[offset..@content.lines.size-field.width].each.with_index do |line, y_full|
 			y = offset + y_full
 			if field.width > 1
-				line = Multiline.generate @content.lines[y, width]
+				line = Multiline.generate @content.lines[y, field.width]
 			end
 			line.match(field.regex){|m|
 				puts "match!!! #{field} #{field.width}"
@@ -55,6 +55,7 @@ class PageContent
 				xf = m.offset(0)[1]
 				position = TextNode.new(xi, xf-1, y) 
 				field.position = position
+				field.width = m.width if m.is_a? MultiMatchData
 				return true
 			}
 		end 

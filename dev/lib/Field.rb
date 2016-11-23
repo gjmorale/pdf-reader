@@ -6,7 +6,7 @@ class Field
 	attr_reader :results
 	attr_reader :ocurrence
 	attr_reader :text
-	attr_reader :width
+	attr_accessor :width
 
 	def initialize(text, width = 1, ocurrence = 1, date = false)
 		@text = Multiline.generate text

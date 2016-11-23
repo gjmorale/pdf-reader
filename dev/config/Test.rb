@@ -30,6 +30,7 @@ class Test < Bank
 		@fields = []
 		#For file 1
 		@fields[0] = []
+		@fields[0] << Field.new(["doble","linea"], 2)
 		@fields[0] << Field.new("UNO", 1)
 		@fields[0] << SingleField.new("Campo", 1, nil, 5, [Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
 		headers = []
