@@ -44,18 +44,19 @@ class PageContent
 	def search_next(field, offset)
 		position = nil
 		xi = 0
-		@content.lines[offset..-1].each.with_index do |line, y_full|
+		@content.lines[offset..@content.lines.size-field.width].each.with_index do |line, y_full|
 			y = offset + y_full
-			last_index = 0
-			while line[last_index, line.length - last_index].match(field.regex){|m|
-					xi = last_index + m.offset(0)[0]
-					xf = last_index + m.offset(0)[1]
-					last_index = xf
-					position = TextNode.new(xi, xf-1, y) 
-					field.position = position
-					return true
-				}
+			if field.width > 1
+				line = Multiline.generate @content.lines[y, width]
 			end
+			line.match(field.regex){|m|
+				puts "match!!! #{field} #{field.width}"
+				xi = m.offset(0)[0]
+				xf = m.offset(0)[1]
+				position = TextNode.new(xi, xf-1, y) 
+				field.position = position
+				return true
+			}
 		end 
 		return false
 	end
@@ -120,16 +121,20 @@ class PageContent
 	def vertical_search(row_count, header)
 		done = false
 		while not done
-			y = header.position.y
+			yf = y = header.position.y
 			xi = header.position.xi
 			xf = header.position.xf
 			done = true
 			row_count.times do |row|
 				#puts "#{xi} #{xf} #{y}"
-				y = find_next_row(xi, xf, y)
+				yf = y = find_next_row(xi, xf, yf)
+				puts "Y: #{y}"
 				#puts "Inverse search: [#{xi},#{index},#{y}]\t => #{header.text}"
 				#puts "#{@content.lines[y][xi + 10..index]}"
-				downwards_search(header, y, header.results[row])
+				while downwards_search(header, (y..yf), header.results[row])
+					yf += 1
+					puts "ITERATION #{y}..#{yf}"
+				end 
 				done = false if header.recalculate_position
 			end
 		end
@@ -182,8 +187,8 @@ class PageContent
 	# ¶1¶¶2.3%¶ => 12.3%
 	def downwards_search(header, y, result)
 		# Content line to be evaluated
-		line = @content.lines[y]
-		puts line
+		line = Multiline.generate(@content.lines[y])
+		puts line.to_s
 		# Acceptable field to be recognized (E.j: +1,234,567.89)
 		regex = result.regex
 		# The right-most index where the field could be
@@ -211,6 +216,7 @@ class PageContent
 			stripped_text = RegexHelper.strip_wildchar text
 			if stripped_text != last_match 
 				if stripped_text.match regex 
+					puts "MATCH!!!"
 					detected = true
 					tolerance = 0
 					last_match = stripped_text
@@ -242,7 +248,7 @@ class PageContent
 		if not last_match.nil? and last_match.match regex
 			#puts "Last line eval: #{text} and #{last_match}"
 			#puts "Final :: #{line[range[1]-counter..limit-1]} ||| #{line[limit..range[1]]}"
-			
+			puts "RESULT!!!"
 			result.result = last_match
 		else
 			result.result = Result::NOT_FOUND
@@ -255,6 +261,7 @@ class PageContent
 		result.edges.xf = start
 		result.position.y = y
 		result.edges.y = y
+		return result.result == Result::NOT_FOUND
 	end
 
 	# Center Mass
@@ -324,7 +331,7 @@ class PageContent
 	# until both recognize a result and sets it.
 	# Pre-Condition: result_n.result != Result::NOT_FOUND
 	def check_result(result, result_n)
-		line = @content.lines[result.position.y]
+		line = Multiline.generate @content.lines[result.position.y]
 		if result.position.xf >= result_n.edges.xi
 			new_edge = result.position.xf + 1
 			result_n.edges.xi = new_edge

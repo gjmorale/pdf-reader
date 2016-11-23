@@ -3,7 +3,7 @@ class TextNode
 	attr_accessor :xi
 	attr_accessor :xf
 	attr_accessor :y
-	attr_reader :line
+	attr_accessor :row
 
 	def initialize(xi, xf, y)
 		@xi = xi
@@ -21,14 +21,6 @@ class TextNode
 
 	def coords
 		[@xi, @xf, @y]
-	end
-
-	def line= l
-		if l.is_a? Array
-			@line = Multiline.new(l)
-		else
-			@line = l
-		end
 	end
 
 end

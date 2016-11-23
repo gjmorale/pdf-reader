@@ -2,11 +2,12 @@ class Table
 
 	attr_reader :page
 	attr_reader :file
+	attr_reader :rows
 
 	def initialize(file, page, headers, fixed_count, bottom = nil)
 		@file = file
 		@page = page
-		@fixed_count= fixed_count
+		@fixed_count = fixed_count
 		@bottom = bottom
 		@headers = headers
 	end

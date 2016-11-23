@@ -40,27 +40,6 @@ class Test < Bank
 		@fields
 	end
 
-	def declare_tables
-		@tables = []
-		headers = []
-		headers << HeaderField.new("Description", 2, 1, Setup::Type::LABEL)
-		headers << HeaderField.new("Cur.", 2, 2, Setup::Type::CURRENCY)
-		headers << HeaderField.new("Valuation (USD)", 2, 3, Setup::Type::AMOUNT)
-		headers << HeaderField.new("P&L", 1, 4, Setup::Type::PERCENTAGE)
-		bottom = Field.new("5 worst performers since inception", 1)
-		@tables << Table.new(@files[0], 12, headers, 5, bottom)
-		headers = []
-		headers << HeaderField.new("Description", 2, 1, Setup::Type::LABEL)
-		headers << HeaderField.new("Cur.", 2, 2, Setup::Type::CURRENCY)
-		headers << HeaderField.new("Valuation (USD)", 2, 3, Setup::Type::AMOUNT)
-		headers << HeaderField.new("P&L", 1, 4, Setup::Type::PERCENTAGE)
-		table = Table.new(@files[0], 12, headers.dup, 5)
-		offset = Field.new("5 worst performers since inception", 1)
-		table.set_offset offset
-		@tables << table
-		@tables
-	end
-
 	def prepare
 		puts "preparing..."
 		declare_fields

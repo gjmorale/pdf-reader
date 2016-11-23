@@ -119,24 +119,6 @@ class Reader
 		end
 	end
 
-	def read_tables(tables)
-		tables.each do |table|
-			reader = PDF::Reader.new(table.file)
-			
-			page = reader.pages[table.page-1]
-			return "Wrong page for this document" if page.nil?
-			receiver = PDF::Reader::PageTextReceiver.new
-			page.walk(receiver)
-
-			page_content = PageContent.new(page.number, receiver.content)
-			if table.populate(page_content)
-				#puts "Position in page #{page_content.number}: Table populated"
-			else
-				puts "Table in page #{page_content.number}: NOT FOUND"
-			end
-		end
-	end
-
 	def print_file file
 		reader = PDF::Reader.new(file)
 		f_raw = File.open("#{file[0, file.length-4]}_inspect.txt",'w')

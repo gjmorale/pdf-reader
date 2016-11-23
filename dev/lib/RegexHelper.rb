@@ -32,6 +32,7 @@ class RegexHelper
 
 
 	def self.regexify term, date = false
+		term = term.to_s
 		raise if term.empty?
 		term = Regexp.escape term
 		regex = ""

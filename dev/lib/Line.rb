@@ -1,5 +1,22 @@
+class MultiMatchData
+	attr_accessor :offset
+	attr_accessor :width
+
+	def offset index = 0
+		@offset
+	end
+end
+
 class Multiline < String
 	attr_reader :line_size
+
+	def self.generate str
+		if str.is_a? Array
+			return line = Multiline.new(str)
+		else
+			return str
+		end
+	end
 
 	def initialize(strings)
 		legacy = ""
@@ -42,7 +59,32 @@ class Multiline < String
 	end
 
 	def match regex
-		return @inline.match regex
+		if str.is_a? Array
+			return nil if @strings.size < regex.size
+			matches = [] 
+			index = 0
+			y = 0
+			@strings.each do |s|
+				s.match regex[index] {|m|
+					matches << [m.offset(0)[0], m.offset(0)[1], y]
+					index +=1
+					break if index == regex.size
+				}
+				y += 1
+			end
+			return false if index != regex.size
+			if block_given?
+				m = MultiMatchData.new
+				m.offset[0] = xi
+				m.offset[1] = xf
+				m.width = y
+				yield(m) 
+			else
+				true
+			end
+		else
+			return super regex
+		end
 	end
 
 	def index regex, offset=0
@@ -72,7 +114,11 @@ class Multiline < String
 	end
 
 	def nil?
-		@strings.nil? or @inline.nil?
+		return true if @strings.nil? or @inline.nil?
+		@strings.each do |s|
+			return true if s.nil?
+		end
+		return false
 	end
 
 	def empty?

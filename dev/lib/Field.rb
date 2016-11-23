@@ -1,28 +1,4 @@
-class Result
 
-	NOT_FOUND = "Result not found"
-
-	attr_accessor :position
-	attr_accessor :result
-	attr_accessor :edges
-
-	def initialize(type)
-		@type = type
-	end
-
-	def regex
-		Setup.bank.get_regex(@type)
-	end
-
-	def to_s
-		@result
-	end
-
-	def inspect 
-		to_s
-	end
-
-end
 
 class Field
 
@@ -30,11 +6,13 @@ class Field
 	attr_reader :results
 	attr_reader :ocurrence
 	attr_reader :text
+	attr_reader :width
 
-	def initialize(text, ocurrence, date = false)
-		@text = text
+	def initialize(text, width = 1, ocurrence = 1, date = false)
+		@text = Multiline.generate text
 		@ocurrence = ocurrence
 		@date = date
+		@width = width
 	end
 
 	def position?
@@ -71,15 +49,13 @@ class SingleField < Field
 	attr_reader :file
 
 	def initialize(text, ocurrence, file, page, types, date = false)
-		@text = text
-		@ocurrence = ocurrence
+		super text, ocurrence, date
 		@file= file
 		@page = page
 		@results = []
 		types.each do |type|
 			@results << Result.new(type)
 		end
-		@date = date
 	end
 
 	def print_results
@@ -103,13 +79,12 @@ class HeaderField < Field
 	attr_reader :type
 	attr_reader :order
 	attr_accessor :border
+	attr_reader :guide
 
-	def initialize(text, ocurrence, order, type, date = false)
-		@text = text
-		@ocurrence = ocurrence
+	def initialize(text, ocurrence, order, type, guide = 0, date = false)
+		super text, ocurrence, date
 		@order = order
 		@type = type
-		@date = date
 	end
 
 	def <=> other
@@ -169,6 +144,31 @@ class HeaderField < Field
 			past_n = n
 		end
 		puts p_line << "             : #{text}"
+	end
+
+end
+
+class Result < Field
+
+	NOT_FOUND = "Result not found"
+
+	attr_accessor :result
+	attr_accessor :edges
+
+	def initialize(type)
+		@type = type
+	end
+
+	def regex
+		Setup.bank.get_regex(@type)
+	end
+
+	def to_s
+		@result
+	end
+
+	def inspect 
+		to_s
 	end
 
 end
