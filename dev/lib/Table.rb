@@ -1,15 +1,17 @@
 class Table
 
-	attr_reader :page
-	attr_reader :file
 	attr_reader :rows
 
-	def initialize(file, page, headers, fixed_count, bottom = nil)
-		@file = file
-		@page = page
-		@fixed_count = fixed_count
+	def initialize(headers, bottom = nil)
 		@bottom = bottom
 		@headers = headers
+	end
+
+	def set_headers_width
+		size = 1
+		size = @headers.map {|header| header.width}.max
+		puts "SIZE:   #{size}"
+		@headers.each {|header| header.width = size}
 	end
 
 	def set_offset(offset_field)
@@ -33,41 +35,39 @@ class Table
 		end
 	end
 
-	def set_range (line_size)
+	def set_range (line_size, line_height)
 		unless @range
-			if @offset
-				y = @offset.position.y
+			yi = (@offset ? @offset.bottom+1 : @headers_row.yf+1)
+			if @bottom
+				yf = @bottom.top - 1 
 			else
-				y = @headers.first.position.y
-				@headers.each do |header|
-					y = header.position.y if header.position.y > y
-				end
+				yf = line_height - 1
 			end
 			#puts "Y: #{y} = #{total}/#{n}"
-			xi = @headers.first.position.xi
-			xf = @headers.last.position.xf
+			xi = @headers.first.left
+			xf = @headers.last.right
 			#puts "Searching between [#{xi},#{xf},#{y}]"
 			table_offset = Setup::Table.offset
 			xi = xi - table_offset >= 0 ? xi - table_offset : 0
 			xf = xf + table_offset <= line_size ? xf + table_offset : line_size
 			#puts "Searching between [#{xi},#{xf},#{y}]"
-			@range = [xi,xf,y]
+			@range = [xi,xf,yi,yf]
 		end
 	end
 
 	def set_borders
 		@headers.each.with_index do |header, i|
-			header.border ||= TextNode.new(header.position.xi, header.position.xf, header.position.y)
+			header.border ||= TextNode.new(header.left, header.right, header.position.y)
 			case i
 			when 0
-				header.border.xi = @range[0]
-				header.border.xf = @headers[i+1].position.xi-1
+				header.outer_left = @range[0]
+				header.outer_right = @headers[i+1].left-1
 			when @headers.size - 1
-				header.border.xi = @headers[i-1].position.xf+1
-				header.border.xf = @range[1]
+				header.outer_left = @headers[i-1].right+1
+				header.outer_right = @range[1]
 			else
-				header.border.xf = @headers[i+1].position.xi-1
-				header.border.xi = @headers[i-1].position.xf+1
+				header.outer_right = @headers[i+1].left-1
+				header.outer_left = @headers[i-1].right+1
 			end
 			header.print_borders
 		end
@@ -95,28 +95,49 @@ class Table
 	end
 
 	def print_results
-		line = "\n|"
+		if @headers_row.multiline?
+			line = []
+			@headers_row.width.times.map {|n| line[n] = (n == 0 ? "|" : "\n|")}
+			line = Multiline.generate line
+		else
+			line = "\n|"
+		end
 		@headers.each do |header|
-			line << "#{fit_in_space(header.text, get_header_size(header))}|"
+			str = fit_in_space(header.text, get_header_size(header))
+			line << str
+			line.fill if line.is_a? Multiline
+			line << "|"
+
+			#puts "OUTSIDE"
+			#puts line.strings
+			#puts line
 			#puts "#{fit_in_space header.text}"
 		end
 		puts "_"*(line.length-1)
-		puts line
+		puts line.to_s
 		puts "-"*(line.length-1)
 
-		@fixed_count.times do |n|
-		line = "|"
-			@headers.each do |header|
-				line << "#{fit_in_space(header.results[n].result, get_header_size(header))}|"
+		@rows.each.with_index do |row, n|
+			line = "|"
+			if row.multiline?
+				line = []
+				row.width.times.map {|n| line[n] = (n == 0 ? "|" : "\n|")}
+				line = Multiline.generate line
 			end
-			puts line
+			@headers.each do |header|
+				str = fit_in_space(header.results[n].result, get_header_size(header))
+				line << str
+				line.fill if line.is_a? Multiline
+				line << "|"
+			end
+			puts line.to_s
 		end
 		puts "-"*line.length
 	end
 
 	def fit_in_space(text, size)
-		return text[0,size] if text.length >= size
-		text = "#{text} " while text.length < size
+		return text[0,size] if text.length > size
+		text << " " while text.length < size
 		return text
 	end
 
@@ -131,28 +152,45 @@ class Table
 
 	def set_results
 		@headers.each do |header|
-			header.set_results @fixed_count
+			header.set_results @rows.size
 		end		
 	end
 
+	def get_guide
+		guide = nil
+		@headers.each do |header|
+			guide = header if header.guide?
+		end
+		guide
+	end
+
 	def execute reader
-		reader.move_to @headers.sort.first
-		reader.set_header_limits(@headers)
+		first_header = @headers.sort.first
+		reader.move_to first_header
+		set_headers_width
+		@headers_row = reader.set_header_limits(@headers)
 		reader.move_to @offset if @offset
-		set_range reader.line_size
+		reader.read_next_field @bottom if @bottom
+		set_range reader.line_size, reader.line_height
+		puts @range
 		set_borders
-		@fixed_count = reader.count_to(@bottom) if @bottom
+		@rows = reader.get_rows(@range, get_guide)
+		puts @rows
 		set_results
 		@headers.reverse_each.with_index do |header, i|
-			reader.get_column(header, @fixed_count)
+			reader.get_column(header, @rows)
 			if @headers.size-i >= 2
 				next_header = @headers[@headers.size-i-2] 
 				next_header.border.xf = header.position.xi-1
 			end
+=begin
+=end
 		end
-		reader.correct_results(@headers, @fixed_count)
+		reader.correct_results(@headers, @rows)
+=begin		
 		set_borders
 		print_borders
+=end
 	end
 
 	def print_borders

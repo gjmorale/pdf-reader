@@ -20,6 +20,17 @@ class Field
 	end
 
 	def regex
+		if @width > 1 and not @text.is_a? Multiline
+			puts "expanded"
+			@text = Multiline.generate ["#{@text}"]
+		elsif @width == 1 and @text.is_a? Multiline
+			puts "reduced"
+			 if @text.size == 1
+			 	@text = @text[0]
+			 else
+			 	raise RangeError, "Multiline field was reduced beyond bounds"
+			 end
+		end 
 		RegexHelper.regexify @text, @date
 	end
 
@@ -41,17 +52,36 @@ class Field
 		#Nothing by default
 	end
 
+	def top
+		position.y
+	end
+
+	def bottom
+		position.y + width - 1
+	end
+
+	def left
+		position.xi
+	end
+
+	def right
+		position.xf
+	end
+
+	def left= value
+		position.xi = value
+	end
+
+	def right= value
+		position.xf = value
+	end
+
 end
 
 class SingleField < Field
 
-	attr_reader :page
-	attr_reader :file
-
-	def initialize(text, ocurrence, file, page, types, date = false)
-		super text, ocurrence, date
-		@file= file
-		@page = page
+	def initialize(text, types, width = 1, ocurrence = 1, date = false)
+		super text, width, ocurrence, date
 		@results = []
 		types.each do |type|
 			@results << Result.new(type)
@@ -79,12 +109,16 @@ class HeaderField < Field
 	attr_reader :type
 	attr_reader :order
 	attr_accessor :border
-	attr_reader :guide
 
-	def initialize(text, ocurrence, order, type, guide = 0, date = false)
-		super text, ocurrence, date
+	def initialize(text, order, type, guide = false, width = 1, ocurrence = 1, date = false)
+		super text, width, ocurrence, date
 		@order = order
 		@type = type
+		@guide = guide
+	end
+
+	def guide?
+		@guide
 	end
 
 	def <=> other
@@ -97,28 +131,30 @@ class HeaderField < Field
 
 	def recalculate_position
 		n = 0
-		xi_min = position.xi
-		xi_max = border.xi
-		xf_min = position.xf
-		xf_max = border.xf
+		print "[#{outer_left}(#{left} #{right})#{outer_right}]"
+		xi_min = left
+		xi_max = outer_left
+		xf_min = right
+		xf_max = outer_right
 		@results.each do |result|
 			if(result.result != Result::NOT_FOUND)
 				n += 1
-				xi_min = [xi_min, result.position.xi].min 
+				xi_min = [xi_min, result.left].min 
 				xi_max = [xi_max, result.edges.xi].max 
-				xf_min = [xf_min, result.position.xf].max 
+				xf_min = [xf_min, result.right].max 
 				xf_max = [xf_max, result.edges.xf].min 
 			end
 		end
-		changed = (position.xi != xi_min or 
-			       border.xi != xi_max or 
-			       position.xf != xf_min or 
-			       border.xf != xf_max)
-		position.xi = xi_min
-		border.xi = xi_max
-		position.xf = xf_min
-		border.xf = xf_max
+		changed = (left != xi_min or 
+			       outer_left != xi_max or 
+			       right != xf_min or 
+			       outer_right != xf_max)
+		left = xi_min
+		outer_left = xi_max
+		right = xf_min
+		outer_right = xf_max
 		print_borders
+		print "[#{outer_left}(#{left} #{right})#{outer_right}] => #{changed}"
 		changed
 	end
 
@@ -136,7 +172,7 @@ class HeaderField < Field
 	def print_borders
 		p_line = " "
 		past_n = 0
-		[border.xi, position.xi, position.xf, border.xf].each.with_index do |n,i|
+		[outer_left, left, right, outer_right].each.with_index do |n,i|
 			p_line << " "*(n - past_n -1) if n - past_n >= 1
 			symbol = ">" if i < 2
 			symbol = "<" if i >= 2
@@ -144,6 +180,22 @@ class HeaderField < Field
 			past_n = n
 		end
 		puts p_line << "             : #{text}"
+	end
+
+	def outer_left
+		border.xi
+	end
+
+	def outer_right
+		border.xf
+	end
+
+	def outer_left= value
+		border.xi = value
+	end
+
+	def outer_right= value
+		border.xf = value
 	end
 
 end

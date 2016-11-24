@@ -5,18 +5,20 @@ class HSBC < Bank
 		#Only to check it's not abstract
 	end
 
-	def get_regex(type)
+	def regex(type)
 		case type
 		when Setup::Type::PERCENTAGE
-			/^[+-]?(100\.0000|[1-9]?\d\.\d{2}%)$/
+			'[+-]?(100|[1-9]?\d)\.\d{2}%'
 		when Setup::Type::AMOUNT
-			/^[+-]?[0-9]{1,3}(?:,?[0-9]{3})*\.[0-9]{2}$/
+			'[+-]?[0-9]{1,3}(?:,?[0-9]{3})*\.[0-9]{2}'
+		when Setup::Type::INTEGER
+			'[+-]?[1-9]\d{0,2}(?:,+?[0-9]{3})*'
 		when Setup::Type::CURRENCY
-			/^(EUR|USD|CAD|JPY){1}$/
+			'(EUR|USD|CAD|JPY){1}'
 		when Setup::Type::ASSET
-			/^(Equities|Fixed Income|Liquidity and Money Market|Others){1}$/
+			'(Equities|Fixed Income|Liquidity and Money Market|Others){1}'
 		when Setup::Type::LABEL
-			/^.*$/
+			'.*'
 		end
 	end
 
@@ -24,6 +26,18 @@ class HSBC < Bank
 		@files = Dir["test_cases/*.pdf"]
 	end
 
+	def declare_fields
+		@fields = []
+		@fields[0] = [] #First document
+		@fields[0] << SingleField.new("Portfolios consolidated for this account: ",[Setup::Type::INTEGER])
+		headers = []
+		headers << HeaderField.new("Portfolio", headers.size, Setup::Type::LABEL)
+		headers << HeaderField.new("Cur.", headers.size, Setup::Type::CURRENCY, true)
+		headers << HeaderField.new("Market value in USD", headers.size, Setup::Type::AMOUNT, true)
+		bottom = Field.new("TOTAL PORTFOLIOS IN CREDIT")
+		@fields[0] << Table.new(headers, bottom)
+	end
+=begin
 	def declare_fields
 		@fields = []
 		@fields << SingleField.new("OTHER HOLDINGS", 1, @files[0], 5, [Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
@@ -56,5 +70,5 @@ class HSBC < Bank
 	end
 
 	private
-
+=end
 end

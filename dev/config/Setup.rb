@@ -53,11 +53,13 @@ module Setup
 	end
 
 	module Type
-		PERCENTAGE = 1
-		AMOUNT = 2
-		CURRENCY = 4
-		ASSET = 5
-		LABEL = 6
+		PERCENTAGE = 	1
+		AMOUNT = 		2
+		INTEGER = 		3
+		FLOAT = 		4
+		CURRENCY = 		5
+		ASSET = 		6
+		LABEL = 		7
 	end
 
 	def self.set_enviroment(format)
@@ -107,6 +109,51 @@ class Bank
 
 	def results()
 		raise NoMethodError, "Bank is an abstract class"
+	end
+
+	def get_regex(type, bounded = true)
+		return Regexp.new('^'<<regex(type)<<'$') if bounded
+		return Regexp.new(regex(type))
+	end
+
+	def prepare
+		puts "preparing..."
+		declare_fields
+		setup_files
+		load
+		puts "CHARS: #{@charts}"
+	end
+
+	def load
+		@charts = []
+		@files.each.with_index do |file, i|
+			chart = Chart.new(file)
+			chart.fields = @fields[i]
+			@charts << chart
+		end
+	end
+
+	def execute
+		puts "executing..."
+		@charts.each do |chart|
+			@reader = Reader.new(chart.file)
+			unless chart.fields.nil?
+				chart.fields.each do |field|
+					puts "EXECUTING: #{field}"
+					field.execute(@reader)
+				end
+			end
+		end
+	end
+
+	def results
+		puts "results..."
+		@charts.each do |chart|
+			puts "CHART #{chart.file}:"
+			chart.fields.each do |field|
+				field.print_results
+			end
+		end
 	end
 
 end

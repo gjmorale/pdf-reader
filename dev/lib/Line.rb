@@ -74,9 +74,9 @@ class Multiline < String
 				s.match regex[index] {|m|
 					matches << [m.offset(0)[0], m.offset(0)[1], y]
 					index +=1
-					break if index == regex.size
 				}
 				y += 1
+				break if index == regex.size
 			end
 			return false if index != regex.size
 			if block_given?
@@ -89,7 +89,7 @@ class Multiline < String
 				true
 			end
 		else
-			return super regex
+			return match [regex]
 		end
 	end
 
@@ -112,11 +112,11 @@ class Multiline < String
 	end
 
 	def delete regex
-		inline = ""
+		stripped = []
 		@strings.each do |s|
-			inline << s.delete(regex)
+			stripped << s.delete(regex)
 		end
-		inline
+		Multiline.new(stripped)
 	end
 
 	def nil?
@@ -129,5 +129,33 @@ class Multiline < String
 
 	def empty?
 		@strings.size == 0 or @inline.empty?
+	end
+
+	def << value
+		#puts "#{self} << #{value}"
+		if value.is_a? Multiline
+			#puts "#{value} is a multiline"
+			@strings.each.with_index do |s, i|
+				s << value.strings[i] if value.strings[i]
+				#puts "#{s}"
+			end
+		else
+			#puts "#{value} is not a multiline"
+			@strings.each.with_index do |s, i|
+				s << value
+				#puts "#{s}"
+			end
+		end
+		#puts "INSIDE"
+		#puts @strings
+		#return Multiline.new @strings
+	end
+
+	def fill
+		max = length
+		@strings.each do |s|
+			offset = (s.chars[0] == "\n" ? 1 : 0)
+			s << " " while s.length < max + offset
+		end
 	end
 end

@@ -1,6 +1,7 @@
 class PageContent
 
 	attr_reader :line_size
+	attr_reader :line_height
 	attr_reader :number
 
 
@@ -8,6 +9,7 @@ class PageContent
 		@number = page_number
 		@content = content
 		@line_size = @content.lines[0].length
+		@line_height = @content.lines.size
 	end 
 
 	def to_s
@@ -42,15 +44,19 @@ class PageContent
 	end
 
 	def search_next(field, offset)
+		#puts "Starting!!! #{field} #{field.width} #{field.regex}"
 		position = nil
 		xi = 0
 		@content.lines[offset..@content.lines.size-field.width].each.with_index do |line, y_full|
 			y = offset + y_full
 			if field.width > 1
 				line = Multiline.generate @content.lines[y, field.width]
+				#puts line.to_s
+				#puts field.regex
 			end
+			#puts "#{RegexHelper.strip_wildchar line}"
 			line.match(field.regex){|m|
-				puts "match!!! #{field} #{field.width}"
+				#puts "match!!! #{field} #{field.width}"
 				xi = m.offset(0)[0]
 				xf = m.offset(0)[1]
 				position = TextNode.new(xi, xf-1, y) 
@@ -65,7 +71,7 @@ class PageContent
 	def field_offset(field)
 		coords = field.position.coords
 		y = coords[2]
-		line = @content.lines[y]
+		line = Multiline.generate @content.lines[y]
 		left = RegexHelper.rindex(line[0..coords[0]-1])
 		left = 0 if left.nil?
 		right = RegexHelper.index(line, coords[1]+1)
@@ -90,7 +96,7 @@ class PageContent
 		while tolerance <= Setup::Read.horizontal_search_range and range[1] + counter < line_size
 			counter += 1
 			tolerance += 1 if detected
-			text = @content.lines[range[2]][range[1],counter]
+			text = (Multiline.generate @content.lines[range[2]])[range[1],counter]
 			text = RegexHelper.strip_wildchar(text)
 			if text.match regex
 				detected = true
@@ -100,9 +106,6 @@ class PageContent
 			end
 		end
 		if not last_match.nil? and last_match.match regex
-			#text = @content.lines[range[2]][range[1],counter]
-			#text = text.delete('€')
-			#puts "Last line eval: #{text} and #{last_match}"
 			result.result = last_match
 		else
 			result.result = Result::NOT_FOUND
@@ -119,26 +122,23 @@ class PageContent
 	# For each iteration the headers position and border 
 	# is recalculated. This way the information of every
 	# result makes the search for the others more accurate.
-	def vertical_search(row_count, header)
+	def vertical_search(rows, header)
 		done = false
 		while not done
-			yf = y = header.position.y
-			xi = header.position.xi
-			xf = header.position.xf
 			done = true
-			row_count.times do |row|
+			rows.each.with_index do |row, i|
 				#puts "#{xi} #{xf} #{y}"
-				yf = y = find_next_row(xi, xf, yf)
-				puts "Y: #{y}"
 				#puts "Inverse search: [#{xi},#{index},#{y}]\t => #{header.text}"
 				#puts "#{@content.lines[y][xi + 10..index]}"
-				while downwards_search(header, (y..yf), header.results[row])
-					yf += 1
-					puts "ITERATION #{y}..#{yf}"
-				end 
+				downwards_search(header, row, header.results[i])
+=begin
+				puts "#{header.outer_left} - #{header.results[i].edges.xi}"
 				done = false if header.recalculate_position
+				puts "#{header.outer_left} - #{header.results[i].edges.xi}"
+=end
 			end
 		end
+		puts "OUT!"
 	end
 
 	# Find Next Row
@@ -157,6 +157,29 @@ class PageContent
 		end
 			#puts "Landed on #{y}: #{@content.lines[y][xi..xf]}"
 		return y
+	end
+
+	def get_row(range, guide)
+		puts "IN"
+		xi = guide.outer_left
+		xf = guide.outer_right
+		yi = range[2]
+		yf = range[3]
+		index = 0
+		regex = Setup.bank.get_regex(guide.type, false)
+		while yf - index >= yi
+			puts "LOOP #{yf - index} #{yi}"
+			range = (index == 0 ? yf : (yf - index..yf))
+			text = Multiline.generate @content.lines[range]
+			text = text[xi..xf]
+			text = RegexHelper.strip_wildchar text
+			if text.match regex
+				puts "CHECKED until #{yf - index}"
+				return yf - index
+			end
+			index += 1
+		end
+		return nil
 	end
 
 
@@ -186,9 +209,10 @@ class PageContent
 	#   ¶¶2.3%¶ =>  2.3%
 	#  1¶¶2.3%¶ => 12.3%
 	# ¶1¶¶2.3%¶ => 12.3%
-	def downwards_search(header, y, result)
+	def downwards_search(header, row, result)
 		# Content line to be evaluated
-		line = Multiline.generate(@content.lines[y])
+		line = Multiline.generate(@content.lines[row.yi..row.yf])
+		puts "DS for #{header}"
 		puts line.to_s
 		# Acceptable field to be recognized (E.j: +1,234,567.89)
 		regex = result.regex
@@ -215,6 +239,7 @@ class PageContent
 			text = line[counter..start]
 			# Evaluate without wildchars
 			stripped_text = RegexHelper.strip_wildchar text
+			puts "#{stripped_text} - #{regex}"
 			if stripped_text != last_match 
 				if stripped_text.match regex 
 					puts "MATCH!!!"
@@ -249,7 +274,7 @@ class PageContent
 		if not last_match.nil? and last_match.match regex
 			#puts "Last line eval: #{text} and #{last_match}"
 			#puts "Final :: #{line[range[1]-counter..limit-1]} ||| #{line[limit..range[1]]}"
-			puts "RESULT!!!"
+			puts "RESULT!!! #{last_match}"
 			result.result = last_match
 		else
 			result.result = Result::NOT_FOUND
@@ -260,8 +285,8 @@ class PageContent
 		result.edges.xi = max
 		result.position.xf = RegexHelper.rindex(line[0..start])
 		result.edges.xf = start
-		result.position.y = y
-		result.edges.y = y
+		result.position.y = row.yi
+		result.edges.y = row.yf
 		return result.result == Result::NOT_FOUND
 	end
 
@@ -274,6 +299,15 @@ class PageContent
 	# 0.5 => ¶23¶
 	# 0 => ¶¶¶4
 	def center_mass str
+		if str.is_a? Multiline
+			mean = 0
+			n = 0
+			str.strings.each do |s|
+				n += 1
+				mean += center_mass s
+			end
+			return mean = mean/n
+		end
 		balance = 0.0
 		skip = true
 		index = 1.0
@@ -292,12 +326,12 @@ class PageContent
 		(balance/n)/(last_index + 1)
 	end
 
-=begin
 	# Check Results
 	# result: result being evaluated
 	# result_n: result to be checked
 	# Sets a limit between both results and moves it to the right
 	# until both recognize a result and sets it.
+=begin
 	# Pre-Condition: result_n.result != Result::NOT_FOUND
 	def check_result(result, result_n)
 		line = @content.lines[result.position.y]
@@ -331,14 +365,14 @@ class PageContent
 	# Sets a limit between both results and moves it to the right
 	# until both recognize a result and sets it.
 	# Pre-Condition: result_n.result != Result::NOT_FOUND
-	def check_result(result, result_n)
-		line = Multiline.generate @content.lines[result.position.y]
-		if result.position.xf >= result_n.edges.xi
-			new_edge = result.position.xf + 1
+	def check_result(row, result, result_n)
+		line = Multiline.generate @content.lines[row.yi..row.yf]
+		if result.right >= result_n.edges.xi
+			new_edge = result.right + 1
 			result_n.edges.xi = new_edge
-			new_result = line[new_edge..result_n.position.xf]
+			new_result = line[new_edge..result_n.right]
 			result_n.result = RegexHelper.strip_wildchar new_result
-			result_n.position.xi = RegexHelper.index new_result
+			result_n.left = RegexHelper.index new_result
 		end
 	end
 end

@@ -14,7 +14,9 @@ class RegexHelper
 	end
 
 	def self.strip_wildchar str
-		(str.nil? or str.empty?) ? "" : str.delete(wildchar)
+		return "" if (str.nil? or str.empty?)
+		r = str.delete(wildchar)
+		r = r.delete('\n')
 	end
 
 	def self.index str, offset = 0, absence = true

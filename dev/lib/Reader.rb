@@ -5,12 +5,16 @@ class Reader
 
 	def initialize(file)
 		@reader = PDF::Reader.new(file) if file
-		@page = 0
+		@page = 1
 		@offset = 0
 	end
 
 	def line_size
 		@page_content ? @page_content.line_size : 0
+	end
+
+	def line_height
+		@page_content ? @page_content.line_height : 0
 	end
 
 	def read_fields(fields)
@@ -32,7 +36,7 @@ class Reader
 
 	def read_next_field(field)
 		if not @page_content or @page_content.number != @page
-			raise #debugg
+			#raise #debugg
 			page = @reader.pages[@page]
 			return "Wrong page for this document" if page.nil?
 			receiver = PDF::Reader::PageTextReceiver.new
@@ -41,9 +45,10 @@ class Reader
 			@page_content = PageContent.new(page.number, receiver.content)
 		end
 		if @page_content.search_next(field, @offset)
+			puts "Found #{field}"
 			return true
 		else
-			puts "Position in page #{@page}: NOT FOUND"
+			puts "Position for #{field} in page #{@page}: NOT FOUND"
 			return false
 		end
 	end
@@ -91,14 +96,33 @@ class Reader
 	end
 
 	def set_header_limits headers
+		row = Row.new
 		headers.each do |header|
 			read_next_field header
+			row.yi = row.yi ? [header.top, row.yi].min : header.top
+			row.yf = row.yf ? [header.bottom, row.yf].max : header.bottom
 		end
+		row
 	end
 
 	# calls a vertical search for the specific column
-	def get_column header, row_number
-		@page_content.vertical_search(row_number, header)
+	def get_column header, rows
+		@page_content.vertical_search(rows, header)
+	end
+
+	# calls a vertical search for the guide column to determine rows
+	def get_rows range, guide
+		rows = []
+		row = Row.new
+		row.yf = range[3]
+		while (row_y = @page_content.get_row(range, guide))
+			row.yi = row_y 
+			rows << row
+			row = Row.new
+			row.yf = row_y - 1
+			range[3] = row_y - 1
+		end
+		rows
 	end
 
 	# Verifies for each result that the Result::NOT_FOUND
@@ -107,10 +131,10 @@ class Reader
 		headers.reverse_each.with_index do |header, col|
 			unless col == 0
 				next_header = headers[-col]
-				rows.times do |row|
-					r = header.results[row]
-					next_r = next_header.results[row]
-					if @page_content.check_result(r, next_r)
+				rows.each.with_index do |row, i|
+					r = header.results[i]
+					next_r = next_header.results[i]
+					if @page_content.check_result(row, r, next_r)
 						header.recalculate_position 
 						next_header.recalculate_position
 					end
