@@ -17,18 +17,14 @@ class Test < Bank
 	end
 
 	def setup_files
-		@files = Dir["test_cases/*est.txt"]
 	end
 
-	def execute
-		puts "executing..."
-		@charts.each do |chart|
-			@reader = Reader.new(nil)
-			@reader.mock_content(File.read('test_cases/test.txt'))
-			chart.fields.each do |field|
-				puts "EXECUTING: #{field}"
-				field.execute(@reader)
-			end
+	def run
+		@reader = Reader.new(nil)
+		@reader.mock_content(File.read('test_cases/test.txt'))
+		chart.fields.each do |field|
+			puts "EXECUTING: #{field}"
+			field.execute(@reader)
 		end
 	end
 

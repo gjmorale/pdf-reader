@@ -93,74 +93,13 @@ class Bank
 	DATE_FORMAT = nil
 	CENTER_MASS_LIMIT = nil
 
-	attr_reader :files
-
-	def initialize()
-		raise NoMethodError, "Bank is an abstract class"
-	end
-
-	def prepare()
-		raise NoMethodError, "Bank is an abstract class"
-	end
-
-	def execute()
-		raise NoMethodError, "Bank is an abstract class"
-	end
-
-	def results()
-		raise NoMethodError, "Bank is an abstract class"
-	end
-
 	def get_regex(type, bounded = true)
 		return Regexp.new('^'<<regex(type)<<'$') if bounded
 		return Regexp.new(regex(type))
 	end
 
 	def run 
-		prepare
-		load
-		execute
-		results
-	end
-
-	def prepare
-		puts "preparing..."
-		declare_fields
-		setup_files
-	end
-
-	def load
-		@charts = []
-		@files.each.with_index do |file, i|
-			chart = Chart.new(file)
-			chart.fields = @fields[i]
-			@charts << chart
-		end
-	end
-
-	def execute
-		puts "executing..."
-		@charts.each do |chart|
-			@reader = Reader.new(chart.file)
-			unless chart.fields.nil?
-				chart.fields.each do |field|
-					puts "EXECUTING: #{field}"
-					field.execute(@reader) 
-				end
-			end
-		end
-	end
-
-	def results
-		puts "results..."
-		@charts.each do |chart|
-			puts "CHART #{chart.file}:"
-			unless chart.fields.nil?
-				chart.fields.each do |field|
-					field.print_results unless field.is_a? Action
-				end
-			end
-		end
+		raise NoMethodError, "Bank is an abstract class"
 	end
 
 end
