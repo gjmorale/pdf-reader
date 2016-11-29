@@ -70,10 +70,9 @@ class HSBC < Bank
 			bottom = Field.new("TOTAL PORTFOLIOS IN CREDIT")
 			fields << Table.new(headers, bottom)
 			fields << Action.new(proc {
-					bank = Setup.bank
-					bank.accounts = []
+					@accounts = []
 					portfolio.results.each.with_index do |result, i|
-						account_data = bank.parse_account(result.result)
+						account_data = parse_account(result.result)
 						account = AccountHSBC.new(account_data[0], account_data[1])
 						account.value = values.results[i].result.to_s.delete(',').to_f
 						@accounts << account
@@ -82,7 +81,7 @@ class HSBC < Bank
 			fields << (net_assets = SingleField.new("NET ASSETS",[Setup::Type::AMOUNT]))
 			fields << Action.new(proc {
 					total = 0
-					Setup.bank.accounts.each do |account|
+					@accounts.each do |account|
 						total += account.value
 					end
 					puts "INTEGRITY_ACTION: #{total.round(2)} vs #{net_assets.results[0].result.to_s}"
