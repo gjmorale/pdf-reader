@@ -11,7 +11,6 @@ class Table
 	def set_headers_width
 		size = 1
 		size = @headers.map {|header| header.width}.max
-		#puts "SIZE:   #{size}"
 		@headers.each {|header| header.width = size}
 	end
 
@@ -44,14 +43,11 @@ class Table
 			else
 				yf = line_height - 1
 			end
-			#puts "Y: #{y} = #{total}/#{n}"
 			xi = @headers.first.left
 			xf = @headers.last.right
-			#puts "Searching between [#{xi},#{xf},#{y}]"
 			table_offset = Setup::Table.offset
 			xi = xi - table_offset >= 0 ? xi - table_offset : 0
 			xf = xf + table_offset <= line_size ? xf + table_offset : line_size
-			#puts "Searching between [#{xi},#{xf},#{y}]"
 			@width = yf-yi+1
 			@range = [xi,xf,yi,yf]
 		end
@@ -71,15 +67,12 @@ class Table
 				header.outer_right = @headers[i+1].left-1
 				header.outer_left = @headers[i-1].right+1
 			end
-			#header.print_borders
 		end
 	end
 
 	def populate page_content
 		@headers.each do |header|
-			if page_content.search(header)
-				#puts "HEADER: #{header.text} [#{header.position.coords[0]},#{header.position.coords[1]},#{header.position.coords[2]}]"
-			else
+			unless page_content.search(header)
 				raise StopIteration, "Table header #{header} is not present in the document"
 			end
 		end
@@ -105,17 +98,11 @@ class Table
 			line = "|"
 		end
 		@headers.each do |header|
-			#puts "#{header}"
 			str = fit_in_space(header.text, get_header_size(header))
 			str = Multiline.generate([str], false) if not str.is_a? Multiline and line.is_a? Multiline
 			line << str
 			line.fill if line.is_a? Multiline
 			line << "|"
-
-			#puts "OUTSIDE"
-			#puts line.strings
-			#puts line
-			#puts "#{fit_in_space header.text}"
 		end
 		puts "-"*(line.length-1)
 		puts line.to_s
@@ -177,10 +164,8 @@ class Table
 		reader.move_to @offset if @offset
 		reader.read_next_field @bottom if @bottom
 		set_range reader.line_size, reader.line_height
-		#puts @range
 		set_borders
 		@rows = reader.get_rows(@range, get_guide)
-		#puts @rows
 		set_results
 		@headers.reverse_each.with_index do |header, i|
 			reader.get_column(header, @rows)
@@ -188,16 +173,10 @@ class Table
 				next_header = @headers[@headers.size-i-2] 
 				next_header.outer_right = header.left-1
 			end
-			#puts "Result! for #{header} #{header.results.size} #{@rows.size}" #if i==0
-=begin
-=end
+
 		end
 		reader.correct_results(@headers, @rows)
 		reader.skip self
-=begin		
-		set_borders
-		print_borders
-=end
 	end
 
 	def print_borders

@@ -49,7 +49,7 @@ class HSBC < Bank
 			field.print_results unless field.is_a? Action
 		end
 		@accounts.reverse_each do |account|
-			puts account
+			puts "\nSEARCHING LIQUIDITY FOR #{account}"
 			(liquidity_for account).each do |field|
 				field.execute @reader
 				field.print_results unless field.is_a? Action
@@ -91,22 +91,18 @@ class HSBC < Bank
 				Setup.bank.accounts.each do |account|
 					total += account.value
 				end
-				puts "#{total.round(2)} vs #{net_assets.results[0].result.to_s}"
+				puts "INTEGRITY_ACTION: #{total.round(2)} vs #{net_assets.results[0].result.to_s}"
 			})
 		return fields
 	end
 
 	def parse_account str
-		puts str.to_s
 		str = str.inspect
 		account_data = []
-		#puts "REG: #{get_regex(Custom::ACCOUNT_CODE, false)}"
 		str.match(get_regex Custom::ACCOUNT_CODE, false) {|m|
-			#puts "#{m.offset(0)} in \n#{str.to_s}"
 			account_data[0] = str[m.offset(0)[0]..m.offset(0)[1]-1]
 			account_data[1] = str[m.offset(0)[1]..-1]
 		}
-		#puts "Account Data: #{account_data}"
 		return account_data
 	end
 
@@ -127,38 +123,4 @@ class HSBC < Bank
 		fields << SingleField.new("Total",[Setup::Type::AMOUNT])
 		fields << SingleField.new("Total Liquidity and Money Market",[Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
 	end
-=begin
-	def declare_fields
-		@fields = []
-		@fields << SingleField.new("OTHER HOLDINGS", 1, @files[0], 5, [Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
-		@fields << SingleField.new('ODEBRECHT FINANCE LTD 7,5% 10-W/O FIXED MATURITY', 1, @files[0], 5, [Setup::Type::CURRENCY, Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
-		@fields << SingleField.new('AMUNDI FDS ABSOLUTE', 1, @files[0], 5, [Setup::Type::ASSET, Setup::Type::CURRENCY, Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
-		@fields << SingleField.new('Fixed Income', 1, @files[0], 4, [Setup::Type::AMOUNT, Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
-		@fields << SingleField.new('Total assets at',1, @files[0], 7, [Setup::Type::AMOUNT], true)
-		@fields
-	end
-
-	def declare_tables
-		@tables = []
-		headers = []
-		headers << HeaderField.new("Description", 2, 1, Setup::Type::LABEL)
-		headers << HeaderField.new("Cur.", 2, 2, Setup::Type::CURRENCY)
-		headers << HeaderField.new("Valuation (USD)", 2, 3, Setup::Type::AMOUNT)
-		headers << HeaderField.new("P&L", 1, 4, Setup::Type::PERCENTAGE)
-		bottom = Field.new("5 worst performers since inception", 1)
-		@tables << Table.new(@files[0], 12, headers, 5, bottom)
-		headers = []
-		headers << HeaderField.new("Description", 2, 1, Setup::Type::LABEL)
-		headers << HeaderField.new("Cur.", 2, 2, Setup::Type::CURRENCY)
-		headers << HeaderField.new("Valuation (USD)", 2, 3, Setup::Type::AMOUNT)
-		headers << HeaderField.new("P&L", 1, 4, Setup::Type::PERCENTAGE)
-		table = Table.new(@files[0], 12, headers.dup, 5)
-		offset = Field.new("5 worst performers since inception", 1)
-		table.set_offset offset
-		@tables << table
-		@tables
-	end
-
-	private
-=end
 end

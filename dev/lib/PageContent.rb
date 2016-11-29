@@ -16,48 +16,16 @@ class PageContent
 		@content
 	end
 
-	def search(field)
-		#puts "searching for #{field.text}"
-		position = nil
-		xi = 0
-		ocurrence_counter = 0
-		@content.each_line.with_index do |line, y|
-			last_index = 0
-			#puts "Line: #{@content.lines[y]}"
-			while line[last_index, line.length - last_index].match(field.regex){|m|
-					#puts "match!------------------------------------------------------------"
-					ocurrence_counter += 1
-					xi = last_index + m.offset(0)[0]
-					xf = last_index + m.offset(0)[1]
-					text = m.to_s
-					last_index = xf
-					if ocurrence_counter == field.ocurrence
-						#puts "Setting!"
-						position = TextNode.new(text, xi, xf-1, y) 
-						field.position = position
-						return true
-					end
-				}
-			end
-		end 
-		return false
-	end
-
 	def search_next(field, offset)
-		#puts "OFF; #{offset}"
 		xi = 0
 		@content.lines[offset..@content.lines.size-field.width].each.with_index do |line, y_full|
 			y = offset + y_full
 			if field.width > 1
 				line = Multiline.generate @content.lines[y, field.width]
-				#puts line.to_s
-				#puts field.regex
 			end
-			#puts "L: #{y_full} #{RegexHelper.strip_wildchar line}" if @number == 33 and y_full == 11
 			line.match(field.regex){|m|
 				xi = m.offset(0)[0]
 				xf = m.offset(0)[1]
-				#puts "match!!! #{field} #{xi} .. #{xf-1}"
 				field.position = TextNode.new(xi, xf-1, y) 
 				field.width = m.width if m.is_a? MultiMatchData
 				return true
@@ -66,19 +34,8 @@ class PageContent
 		return false
 	end
 
-	def field_offset(field)
-		coords = field.position.coords
-		y = coords[2]
-		line = Multiline.generate @content.lines[y]
-		left = RegexHelper.rindex(line[0..coords[0]-1])
-		left = 0 if left.nil?
-		right = RegexHelper.index(line, coords[1]+1)
-		right = line.length-1 if right.nil?
-		[left,right,y]
-	end
-
 	def find_results_right(field)
-		range = field_offset field
+		range = [field.left, field.right+1, field.top, field.width]
 		field.results.each.with_index do |result, i|
 			regex = result.regex
 			range[1] = horizontal_search result, range, regex
@@ -94,7 +51,9 @@ class PageContent
 		while tolerance <= Setup::Read.horizontal_search_range and range[1] + counter < line_size
 			counter += 1
 			tolerance += 1 if detected
-			text = (Multiline.generate @content.lines[range[2]])[range[1],counter]
+			lines = (range[3] > 1 ? (range[2]..range[2]+range[3]-1) : range[2] )
+			lines = range[2]
+			text = (Multiline.generate @content.lines[lines])[range[1]..range[1]+counter]
 			text = RegexHelper.strip_wildchar(text)
 			if text.match regex
 				detected = true
@@ -128,7 +87,7 @@ class PageContent
 				#puts "#{xi} #{xf} #{y}"
 				#puts "Inverse search: [#{xi},#{index},#{y}]\t => #{header.text}"
 				#puts "#{@content.lines[y][xi + 10..index]}"
-				downwards_search(header, row, header.results[i])
+				search_results_left(header, row, header.results[i])
 				#header.recalculate_position
 =begin
 				puts "#{header.outer_left} - #{header.results[i].edges.xi}"
@@ -139,26 +98,12 @@ class PageContent
 		#puts "OUT!"
 	end
 
-	# Find Next Row
+	# Get Row
 	# xi, xf, y: dimensions of the table header to be evalueated
-	# The algorithm starts on the line 'y' and moves to the next one
-	# until the line is empty or invalid as a row. Then it moves on
-	# until it reaches a valid row and returns it's 'y' coordinate
-	def find_next_row(xi, xf, y)
-		while not (line = RegexHelper.strip_wildchar(@content.lines[y][xi..xf])).empty?
-			#puts "SKIPPING[#{xi},#{xf}] #{@content.lines[y][xi..xf]}"
-			y += 1
-		end
-		while (line = RegexHelper.strip_wildchar(@content.lines[y][xi..xf])).empty?
-			#puts "SKIPPING[#{xi},#{xf}] #{@content.lines[y][xi..xf]}"
-			y += 1
-		end
-			#puts "Landed on #{y}: #{@content.lines[y][xi..xf]}"
-		return y
-	end
-
+	# The algorithm starts on the line 'y' and adds the next line downwards 
+	# until the format is found. There is a risk of crashing with neigbour
+	# results. in that case choose an other guide column
 	def get_row(range, guide)
-		#puts "IN"
 		xi = guide.outer_left
 		xf = guide.outer_right
 		yi = range[2]
@@ -166,35 +111,16 @@ class PageContent
 		index = 0
 		regex = Setup.bank.get_regex(guide.type, false)
 		while yf - index >= yi
-			#puts "LOOP #{yf - index} #{yi}"
 			range = (index == 0 ? yf : (yf - index..yf))
 			text = Multiline.generate @content.lines[range]
 			text = text[xi..xf]
 			text = RegexHelper.strip_wildchar text
-			#puts text
 			if text.match regex
-				#puts "CHECKED until #{yf - index}"
 				return yf - index
 			end
 			index += 1
 		end
 		return nil
-	end
-
-
-	# Count To Bottom
-	# xi, xf, y: dimensions of the table header to be evalueated
-	# It counts how many valid rows are between the provided coordinates
-	# and the bottom field exclusively
-	def count_to_bottom(xi, xf, y, bottom_y)
-		rows = 0
-		#rows += 1 while not (y = find_next_row(xi, xf, y)) > bottom_y
-		while y < bottom_y
-			y = find_next_row(xi, xf, y)
-			rows += 1 if y != bottom_y
-			#puts "ROW #{rows} Y #{y} BOTTOM #{bottom_y}"
-		end
-		rows
 	end
 	
 	# Downwards Search
@@ -208,7 +134,7 @@ class PageContent
 	#   ¶¶2.3%¶ =>  2.3%
 	#  1¶¶2.3%¶ => 12.3%
 	# ¶1¶¶2.3%¶ => 12.3%
-	def downwards_search(header, row, result)
+	def search_results_left(header, row, result)
 		# Content line to be evaluated
 		line = Multiline.generate(@content.lines[row.yi..row.yf])
 		#header.print_borders
