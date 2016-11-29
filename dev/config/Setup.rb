@@ -116,12 +116,17 @@ class Bank
 		return Regexp.new(regex(type))
 	end
 
+	def run 
+		prepare
+		load
+		execute
+		results
+	end
+
 	def prepare
 		puts "preparing..."
 		declare_fields
 		setup_files
-		load
-		puts "CHARS: #{@charts}"
 	end
 
 	def load
@@ -140,7 +145,7 @@ class Bank
 			unless chart.fields.nil?
 				chart.fields.each do |field|
 					puts "EXECUTING: #{field}"
-					field.execute(@reader)
+					field.execute(@reader) 
 				end
 			end
 		end
@@ -150,8 +155,10 @@ class Bank
 		puts "results..."
 		@charts.each do |chart|
 			puts "CHART #{chart.file}:"
-			chart.fields.each do |field|
-				field.print_results
+			unless chart.fields.nil?
+				chart.fields.each do |field|
+					field.print_results unless field.is_a? Action
+				end
 			end
 		end
 	end

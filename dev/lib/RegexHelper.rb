@@ -37,7 +37,7 @@ class RegexHelper
 		if term.is_a? Multiline
 			return term.strings.map{|s| regexify s}
 		end
-		term = term.to_s
+		#term = term.to_s
 		raise if term.empty?
 		term = Regexp.escape term
 		regex = ""

@@ -9,7 +9,7 @@ class Field
 	attr_accessor :width
 
 	def initialize(text, width = 1, ocurrence = 1, date = false)
-		@text = Multiline.generate text
+		@text = Multiline.generate text, true
 		@ocurrence = ocurrence
 		@date = date
 		@width = width
@@ -21,10 +21,10 @@ class Field
 
 	def regex
 		if @width > 1 and not @text.is_a? Multiline
-			puts "expanded"
+			#puts "expanded"
 			@text = Multiline.generate ["#{@text}"]
 		elsif @width == 1 and @text.is_a? Multiline
-			puts "reduced"
+			#puts "reduced"
 			 if @text.size == 1
 			 	@text = @text[0]
 			 else
@@ -46,6 +46,7 @@ class Field
 
 	def execute(reader)
 		reader.move_to(self)
+		reader.skip self
 	end
 
 	def print_results
@@ -101,6 +102,7 @@ class SingleField < Field
 	def execute(reader)
 		reader.move_to(self)
 		reader.find_results_for(self)
+		reader.skip self
 	end
 end
 
@@ -130,15 +132,13 @@ class HeaderField < Field
 	end
 
 	def recalculate_position
-		n = 0
-		print "[#{outer_left}(#{left} #{right})#{outer_right}]"
+		#puts "#{self}[#{outer_left}(#{left} #{right})#{outer_right}]"
 		xi_min = left
 		xi_max = outer_left
 		xf_min = right
 		xf_max = outer_right
 		@results.each do |result|
 			if(result.result != Result::NOT_FOUND)
-				n += 1
 				xi_min = [xi_min, result.left].min 
 				xi_max = [xi_max, result.edges.xi].max 
 				xf_min = [xf_min, result.right].max 
@@ -149,12 +149,12 @@ class HeaderField < Field
 			       outer_left != xi_max or 
 			       right != xf_min or 
 			       outer_right != xf_max)
-		left = xi_min
-		outer_left = xi_max
-		right = xf_min
-		outer_right = xf_max
-		print_borders
-		print "[#{outer_left}(#{left} #{right})#{outer_right}] => #{changed}"
+		self.left = xi_min
+		self.outer_left = xi_max
+		self.right = xf_min
+		self.outer_right = xf_max
+		#print_borders
+		#puts "#{self}[#{outer_left}(#{left} #{right})#{outer_right}] => #{changed}"
 		changed
 	end
 
@@ -179,7 +179,7 @@ class HeaderField < Field
 			p_line << symbol if n != past_n
 			past_n = n
 		end
-		puts p_line << "             : #{text}"
+		puts p_line << "         :[#{outer_left} ( #{left} : #{right} ) #{outer_right}] #{text}"
 	end
 
 	def outer_left
@@ -221,6 +221,11 @@ class Result < Field
 
 	def inspect 
 		to_s
+	end
+
+	def result= value
+		value.delete "\n"
+		@result = value
 	end
 
 end

@@ -19,9 +19,7 @@ end
 @fields = Setup.bank.declare_fields
 =end
 
-Setup.bank.prepare
-Setup.bank.execute
-Setup.bank.results
+Setup.bank.run
 
 #reader = Reader.new(Dir["test_cases/*.pdf"][0])
 #reader.mock_content(File.read('test_cases/test.txt'))

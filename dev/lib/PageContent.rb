@@ -44,8 +44,7 @@ class PageContent
 	end
 
 	def search_next(field, offset)
-		#puts "Starting!!! #{field} #{field.width} #{field.regex}"
-		position = nil
+		#puts "OFF; #{offset}"
 		xi = 0
 		@content.lines[offset..@content.lines.size-field.width].each.with_index do |line, y_full|
 			y = offset + y_full
@@ -54,13 +53,12 @@ class PageContent
 				#puts line.to_s
 				#puts field.regex
 			end
-			#puts "#{RegexHelper.strip_wildchar line}"
+			#puts "L: #{y_full} #{RegexHelper.strip_wildchar line}" if @number == 33 and y_full == 11
 			line.match(field.regex){|m|
-				#puts "match!!! #{field} #{field.width}"
 				xi = m.offset(0)[0]
 				xf = m.offset(0)[1]
-				position = TextNode.new(xi, xf-1, y) 
-				field.position = position
+				#puts "match!!! #{field} #{xi} .. #{xf-1}"
+				field.position = TextNode.new(xi, xf-1, y) 
 				field.width = m.width if m.is_a? MultiMatchData
 				return true
 			}
@@ -131,14 +129,14 @@ class PageContent
 				#puts "Inverse search: [#{xi},#{index},#{y}]\t => #{header.text}"
 				#puts "#{@content.lines[y][xi + 10..index]}"
 				downwards_search(header, row, header.results[i])
+				#header.recalculate_position
 =begin
 				puts "#{header.outer_left} - #{header.results[i].edges.xi}"
-				done = false if header.recalculate_position
 				puts "#{header.outer_left} - #{header.results[i].edges.xi}"
 =end
 			end
 		end
-		puts "OUT!"
+		#puts "OUT!"
 	end
 
 	# Find Next Row
@@ -160,7 +158,7 @@ class PageContent
 	end
 
 	def get_row(range, guide)
-		puts "IN"
+		#puts "IN"
 		xi = guide.outer_left
 		xf = guide.outer_right
 		yi = range[2]
@@ -168,13 +166,14 @@ class PageContent
 		index = 0
 		regex = Setup.bank.get_regex(guide.type, false)
 		while yf - index >= yi
-			puts "LOOP #{yf - index} #{yi}"
+			#puts "LOOP #{yf - index} #{yi}"
 			range = (index == 0 ? yf : (yf - index..yf))
 			text = Multiline.generate @content.lines[range]
 			text = text[xi..xf]
 			text = RegexHelper.strip_wildchar text
+			#puts text
 			if text.match regex
-				puts "CHECKED until #{yf - index}"
+				#puts "CHECKED until #{yf - index}"
 				return yf - index
 			end
 			index += 1
@@ -212,8 +211,7 @@ class PageContent
 	def downwards_search(header, row, result)
 		# Content line to be evaluated
 		line = Multiline.generate(@content.lines[row.yi..row.yf])
-		puts "DS for #{header}"
-		puts line.to_s
+		#header.print_borders
 		# Acceptable field to be recognized (E.j: +1,234,567.89)
 		regex = result.regex
 		# The right-most index where the field could be
@@ -239,15 +237,15 @@ class PageContent
 			text = line[counter..start]
 			# Evaluate without wildchars
 			stripped_text = RegexHelper.strip_wildchar text
-			puts "#{stripped_text} - #{regex}"
+			#puts "#{stripped_text} - #{regex}"
 			if stripped_text != last_match 
 				if stripped_text.match regex 
-					puts "MATCH!!!"
+					#puts "MATCH!!!"
 					detected = true
 					tolerance = 0
 					last_match = stripped_text
 					# Record new MIN only if the result is relatively even (See center_mass)
-					min = counter+1 if center_mass(text) > Setup::Read.center_mass_limit
+					min = counter #if center_mass(text) > Setup::Read.center_mass_limit
 					#puts "--------------------------------------------------------------------------------MIN #{min}"
 					# Resets the max value
 					max = header.border.xi
@@ -274,19 +272,22 @@ class PageContent
 		if not last_match.nil? and last_match.match regex
 			#puts "Last line eval: #{text} and #{last_match}"
 			#puts "Final :: #{line[range[1]-counter..limit-1]} ||| #{line[limit..range[1]]}"
-			puts "RESULT!!! #{last_match}"
+			#puts "RESULT!!! #{last_match}"
 			result.result = last_match
+			result.position.xi = min
+			result.edges.xi = max
+			result.position.xf = RegexHelper.rindex(line[0..start])
+			#puts "last index is #{result.right-result.left}"
+			result.edges.xf = start
+			result.position.y = row.yi
+			result.edges.y = row.yf
+			#puts "RESULT: #{last_match} in #{line[result.left..result.left+ 6]}"
 		else
 			result.result = Result::NOT_FOUND
 		end
 		# Even if the result wasn't found, set the new positions and borders
 		# to recalculate for the next iteration
-		result.position.xi = min
-		result.edges.xi = max
-		result.position.xf = RegexHelper.rindex(line[0..start])
-		result.edges.xf = start
-		result.position.y = row.yi
-		result.edges.y = row.yf
+		#puts "RESULT: #{result.result}"
 		return result.result == Result::NOT_FOUND
 	end
 
@@ -373,6 +374,42 @@ class PageContent
 			new_result = line[new_edge..result_n.right]
 			result_n.result = RegexHelper.strip_wildchar new_result
 			result_n.left = RegexHelper.index new_result
+			return true
+		end
+
+		if result_n.result == Result::NOT_FOUND
+			range = (result_n.edges.xf - result.right - 1)
+			return false if range <= 0
+			#puts "RANGE RIGHT: #{result_n} #{result.right}  to  #{result_n.edges.xf}"
+			#puts line[result.right .. result_n.edges.xf]
+			last_text = ""
+			range.times do |i|
+				text = RegexHelper.strip_wildchar(line[result_n.edges.xf - i .. result_n.edges.xf])
+				if text != last_text and text.match result.regex
+					last_text = text
+					result_n.result = text
+					result_n.left = result_n.edges.xf - i
+				end
+			end
+		end
+
+		if result.result == Result::NOT_FOUND
+			range = (result_n.left-1 - result.edges.xi)
+			return false if range <= 0
+			#puts "RANGE LEFT: #{result} #{result.edges.xi}  to  #{result_n.left-1}"
+			#puts line[result.edges.xi .. result_n.left-1]
+			last_text = ""
+			range.times do |i|
+				text = RegexHelper.strip_wildchar(line[result_n.left - 1 - i .. result_n.left - 1])
+				#puts text.strings if not text.empty?
+				if text != last_text and text.match result.regex
+					last_text = text
+					#puts "SETTED!!"
+					result.result = text
+					result.left = result_n.left - 1 - i
+				end
+			end
 		end
 	end
+
 end

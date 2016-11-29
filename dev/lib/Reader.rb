@@ -3,26 +3,31 @@ require 'pdf/reader'
 
 class Reader
 
+	# file: File to be read by page
+	# offset: y position of last read item
 	def initialize(file)
 		@reader = PDF::Reader.new(file) if file
 		@page = 1
 		@offset = 0
 	end
 
+	# Allows banks execution to skip directly to a specific page
+	def go_to page, offset = 0
+		@page = page - 1
+		@offset = offset
+	end
+
+	# Retrieves the number of columns from the actual page
 	def line_size
 		@page_content ? @page_content.line_size : 0
 	end
 
+	# Retrieves number of rows from the actual page
 	def line_height
 		@page_content ? @page_content.line_height : 0
 	end
 
-	def read_fields(fields)
-		fields.each do |field|
-			read_field(field, field.page)			
-		end
-	end
-
+	# Moves the offset to the beggining of the specified field
 	def move_to field
 		while not read_next_field(field)
 			@page += 1
@@ -34,8 +39,14 @@ class Reader
 		end
 	end
 
+	# Moves the offset past the bottom of the specified field
+	def skip field
+		@offset += field.width
+	end
+
+	# Looks for the first occurrence of the field past the offset
 	def read_next_field(field)
-		if not @page_content or @page_content.number != @page
+		if not @page_content or @page_content.number != @page + 1
 			#raise #debugg
 			page = @reader.pages[@page]
 			return "Wrong page for this document" if page.nil?
@@ -43,58 +54,29 @@ class Reader
 			page.walk(receiver)
 
 			@page_content = PageContent.new(page.number, receiver.content)
+			@offset = 0
 		end
 		if @page_content.search_next(field, @offset)
-			puts "Found #{field}"
+			#puts "Found #{field} in page #{@page}"
 			return true
 		else
-			puts "Position for #{field} in page #{@page}: NOT FOUND"
+			#puts "Position for #{field} in page #{@page}: NOT FOUND"
 			return false
 		end
 	end
 
+	# Looks for results to right of the field
+	# field: Position must be set first
 	def find_results_for field
 		@page_content.find_results_right(field)
 	end
 
-	def read_continue(fields)
-		@page = 0
-		@offset = 0
-		fields.each do |field|
-			while not read_next_field(field)
-				@page += 1
-			end
-			if field.position?
-				@offset = field.position.y
-				page_content.find_results_right(field)
-				field.print_results
-			else
-				raise StopIteration, "Field #{field} is not present in the document"
-			end
-		end
-	end
-
+	# For testing with false content
 	def mock_content content
 		@page_content = PageContent.new(0,content)
 	end
 
-	def read_field(field, page_number)
-		page = @reader.pages[page_number-1]
-		return "Wrong page for this document" if page.nil?
-		receiver = PDF::Reader::PageTextReceiver.new
-		page.walk(receiver)
-
-		page_content = PageContent.new(page.number, receiver.content)
-		if page_content.search(field)
-			page_content.find_results_right(field)
-			field.print_results
-			return true
-		else
-			puts "Position in page #{page_content.number}: NOT FOUND"
-			return false
-		end
-	end
-
+	# Sets the table headers borders to touch the neighbours positions
 	def set_header_limits headers
 		row = Row.new
 		headers.each do |header|
@@ -126,15 +108,20 @@ class Reader
 	end
 
 	# Verifies for each result that the Result::NOT_FOUND
-	# wasn't due to right-next result overstep
+	# wasn't due to next result overstep
 	def correct_results(headers, rows)
 		headers.reverse_each.with_index do |header, col|
-			unless col == 0
+			# first col has no right neighbour
+			if col == 0
+				header.recalculate_position
+			else
 				next_header = headers[-col]
 				rows.each.with_index do |row, i|
 					r = header.results[i]
 					next_r = next_header.results[i]
+					# check for over stepping
 					if @page_content.check_result(row, r, next_r)
+						# if results changed then recalculate header
 						header.recalculate_position 
 						next_header.recalculate_position
 					end
@@ -143,6 +130,7 @@ class Reader
 		end
 	end
 
+	# For debugging purposes
 	def print_file file
 		reader = PDF::Reader.new(file)
 		f_raw = File.open("#{file[0, file.length-4]}_inspect.txt",'w')

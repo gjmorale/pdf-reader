@@ -1,8 +1,9 @@
 class Table
 
 	attr_reader :rows
+	attr_reader :width
 
-	def initialize(headers, bottom = nil)
+	def initialize(headers, bottom = nil, offset = nil)
 		@bottom = bottom
 		@headers = headers
 	end
@@ -10,7 +11,7 @@ class Table
 	def set_headers_width
 		size = 1
 		size = @headers.map {|header| header.width}.max
-		puts "SIZE:   #{size}"
+		#puts "SIZE:   #{size}"
 		@headers.each {|header| header.width = size}
 	end
 
@@ -51,6 +52,7 @@ class Table
 			xi = xi - table_offset >= 0 ? xi - table_offset : 0
 			xf = xf + table_offset <= line_size ? xf + table_offset : line_size
 			#puts "Searching between [#{xi},#{xf},#{y}]"
+			@width = yf-yi+1
 			@range = [xi,xf,yi,yf]
 		end
 	end
@@ -69,7 +71,7 @@ class Table
 				header.outer_right = @headers[i+1].left-1
 				header.outer_left = @headers[i-1].right+1
 			end
-			header.print_borders
+			#header.print_borders
 		end
 	end
 
@@ -97,13 +99,15 @@ class Table
 	def print_results
 		if @headers_row.multiline?
 			line = []
-			@headers_row.width.times.map {|n| line[n] = (n == 0 ? "|" : "\n|")}
+			@headers_row.width.times.map {|n| line[n] = "|"}
 			line = Multiline.generate line
 		else
-			line = "\n|"
+			line = "|"
 		end
 		@headers.each do |header|
+			#puts "#{header}"
 			str = fit_in_space(header.text, get_header_size(header))
+			str = Multiline.generate([str], false) if not str.is_a? Multiline and line.is_a? Multiline
 			line << str
 			line.fill if line.is_a? Multiline
 			line << "|"
@@ -113,7 +117,7 @@ class Table
 			#puts line
 			#puts "#{fit_in_space header.text}"
 		end
-		puts "_"*(line.length-1)
+		puts "-"*(line.length-1)
 		puts line.to_s
 		puts "-"*(line.length-1)
 
@@ -121,8 +125,8 @@ class Table
 			line = "|"
 			if row.multiline?
 				line = []
-				row.width.times.map {|n| line[n] = (n == 0 ? "|" : "\n|")}
-				line = Multiline.generate line
+				row.width.times.map {|n| line[n] = "|"}
+				line = Multiline.generate line, false
 			end
 			@headers.each do |header|
 				str = fit_in_space(header.results[n].result, get_header_size(header))
@@ -136,6 +140,7 @@ class Table
 	end
 
 	def fit_in_space(text, size)
+		size = [size, 100].min
 		return text[0,size] if text.length > size
 		text << " " while text.length < size
 		return text
@@ -172,21 +177,23 @@ class Table
 		reader.move_to @offset if @offset
 		reader.read_next_field @bottom if @bottom
 		set_range reader.line_size, reader.line_height
-		puts @range
+		#puts @range
 		set_borders
 		@rows = reader.get_rows(@range, get_guide)
-		puts @rows
+		#puts @rows
 		set_results
 		@headers.reverse_each.with_index do |header, i|
 			reader.get_column(header, @rows)
 			if @headers.size-i >= 2
 				next_header = @headers[@headers.size-i-2] 
-				next_header.border.xf = header.position.xi-1
+				next_header.outer_right = header.left-1
 			end
+			#puts "Result! for #{header} #{header.results.size} #{@rows.size}" #if i==0
 =begin
 =end
 		end
 		reader.correct_results(@headers, @rows)
+		reader.skip self
 =begin		
 		set_borders
 		print_borders

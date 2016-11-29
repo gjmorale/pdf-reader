@@ -15,9 +15,10 @@ class Multiline < String
 	attr_reader :line_size
 	attr_reader :strings
 
-	def self.generate str
+	def self.generate str, remove_n = true
 		if str.is_a? Array
-			return line = Multiline.new(str)
+			str = str.map {|s| s = s.delete("\n")} if remove_n
+			return  Multiline.new(str)
 		else
 			return str
 		end
@@ -45,7 +46,16 @@ class Multiline < String
 	def to_s
 		out = ""
 		@strings.each do |s|
-			out << s
+			out << "\n" unless out == ""
+			out << s 
+		end
+		out
+	end
+
+	def inspect
+		out = ""
+		@strings.each do |s|
+			out << s 
 		end
 		out
 	end
@@ -56,6 +66,7 @@ class Multiline < String
 			@strings.each do |string|
 				r << string[key]
 			end
+			#puts "R #{r}"
 			return Multiline.new(r) 
 		else
 			super[key]
@@ -63,32 +74,43 @@ class Multiline < String
 
 	end
 
-	def match regex
+	def match regex, &block
 		return false unless regex
 		if regex.is_a? Array
+			#puts "1"
 			return nil if @strings.size < regex.size
 			matches = [] 
 			index = 0
 			y = 0
+			#puts "2"
 			@strings.each do |s|
+				#puts "#{s} => #{regex[index]}"
 				s.match regex[index] {|m|
+					#puts "3"
 					matches << [m.offset(0)[0], m.offset(0)[1], y]
 					index +=1
 				}
 				y += 1
 				break if index == regex.size
 			end
+			#puts "#{index} vs #{regex.size}"
 			return false if index != regex.size
 			if block_given?
+				#puts "MATCHES: #{matches}"
 				m = MultiMatchData.new
 				m.offset[0] = matches.map {|match| match[0]}.min
 				m.offset[1] = matches.map {|match| match[1]}.max
 				m.width = y
-				yield(m) 
+				#puts "CALLING..."
+				block.call(m) 
 			else
+				#puts "FUUUU"
 				true
 			end
 		else
+			if block_given?
+				return match([regex], &block)
+			end
 			return match [regex]
 		end
 	end
@@ -105,7 +127,7 @@ class Multiline < String
 	def rindex regex, offset=0
 		first = nil
 		@strings.each do |s|
-			last = offset == 0 ? s.rindex(regex) : s.rindex(regex, offset)
+			last = (offset == 0 ? s.rindex(regex) : s.rindex(regex, offset))
 			first = last if last and (not first or first < last)
 		end
 		return first
@@ -147,7 +169,6 @@ class Multiline < String
 			end
 		end
 		#puts "INSIDE"
-		#puts @strings
 		#return Multiline.new @strings
 	end
 
