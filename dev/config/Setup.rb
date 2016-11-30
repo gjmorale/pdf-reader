@@ -98,4 +98,12 @@ class Bank
 		raise NoMethodError, "Bank is an abstract class"
 	end
 
+	def to_arr(item, n)
+		r = []
+		n.times do |i|
+			r << item
+		end
+		r
+	end
+
 end

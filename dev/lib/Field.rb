@@ -131,7 +131,7 @@ class HeaderField < Field
 		reader.find(self)
 	end
 
-	def recalculate_position
+	def recalculate_position(o_l = true, i_l = true, i_r = true, o_r = true)
 		#puts "#{self}[#{outer_left}(#{left} #{right})#{outer_right}]"
 		xi_min = left
 		xi_max = outer_left
@@ -139,10 +139,10 @@ class HeaderField < Field
 		xf_max = outer_right
 		@results.each do |result|
 			if(result.result != Result::NOT_FOUND)
-				xi_min = [xi_min, result.left].min 
-				xi_max = [xi_max, result.edges.xi].max 
-				xf_min = [xf_min, result.right].max 
-				xf_max = [xf_max, result.edges.xf].min 
+				xi_min = [xi_min, result.left].min if i_l
+				xi_max = [xi_max, result.edges.xi].max if o_l
+				xf_min = [xf_min, result.right].max if i_r
+				xf_max = [xf_max, result.edges.xf].min if o_r
 			end
 		end
 		changed = (left != xi_min or 
@@ -166,6 +166,13 @@ class HeaderField < Field
 			result.edges = border.dup
 			result.result = Result::NOT_FOUND
 			@results << result
+		end
+	end
+
+	def reset_results
+		results.each do |result|
+			result.position = position.dup
+			result.edges = border.dup
 		end
 	end
 
@@ -212,7 +219,12 @@ class Result < Field
 	end
 
 	def regex
-		Setup.bank.get_regex(@type)
+		if @type.is_a? Array
+			r = @type.map {|type| Setup.bank.get_regex(type)}
+		else
+			r = Setup.bank.get_regex(@type)
+		end
+		r
 	end
 
 	def to_s
@@ -226,6 +238,22 @@ class Result < Field
 	def result= value
 		value.delete "\n"
 		@result = value
+	end
+
+	def outer_left
+		edges.xi
+	end
+
+	def outer_right
+		edges.xf
+	end
+
+	def outer_left= value
+		edges.xi = value
+	end
+
+	def outer_right= value
+		edges.xf = value
 	end
 
 end

@@ -66,7 +66,6 @@ class Multiline < String
 			@strings.each do |string|
 				r << string[key]
 			end
-			#puts "R #{r}"
 			return Multiline.new(r) 
 		else
 			super[key]
@@ -77,34 +76,26 @@ class Multiline < String
 	def match regex, &block
 		return false unless regex
 		if regex.is_a? Array
-			#puts "1"
 			return nil if @strings.size < regex.size
 			matches = [] 
 			index = 0
 			y = 0
-			#puts "2"
 			@strings.each do |s|
-				#puts "#{s} => #{regex[index]}"
 				s.match regex[index] {|m|
-					#puts "3"
 					matches << [m.offset(0)[0], m.offset(0)[1], y]
 					index +=1
 				}
 				y += 1
 				break if index == regex.size
 			end
-			#puts "#{index} vs #{regex.size}"
 			return false if index != regex.size
 			if block_given?
-				#puts "MATCHES: #{matches}"
 				m = MultiMatchData.new
 				m.offset[0] = matches.map {|match| match[0]}.min
 				m.offset[1] = matches.map {|match| match[1]}.max
 				m.width = y
-				#puts "CALLING..."
 				block.call(m) 
 			else
-				#puts "FUUUU"
 				true
 			end
 		else

@@ -87,9 +87,28 @@ class Reader
 		row
 	end
 
-	# Calls a vertical search for the specific column
-	def get_column header, rows
-		@page_content.vertical_search(rows, header)
+	# Get Columns
+	# rows: the rows to be recognized
+	# headers: The header of the columns to be recognized
+	# Goes row by row for each header looking for results
+	# for the header. The header results must exist
+	# initialy and have the same dimensions as the header.
+	# For each iteration the headers position and border 
+	# is recalculated. This way the information of every
+	# result makes the search for the others more accurate.
+	def get_columns headers, rows
+		range = []
+		headers.reverse_each.with_index do |header, col|
+			rows.each.with_index do |row, i|
+				range = [header.outer_left,header.left,header.right,header.outer_right]
+				while not @page_content.search_results_left(range, row, header.results[i])
+					range[3] -= 1
+				end
+				unless header.results[i].result == Result::NOT_FOUND
+					header.recalculate_position(false, false, true, true) 
+				end
+			end
+		end
 	end
 
 	# Calls a vertical search for the guide column to determine rows
@@ -122,8 +141,8 @@ class Reader
 					# check for over stepping
 					if @page_content.check_result(row, r, next_r)
 						# if results changed then recalculate header
-						header.recalculate_position 
-						next_header.recalculate_position
+						#header.recalculate_position 
+						#next_header.recalculate_position
 					end
 				end
 			end

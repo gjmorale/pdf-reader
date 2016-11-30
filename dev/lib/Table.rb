@@ -167,14 +167,7 @@ class Table
 		set_borders
 		@rows = reader.get_rows(@range, get_guide)
 		set_results
-		@headers.reverse_each.with_index do |header, i|
-			reader.get_column(header, @rows)
-			if @headers.size-i >= 2
-				next_header = @headers[@headers.size-i-2] 
-				next_header.outer_right = header.left-1
-			end
-
-		end
+		reader.get_columns(@headers, @rows)
 		reader.correct_results(@headers, @rows)
 		reader.skip self
 	end
