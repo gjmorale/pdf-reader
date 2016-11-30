@@ -4,7 +4,8 @@ class PageContent
 	attr_reader :line_height
 	attr_reader :number
 
-
+	# Creates a PageContent object from content
+	# as a string and a page_number
 	def initialize(page_number, content)
 		@number = page_number
 		@content = content
@@ -16,6 +17,11 @@ class PageContent
 		@content
 	end
 
+	# Looks for the first match of the field regex in
+	# the page from offset to bottom.
+	# The field width must be at least as big as the field.
+	# Once the field is found, it sets it's position and
+	# width if it's multiline
 	def search_next(field, offset)
 		xi = 0
 		@content.lines[offset..@content.lines.size-field.width].each.with_index do |line, y_full|
@@ -34,6 +40,9 @@ class PageContent
 		return false
 	end
 
+	# Calls a horizontal_search to the right until every result
+	# for the field is is found. for every result found the
+	# starting index to search is updated.
 	def find_results_right(field)
 		range = [field.left, field.right+1, field.top, field.width]
 		field.results.each.with_index do |result, i|
@@ -42,6 +51,10 @@ class PageContent
 		end
 	end
 	
+	# Searches the line(s) from the last right index to further
+	# to the right until the last match right index has been passed
+	# horizontal_search_range times. Then it takes the last match
+	# and assigns it with position to the result.
 	def horizontal_search(result, range, regex)
 		counter = 0
 		tolerance = 0
@@ -70,34 +83,6 @@ class PageContent
 		return limit
 	end
 
-	# Vertical Search
-	# row_count: the amount of rows to be recognized
-	# header: The header of thecolumn to be recognized
-	# Vertical search goes row by row looking for results
-	# for the header. The header results must exist
-	# initialy and have the same dimensions as the header.
-	# For each iteration the headers position and border 
-	# is recalculated. This way the information of every
-	# result makes the search for the others more accurate.
-	def vertical_search(rows, header)
-		done = false
-		while not done
-			done = true
-			rows.each.with_index do |row, i|
-				#puts "#{xi} #{xf} #{y}"
-				#puts "Inverse search: [#{xi},#{index},#{y}]\t => #{header.text}"
-				#puts "#{@content.lines[y][xi + 10..index]}"
-				search_results_left(header, row, header.results[i])
-				#header.recalculate_position
-=begin
-				puts "#{header.outer_left} - #{header.results[i].edges.xi}"
-				puts "#{header.outer_left} - #{header.results[i].edges.xi}"
-=end
-			end
-		end
-		#puts "OUT!"
-	end
-
 	# Get Row
 	# xi, xf, y: dimensions of the table header to be evalueated
 	# The algorithm starts on the line 'y' and adds the next line downwards 
@@ -122,13 +107,33 @@ class PageContent
 		end
 		return nil
 	end
+
+	# Vertical Search
+	# rows: the rows to be recognized
+	# header: The header of the column to be recognized
+	# Vertical search goes row by row looking for results
+	# for the header. The header results must exist
+	# initialy and have the same dimensions as the header.
+	# For each iteration the headers position and border 
+	# is recalculated. This way the information of every
+	# result makes the search for the others more accurate.
+	def vertical_search(rows, header)
+		done = false
+		while not done
+			done = true
+			rows.each.with_index do |row, i|
+				search_results_left(header, row, header.results[i])
+				#header.recalculate_position
+			end
+		end
+	end
 	
-	# Downwards Search
+	# Search Results Left
 	# header: column to be evaluated
-	# y: 'y' coordinate for this row
-	# result: the header result for this 'y' coordinate
-	# Progresively recognizes chars from line y between position.xi to
-	# border.xf until border.xi to border.xf as follows
+	# row: row being evaluated
+	# result: the header result for this row
+	# Progresively recognizes chars from lines in row between position.xi(left) and
+	# border.xf(outer right) until border.xi(outer_left) and border.xf(outer_right) as follows
 	#     2.3%¶ =>  2.3%
 	#    ¶2.3%¶ =>  2.3%
 	#   ¶¶2.3%¶ =>  2.3%
@@ -137,7 +142,6 @@ class PageContent
 	def search_results_left(header, row, result)
 		# Content line to be evaluated
 		line = Multiline.generate(@content.lines[row.yi..row.yf])
-		#header.print_borders
 		# Acceptable field to be recognized (E.j: +1,234,567.89)
 		regex = result.regex
 		# The right-most index where the field could be
@@ -163,57 +167,35 @@ class PageContent
 			text = line[counter..start]
 			# Evaluate without wildchars
 			stripped_text = RegexHelper.strip_wildchar text
-			#puts "#{stripped_text} - #{regex}"
 			if stripped_text != last_match 
 				if stripped_text.match regex 
-					#puts "MATCH!!!"
 					detected = true
 					tolerance = 0
 					last_match = stripped_text
-					# Record new MIN only if the result is relatively even (See center_mass)
-					min = counter #if center_mass(text) > Setup::Read.center_mass_limit
-					#puts "--------------------------------------------------------------------------------MIN #{min}"
-					# Resets the max value
+					# min is the posible new left for result
+					#puts "#{center_mass(text)} < #{Setup::Read.center_mass_limit}"
+					min = counter #if center_mass(text) < 0.5
+					# Resets the max value because format has been recovered
 					max = header.border.xi
 				else
 					# Records max when the regex is lost because another format has been reached
 					max = [counter+1, max].max
-					#puts "--------------------------------------------------------------------------------MAX #{max}"
 				end
 			end
-=begin
-			puts "#{line[counter..start]} => #{last_match}----------------------------------------------------------CTR #{counter}"
-			p_line = ""
-			past_n = 0
-			[max, min, start+1, start+1].each do |n|
-				p_line << " "*(n - past_n -1) if n - past_n >= 1
-				p_line << "|" if n != past_n
-				past_n = n
-			end
-			puts line
-			puts p_line
-=end
-			#puts "[#{y}] [#{max} (#{min}  #{start}) #{start}]"
 		end
 		if not last_match.nil? and last_match.match regex
-			#puts "Last line eval: #{text} and #{last_match}"
-			#puts "Final :: #{line[range[1]-counter..limit-1]} ||| #{line[limit..range[1]]}"
-			#puts "RESULT!!! #{last_match}"
 			result.result = last_match
 			result.position.xi = min
 			result.edges.xi = max
 			result.position.xf = RegexHelper.rindex(line[0..start])
-			#puts "last index is #{result.right-result.left}"
 			result.edges.xf = start
 			result.position.y = row.yi
 			result.edges.y = row.yf
-			#puts "RESULT: #{last_match} in #{line[result.left..result.left+ 6]}"
 		else
 			result.result = Result::NOT_FOUND
 		end
 		# Even if the result wasn't found, set the new positions and borders
 		# to recalculate for the next iteration
-		#puts "RESULT: #{result.result}"
 		return result.result == Result::NOT_FOUND
 	end
 
@@ -227,13 +209,15 @@ class PageContent
 	# 0 => ¶¶¶4
 	def center_mass str
 		if str.is_a? Multiline
-			mean = 0
-			n = 0
+			mean = 0.0
+			n = 0.0
 			str.strings.each do |s|
-				n += 1
-				mean += center_mass s
+				unless (x = center_mass s).nan?
+					n += 1.0
+					mean += x
+				end
 			end
-			return mean = mean/n
+			return mean/n
 		end
 		balance = 0.0
 		skip = true
@@ -243,14 +227,15 @@ class PageContent
 		str.chars.reverse_each do |c|
 			if c != RegexHelper.wildchar
 				balance += index
-				count += 1
+				count += 1.0
 				skip = false
 				last_index = index
 			end
-			index += 1 unless skip
+			index += 1.0 unless skip
 		end
 		n = count
-		(balance/n)/(last_index + 1)
+		#puts "#{(balance/n)}/#{(last_index + 1.0)}"
+		(balance/n)/(last_index + 1.0)
 	end
 
 	# Check Results

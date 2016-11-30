@@ -1,21 +1,13 @@
 class HSBC < Bank
 
 	module Custom
-		# Include custom formats specific for the bank here
-		# Use negative indexes to avod conflicts
-		# E.g: ACCOUNT_CODE = -1
-		# And be sure to add a regex in the regex(type) method below
 		ACCOUNT_CODE = -1
 	end
-
-	attr_accessor :accounts
 
 	TABLE_OFFSET = 15
 	CENTER_MASS_LIMIT = 0.0
 
 	def initialize
-		#Empty initialize required in very bank sub-class
-		#Only to check it's not abstract
 	end
 
 	def regex(type)
@@ -51,7 +43,7 @@ class HSBC < Bank
 				field.print_results unless field.is_a? Action
 			end
 			@accounts.reverse_each do |account|
-				puts "\nSEARCHING LIQUIDITY FOR #{account}"
+				puts "\nSEARCHING LIQUIDITY FOR #{account}".green_bg
 				liquidity_for(account).each do |field|
 					field.execute @reader
 					field.print_results unless field.is_a? Action

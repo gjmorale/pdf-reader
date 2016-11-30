@@ -183,8 +183,8 @@ end
 
 class String
   # colorization
-  def colorize(color_code)
-    "\e[#{color_code}m#{self}\e[0m"
+  def colorize(color_code, style_code = 0)
+    "\e[#{color_code}m#{self}\e[#{style_code}m"
   end
 
   def red
@@ -209,5 +209,9 @@ class String
 
   def light_blue
     colorize(36)
+  end
+
+  def green_bg
+    colorize(1,1)
   end
 end

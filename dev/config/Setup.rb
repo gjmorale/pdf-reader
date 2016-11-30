@@ -1,57 +1,47 @@
 
 module Setup
 
+	# Bank document formats must match ARGV[0]
 	module Format
 		HSBC = "HSBC"
 		TEST = "test"
 	end
 
+	# Reading parameters taken from specific bank
+	# or default. Folows ruby convention to store
+	# constants.
 	module Read
-		VERTICAL_SEARCH_RANGE = 30
-		HORIZONTAL_SEARCH_RANGE = 15
-		CENTER_MASS_LIMIT = 0.40
-		WILDCHAR = '¶'
-		DATE_FORMAT = '\d\d\/\d\d\/\d\d\d\d'
 
 		def self.wildchar
-			@@wildchar = Setup.bank.class::WILDCHAR
-			@@wildchar ||= WILDCHAR
+			@@wildchar ||= Setup.bank.class::WILDCHAR
 		end
 
 		def self.date_format
-			@@date_format = Setup.bank.class::DATE_FORMAT
-			@@date_format ||= DATE_FORMAT
+			@@date_format ||= Setup.bank.class::DATE_FORMAT
 		end
 
 		def self.horizontal_search_range
-			@@horizontal_search_range = Setup.bank.class::HORIZONTAL_SEARCH_RANGE
-			@@horizontal_search_range ||= HORIZONTAL_SEARCH_RANGE
+			@@horizontal_search_range ||= Setup.bank.class::HORIZONTAL_SEARCH_RANGE
 		end
 
 		def self.vertical_search_range
-			@@vertical_search_range = Setup.bank.class::VERTICAL_SEARCH_RANGE
-			@@vertical_search_range ||= VERTICAL_SEARCH_RANGE
+			@@vertical_search_range ||= Setup.bank.class::VERTICAL_SEARCH_RANGE
 		end
 
 		def self.center_mass_limit
-			@@center_mass_limit = Setup.bank.class::CENTER_MASS_LIMIT
-			@@center_mass_limit ||= CENTER_MASS_LIMIT
+			@@center_mass_limit ||= Setup.bank.class::CENTER_MASS_LIMIT
 		end
 	end
 
+	# Table specific constants
 	module Table
-		TABLE_OFFSET = 6
 
 		def self.offset
-			@@offset = Setup.bank.class::TABLE_OFFSET
-			@@offset ||= TABLE_OFFSET
+			@@offset ||= Setup.bank.class::TABLE_OFFSET
 		end
 	end
 
-	module Printing
-		TAB_SIZE = 30
-	end
-
+	# General data types in documents
 	module Type
 		PERCENTAGE = 	1
 		AMOUNT = 		2
@@ -62,8 +52,8 @@ module Setup
 		LABEL = 		7
 	end
 
+	# Sets up the specific bank format to be loaded
 	def self.set_enviroment(format)
-		puts "Setting Up"
 		case format
 		when Format::TEST
 			puts "TEST BANK selected"
@@ -81,23 +71,29 @@ module Setup
 
 end
 
+# Abstract bank class never to be instantiated
 class Bank
+
+	# Accounts to store information
+	attr_accessor :accounts
 
 	# FINE TUNNING parameters:
 	# Override in sub-classes for bank specific
-	# or modify in module for global effect
-	TABLE_OFFSET = nil
-	HORIZONTAL_SEARCH_RANGE = nil
-	VERTICAL_SEARCH_RANGE = nil
-	WILDCHAR = nil
-	DATE_FORMAT = nil
-	CENTER_MASS_LIMIT = nil
+	TABLE_OFFSET = 6
+	VERTICAL_SEARCH_RANGE = 30
+	HORIZONTAL_SEARCH_RANGE = 15
+	CENTER_MASS_LIMIT = 0.40
+	WILDCHAR = '¶'
+	DATE_FORMAT = '\d\d\/\d\d\/\d\d\d\d'
 
+	# Regex format for a specific type.
+	# bounded: if it should add start and end of text
 	def get_regex(type, bounded = true)
 		return Regexp.new('^'<<regex(type)<<'$') if bounded
 		return Regexp.new(regex(type))
 	end
 
+	# Method to be overriden and executed
 	def run 
 		raise NoMethodError, "Bank is an abstract class"
 	end

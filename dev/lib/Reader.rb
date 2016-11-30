@@ -87,12 +87,12 @@ class Reader
 		row
 	end
 
-	# calls a vertical search for the specific column
+	# Calls a vertical search for the specific column
 	def get_column header, rows
 		@page_content.vertical_search(rows, header)
 	end
 
-	# calls a vertical search for the guide column to determine rows
+	# Calls a vertical search for the guide column to determine rows
 	def get_rows range, guide
 		rows = []
 		row = Row.new
@@ -130,7 +130,7 @@ class Reader
 		end
 	end
 
-	# For debugging purposes
+	# For debugging purposes only
 	def print_file file
 		reader = PDF::Reader.new(file)
 		f_raw = File.open("#{file[0, file.length-4]}_inspect.txt",'w')

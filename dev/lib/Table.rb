@@ -104,9 +104,9 @@ class Table
 			line.fill if line.is_a? Multiline
 			line << "|"
 		end
-		puts ("-"*(line.length)).light_blue
+		puts ("+"<<"-"*(line.length-2)<<"+").light_blue
 		puts line.to_s.light_blue
-		puts ("-"*(line.length)).light_blue
+		puts ("+"<<"-"*(line.length-2)<<"+").light_blue
 
 		@rows.each.with_index do |row, n|
 			line = "|"
@@ -123,7 +123,7 @@ class Table
 			end
 			puts line.to_s.blue
 		end
-		puts ("-"*line.length).blue
+		puts ("+"<<"-"*(line.length-2)<<"+").blue
 	end
 
 	def fit_in_space(text, size)

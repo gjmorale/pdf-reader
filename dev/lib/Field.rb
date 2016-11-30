@@ -94,9 +94,9 @@ class SingleField < Field
 		results.each do |r|
 			line << "#{r.result.strip} | "
 		end
-		puts ("-"*(line.length-1)).green
+		puts ("+"<<"-"*(line.length-3)<<"+").green
 		puts line.green
-		puts ("-"*(line.length-1)).green
+		puts ("+"<<"-"*(line.length-3)<<"+").green
 	end
 
 	def execute(reader)
