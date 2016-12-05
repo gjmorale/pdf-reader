@@ -4,6 +4,8 @@ class Reader
 
 	INPUT_PATH = 'in'
 
+	attr_accessor :page
+
 	# file: File to be read by page
 	# offset: y position of last read item
 	def initialize(file)
@@ -14,7 +16,7 @@ class Reader
 
 	# Allows banks execution to skip directly to a specific page
 	def go_to page, offset = 0
-		@page = page - 1
+		@page = page
 		@offset = offset
 	end
 
@@ -36,7 +38,8 @@ class Reader
 		if field.position?
 			@offset = field.position.y
 		else
-			raise StopIteration, "Field #{field} is not present in the document"
+			return false
+			#raise StopIteration, "Field #{field} is not present in the document"
 		end
 	end
 
@@ -115,10 +118,14 @@ class Reader
 	end
 
 	# Calls a vertical search for the guide column to determine rows
-	def get_rows range, guide
+	def get_rows range, guide, skips
 		rows = []
 		row = Row.new
 		row.yf = range[3]
+		if skips
+			regex = RegexHelper.regexify_skips(skips) 
+			@page_content.clean(range, regex)
+		end
 		while (row_y = @page_content.get_row(range, guide))
 			row.yi = row_y 
 			rows << row

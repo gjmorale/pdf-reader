@@ -45,8 +45,11 @@ class Field
 	end
 
 	def execute(reader)
-		reader.move_to(self)
-		reader.skip self
+		if reader.move_to(self)
+			reader.skip self
+		else
+			return false
+		end
 	end
 
 	def print_results
@@ -100,9 +103,13 @@ class SingleField < Field
 	end
 
 	def execute(reader)
-		reader.move_to(self)
-		reader.find_results_for(self)
-		reader.skip self
+		if reader.move_to(self)
+			reader.find_results_for(self)
+			reader.skip self
+			return true
+		else
+			return false
+		end
 	end
 end
 

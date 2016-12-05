@@ -3,9 +3,10 @@ class Table
 	attr_reader :rows
 	attr_reader :width
 
-	def initialize(headers, bottom = nil, offset = nil)
+	def initialize(headers, bottom = nil, offset = nil, skips = nil)
 		@bottom = bottom
 		@headers = headers
+		@skips = skips
 	end
 
 	def set_headers_width
@@ -116,7 +117,10 @@ class Table
 				line = Multiline.generate line, false
 			end
 			@headers.each do |header|
-				str = fit_in_space(header.results[n].result, get_header_size(header))
+				r = header.results[n].result
+				r = r == Result::NOT_FOUND ? "n/a" : r
+				r = Multiline.generate (["n/a"]) if line.is_a? Multiline and r == "n/a"
+				str = fit_in_space(r, get_header_size(header))
 				line << str
 				line.fill if line.is_a? Multiline
 				line << "|"
@@ -165,7 +169,7 @@ class Table
 		reader.read_next_field @bottom if @bottom
 		set_range reader.line_size, reader.line_height
 		set_borders
-		@rows = reader.get_rows(@range, get_guide)
+		@rows = reader.get_rows(@range, get_guide, @skips)
 		set_results
 		reader.get_columns(@headers, @rows)
 		reader.correct_results(@headers, @rows)

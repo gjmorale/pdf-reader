@@ -55,4 +55,16 @@ class RegexHelper
 		end
 		Regexp.new(regex)
 	end
+
+	def self.regexify_skips skips
+		regex = ""
+		regex << '^('
+		first = true
+		skips.each do |skip|
+			first ? (first = false) : regex << '|'
+			regex << Regexp.escape(skip)
+		end
+		regex << '){1}$'
+		Regexp.new regex
+	end
 end

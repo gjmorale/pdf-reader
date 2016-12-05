@@ -6,6 +6,7 @@ receiver = PDF::Reader::RegisterReceiver.new
 #archivos = Dir["/Users/Jose Antonio/Dropbox/Maul-Peters/Quaam/Operaciones/004 Clientes/Clientes Portfolio Cap/Familia Farcas/DAC/HSBC/*.pdf"]
 #archivos = Dir["/Users/juanse/Desktop/Cartolas/RawDataTests/HSBC/2014/*.pdf"]
 #archivos = Dir["/Users/windows7/Desktop/Cartolas/*.pdf"]
+#archivos = Dir["/Users/joseantoniohonorato/Desktop/Cartolas/*.pdf"]
 archivos = Dir["test_cases/*.pdf"]
 
 #Metodos funcionales
@@ -26,11 +27,11 @@ def identificarSeparador(valores)
 			#puts comas
 			if puntos > 1
 				$separador = "."
-				puts "separador: #{$separador}"
+				#puts "separador: #{$separador}"
 				break
 			elsif comas > 1
 				$separador = ","
-				puts "separador: #{$separador}"
+				#puts "separador: #{$separador}"
 				break
 			end
 
@@ -128,6 +129,7 @@ def processPosition(posicion, type)
 		#puts $separador
 	end
 
+	puts "#{type}"
 	if type == "LIQUID ASSET"
 
 		pos[0] = pos[0].to_s
@@ -188,6 +190,7 @@ def processPosition(posicion, type)
 		pos[2] = numerize(posicion[5 + index])
 		#Monto
 		pos[3] = numerize(posicion[9 + index])
+		puts "#{pos}"
 
 	elsif type == "EQUITY MF"
 
@@ -467,7 +470,7 @@ archivos.each do |archivo|
 		end
 		if formato == 1 and aux == 1 and line =~ /TJ$/
 			total_portfolio = line[line.index('(') + 1, line.index(')') - 2]
-			puts total_portfolio
+			#puts total_portfolio
 		end
 
 		#Fecha y num cuenta
@@ -476,27 +479,27 @@ archivos.each do |archivo|
 			aux = 0
 		end
 		if formato == 2 and aux == 1 and (line =~ /TJ$/ or line =~ /\(E&O/)
-			puts line
+			#puts line
 			if line =~ /\) 14 \(/
 				aux_array = line.split('(')
 
 				#Fecha
 				fecha = aux_array[1].partition(')').first + aux_array[2].partition(')').first
-				puts fecha
+				#puts fecha
 
 				#Num cuenta
 				id_sec1 = aux_array[4].scan(/[0-9]+/)[0]
-				puts id_sec1
+				#puts id_sec1
 			else
 				aux_array = line.split('(')
 				#Fecha
 				aux_i = aux_array[1].index(')') ? aux_array[1].index(')') : aux_array[1].size
 				fecha = aux_array[1][0, aux_i - 3]
-				puts fecha
+				#puts fecha
 
 				#Num cuenta
 				id_sec1 = aux_array[2] ? aux_array[2].scan(/[0-9]+/)[0] : "ide_sec1"
-				puts id_sec1
+				#puts id_sec1
 			end
 
 		end
@@ -624,7 +627,7 @@ archivos.each do |archivo|
 				if line =~ /\(T\) 14 \(OT\) 60 \(AL\) 14 \( EQUITY\)/ or line =~ /\(T\) 60 \(otal Equity\)/  or line =~ /of/ and aux_pos.length > 0
 					formato = 5
 					#puts aux_pos
-					#puts "*********"
+					puts "*********"
 					pos = processPosition(aux_pos, "EQUITY MF")
 					f_pos.write("#{pais};#{tipo_tax};#{id_tax};#{id_sec1};#{id_fil1};#{fecha};#{pos[0]};#{pos[1]};#{pos[2]};#{pos[3]};#{pos[4]}" + "\n")
 					aux_pos = []
@@ -646,7 +649,8 @@ archivos.each do |archivo|
 								#puts aux_pos
 								#puts "*********"
 								pos = processPosition(aux_pos, "EQUITY MF")
-								f_pos.write("#{pais};#{tipo_tax};#{id_tax};#{id_sec1};#{id_fil1};#{fecha};#{pos[0]};#{pos[1]};#{pos[2]};#{pos[3]};#{pos[4]}" + "\n")
+								f_pos.write("EQ: #{pais};#{tipo_tax};#{id_tax};#{id_sec1};#{id_fil1};#{fecha};#{pos[0]};#{pos[1]};#{pos[2]};#{pos[3]};#{pos[4]}" + "\n")
+								puts("#{pais};#{tipo_tax};#{id_tax};#{id_sec1};#{id_fil1};#{fecha};#{pos[0]};#{pos[1]};#{pos[2]};#{pos[3]};#{pos[4]}" + "\n")
 								aux_pos = []
 								aux_pos.push(aux_string)
 								contador = 1
@@ -778,8 +782,8 @@ archivos.each do |archivo|
 				end
 				if line =~ /\(T\) 14 \(OT\) 60 \(AL\) 14 \( MIXED \) 30 \(ASSET CLASS\)/ or line =~ /\(T\) 60 \(otal Mixed \) 30 \(Asset Class\)/ or line =~ /of/ and aux_pos.length > 0
 					formato = 5
-					puts aux_pos
-					puts "*********"
+				#	puts aux_pos
+				#	puts "*********"
 					pos = processPosition(aux_pos, "MIXED ASSET")
 					f_pos.write("#{pais};#{tipo_tax};#{id_tax};#{id_sec1};#{id_fil1};#{fecha};#{pos[0]};#{pos[1]};#{pos[2]};#{pos[3]};#{pos[4]}" + "\n")
 					aux_pos = []
@@ -798,8 +802,8 @@ archivos.each do |archivo|
 							aux_pos.push(aux_string)
 
 						else
-							puts aux_pos
-							puts "*********"
+						#	puts aux_pos
+						#	puts "*********"
 							pos = processPosition(aux_pos, "MIXED ASSET")
 							f_pos.write("#{pais};#{tipo_tax};#{id_tax};#{id_sec1};#{id_fil1};#{fecha};#{pos[0]};#{pos[1]};#{pos[2]};#{pos[3]};#{pos[4]}" + "\n")
 							aux_pos = []

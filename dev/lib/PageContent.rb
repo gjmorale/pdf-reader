@@ -83,16 +83,28 @@ class PageContent
 		return limit
 	end
 
+	def clean range, regex
+		@content = @content.each_line.with_index.map{|line, i|
+			if i >= range[2] and i <= range[3]
+				stripped = RegexHelper.strip_wildchar line[range[0]..range[1]]
+				if stripped.match regex
+					line[range[0]..range[1]] = Setup::Read.wildchar*(range[1]-range[0])
+				end
+			end
+			line
+			}.join
+	end
+
 	# Get Row
 	# xi, xf, y: dimensions of the table header to be evalueated
 	# The algorithm starts on the line 'y' and adds the next line downwards 
 	# until the format is found. There is a risk of crashing with neigbour
 	# results. in that case choose an other guide column
-	def get_row(range, guide)
+	def get_row(table_range, guide, skip_regex = nil)
 		xi = guide.outer_left
 		xf = guide.outer_right
-		yi = range[2]
-		yf = range[3]
+		yi = table_range[2]
+		yf = table_range[3]
 		index = 0
 		regex = Setup.bank.get_regex(guide.type, false)
 		while yf - index >= yi

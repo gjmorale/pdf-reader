@@ -50,6 +50,12 @@ module Setup
 		CURRENCY = 		5
 		ASSET = 		6
 		LABEL = 		7
+		DATE = 			8
+	end
+
+	module AccType
+		FIXED_INCOME = 			1
+		EQUITY_MUTUAL_FUND = 	2
 	end
 
 	# Sets up the specific bank format to be loaded
@@ -76,6 +82,8 @@ class Bank
 
 	# Accounts to store information
 	attr_accessor :accounts
+	# Accounts to store information
+	attr_accessor :positions
 
 	# FINE TUNNING parameters:
 	# Override in sub-classes for bank specific
