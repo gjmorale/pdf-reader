@@ -1,12 +1,13 @@
 require 'rubygems'
-require 'pdf/reader'
 
 class Reader
+
+	INPUT_PATH = 'in'
 
 	# file: File to be read by page
 	# offset: y position of last read item
 	def initialize(file)
-		@reader = PDF::Reader.new(file) if file
+		@file = file
 		@page = 1
 		@offset = 0
 	end
@@ -46,14 +47,16 @@ class Reader
 
 	# Looks for the first occurrence of the field past the offset
 	def read_next_field(field)
-		if not @page_content or @page_content.number != @page + 1
+		if not @page_content or @page_content.number != @page
 			#raise #debugg
-			page = @reader.pages[@page]
-			return "Wrong page for this document" if page.nil?
-			receiver = PDF::Reader::PageTextReceiver.new
-			page.walk(receiver)
-
-			@page_content = PageContent.new(page.number, receiver.content)
+			file_name = "#{@file[@file.rindex('/')+1..-1]}"
+			file_path = "#{@file}/#{file_name}_#{@page}.page"
+			if File.exist? file_path
+				page = File.new(file_path, 'r')
+			else
+				return true
+			end
+			@page_content = PageContent.new(@page, page.read)
 			@offset = 0
 		end
 		if @page_content.search_next(field, @offset)
@@ -146,22 +149,6 @@ class Reader
 					end
 				end
 			end
-		end
-	end
-
-	# For debugging purposes only
-	def print_file file
-		reader = PDF::Reader.new(file)
-		f_raw = File.open("#{file[0, file.length-4]}_inspect.txt",'w')
-		f_raw.write("File INSPECTION\n")
-		
-		#Printed file for checking
-		reader.pages.each do |page|
-			f_raw.write("\nPAGE #{page.number}\n")
-			receiver = PDF::Reader::PageTextReceiver.new
-			page.walk(receiver)
-
-			f_raw.write("\n#{receiver.content}")
 		end
 	end
 end

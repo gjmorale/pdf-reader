@@ -36,7 +36,7 @@ class HSBC < Bank
 	private
 
 		def analyse_position
-			file = Dir["test_cases/*2016.pdf"][0]
+			file = Dir["in/*"][1]
 			@reader = Reader.new(file)
 			recognize_accounts.each do |field|
 				field.execute @reader

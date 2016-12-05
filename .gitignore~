@@ -2,4 +2,3 @@ dev/test_cases/*.pdf
 dev/test_cases/*.txt
 dev/test_cases/*.txt~
 dev/in/*
-!dev/in/.gitkeep
