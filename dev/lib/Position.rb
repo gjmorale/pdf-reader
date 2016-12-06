@@ -10,7 +10,7 @@ class Position
 	end
 
 	def to_s
-		"#{@quantity*@price - @value}   =>   #{@name}[#{@quantity}]: $#{@value} - ($#{@price} c/u)"
+		"#{@name}[#{@quantity}]: $#{@value} - ($#{@price} c/u)"
 	end
 
 end
