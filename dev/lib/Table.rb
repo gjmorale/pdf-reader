@@ -68,26 +68,8 @@ class Table
 				header.outer_right = @headers[i+1].left-1
 				header.outer_left = @headers[i-1].right+1
 			end
+			#header.print_borders
 		end
-	end
-
-	def populate page_content
-		@headers.each do |header|
-			unless page_content.search(header)
-				raise StopIteration, "Table header #{header} is not present in the document"
-			end
-		end
-		range = get_range page_content.line_size
-		range[2] = calculate_offset(page_content) if @offset
-		calculate_bottom(range, page_content) if @bottom
-		@headers.each do |header|
-			@fixed_count.times do |i|
-				header.results << Result.new(header.type)
-			end
-		end
-		page_content.vertical_search(range[0], range[1], range[2], @fixed_count, @headers)
-		print_results
-		true
 	end
 
 	def print_results
@@ -109,15 +91,15 @@ class Table
 		puts line.to_s.light_blue
 		puts ("+"<<"-"*(line.length-2)<<"+").light_blue
 
-		@rows.each.with_index do |row, n|
+		@rows.reverse_each.with_index do |row, n|
 			line = "|"
 			if row.multiline?
 				line = []
-				row.width.times.map {|n| line[n] = "|"}
+				row.width.times.map {|m| line[m] = "|"}
 				line = Multiline.generate line, false
 			end
 			@headers.each do |header|
-				r = header.results[n].result
+				r = header.results[-n-1].result
 				r = r == Result::NOT_FOUND ? "n/a" : r
 				r = Multiline.generate (["n/a"]) if line.is_a? Multiline and r == "n/a"
 				str = fit_in_space(r, get_header_size(header))

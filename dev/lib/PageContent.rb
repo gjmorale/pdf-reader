@@ -24,6 +24,7 @@ class PageContent
 	# width if it's multiline
 	def search_next(field, offset)
 		xi = 0
+		matched = false
 		@content.lines[offset..@content.lines.size-field.width].each.with_index do |line, y_full|
 			y = offset + y_full
 			if field.width > 1
@@ -34,9 +35,23 @@ class PageContent
 				xf = m.offset(0)[1]
 				field.position = TextNode.new(xi, xf-1, y) 
 				field.width = m.width if m.is_a? MultiMatchData
-				return true
+				matched = true
 			}
+			break if matched
 		end 
+		if matched
+			scope = field.width > 1 ? @content.lines[field.top, field.width] : @content.lines[field.top]
+			text = Multiline.generate scope
+			index = field.right
+			while index > field.left
+				index -= 1
+				text[index..field.right+Setup::Read.horizontal_search_range].match(field.regex) do |m|
+					field.left = index + m.offset(0)[0]
+					return true
+				end
+			end
+			return true
+		end
 		return false
 	end
 
@@ -132,6 +147,7 @@ class PageContent
 	#  1¶¶2.3%¶ => 12.3%
 	# ¶1¶¶2.3%¶ => 12.3%
 	def search_results_left(range, row, result)
+		#puts "#{result}" if temp
 		return true if range[2] >= range[3]
 		# Content line to be evaluated
 		line = Multiline.generate(@content.lines[row.yi..row.yf])

@@ -1,11 +1,12 @@
 class Position
 
-	def initialize name, quantity, price, value, type
+	attr_reader :value
+
+	def initialize name, quantity, price, value
 		@name = name
 		@quantity = quantity
 		@price = price
 		@value = value
-		@type = type
 	end
 
 	def to_s

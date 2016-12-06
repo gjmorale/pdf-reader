@@ -25,11 +25,11 @@ class Field
 			@text = Multiline.generate ["#{@text}"]
 		elsif @width == 1 and @text.is_a? Multiline
 			#puts "reduced"
-			 if @text.size == 1
-			 	@text = @text[0]
-			 else
-			 	raise RangeError, "Multiline field was reduced beyond bounds"
-			 end
+			if @text.strings.size == 1
+				@text = @text.strings[0].dup
+			else
+				raise RangeError, "Multiline field was reduced beyond bounds"
+			end
 		end 
 		RegexHelper.regexify @text, @date
 	end
@@ -220,6 +220,7 @@ class Result < Field
 
 	attr_accessor :result
 	attr_accessor :edges
+	attr_reader :type
 
 	def initialize(type)
 		@type = type

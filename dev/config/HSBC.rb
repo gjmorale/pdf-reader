@@ -3,11 +3,12 @@ class HSBC < Bank
 	module Custom
 		ACCOUNT_CODE = -1
 		LONG_AMOUNT = -2
+		GLITCH_AMOUNT = -3
 	end
 
 	TABLE_OFFSET = 15
 	CENTER_MASS_LIMIT = 0.0
-	VERTICAL_SEARCH_RANGE = 5
+	VERTICAL_SEARCH_RANGE = 8
 
 	def initialize
 	end
@@ -17,7 +18,7 @@ class HSBC < Bank
 		when Setup::Type::PERCENTAGE
 			'[+-]?(100|[1-9]?\d)\.\d{2}%'
 		when Setup::Type::AMOUNT
-			'[+-]?[0-9]{1,3}(?:,?[0-9]{3})*\.[0-9]{2}'
+			'[+-]?[0-9]{1,3}(?:,?[0-9]{3})*\.[0-9]{2,4}'
 		when Setup::Type::INTEGER
 			'[+-]?[1-9]\d{0,2}(?:,+?[0-9]{3})*'
 		when Setup::Type::CURRENCY
@@ -32,6 +33,11 @@ class HSBC < Bank
 			'\d{3}[A-Z]\d{7}'
 		when Custom::LONG_AMOUNT
 			'[+-]?[0-9]{1,3}(?:,?[0-9]{3})*\.[0-9]+'
+		when Custom::GLITCH_AMOUNT
+			'(.*)'
+		when Setup::Type::FLOAT
+			#raise NoMethodError, "Float not implementd yet"
+			'.*'
 		end
 	end
 
@@ -48,8 +54,8 @@ class HSBC < Bank
 			@reader = Reader.new(file)
 			recognize_accounts
 			@accounts.reverse_each do |account|
-				puts "\nSEARCHING LIQUIDITY FOR #{account} in #{@reader.page}".green_bg
-				liquidity_for(account)
+				#puts "\nSEARCHING LIQUIDITY FOR #{account} in #{@reader.page}".green_bg
+				#liquidity_for(account)
 				puts "\nSEARCHING FIXED INCOME FOR #{account}".green_bg
 				fixed_income_for(account)
 				puts "\nSEARCHING EQUITIES FOR #{account}".green_bg
@@ -107,13 +113,13 @@ class HSBC < Bank
 			headers << HeaderField.new(["% Acc.","% Liq."], headers.size, to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
 			table = Table.new(headers, bottom, offset)
 			table.execute @reader
-			table.print_results
+			#table.print_results
 			total = SingleField.new("Total",[Setup::Type::AMOUNT])
 			total.execute @reader
-			total.print_results
+			#total.print_results
 			global = SingleField.new("Total Liquidity and Money Market",[Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
 			global.execute @reader
-			global.print_results
+			#global.print_results
 		end
 
 		def fixed_income_for account
@@ -157,7 +163,7 @@ class HSBC < Bank
 				#table.print_results
 			end
 			if present
-				#@positions.map{|p| puts "#{p}"}
+				@positions.map{|p| puts "#{p}"}
 				total = SingleField.new("Total Fixed Income",[Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
 				total.execute @reader
 				total.print_results
@@ -175,17 +181,15 @@ class HSBC < Bank
 			search = Field.new("Equities - Portfolio #{account.code} - #{account.name}")
 			offset = Field.new("Equity Mutual Funds")
 			present = true
+			new_positions = []
 			while bottom != table_end
 				@reader.go_to(@reader.page + 1) unless bottom.nil?
-				puts "Searching title"
 				search.execute @reader
 				if search.position.nil?
 					present = false
 					break
 				end
-				puts "title found"
 				bottom = @reader.read_next_field(table_end) ? table_end : page_end
-				puts "bottom set"
 				headers = []
 				headers << HeaderField.new("Cur.", headers.size, Setup::Type::CURRENCY, true)
 				headers << HeaderField.new("Qty.", headers.size, Setup::Type::AMOUNT)
@@ -193,33 +197,66 @@ class HSBC < Bank
 				headers << HeaderField.new("Sector", headers.size, Setup::Type::PERCENTAGE, false, 4)
 				headers << HeaderField.new(["YTM / Duration","Maturity"], headers.size, Setup::Type::PERCENTAGE, false, 4)
 				headers << HeaderField.new(["Avg. price","Last buy/trsf. date"], headers.size, Custom::LONG_AMOUNT, false, 4)
-				headers << HeaderField.new(["Market price","Date"], headers.size, [Custom::LONG_AMOUNT, Setup::Type::DATE], false, 4)
-				headers << HeaderField.new(["Mkt. value","incl. accr. int."], headers.size, to_arr(Setup::Type::AMOUNT, 2), false, 4)
-				headers << HeaderField.new(["Mkt. value (USD)","incl. accr. int."], headers.size, to_arr(Setup::Type::AMOUNT, 2), false, 4)
+				headers << HeaderField.new(["Market price","Date"], headers.size, [Setup::Type::AMOUNT, Setup::Type::DATE], false, 4)
+				headers << HeaderField.new(["Mkt. value","incl. accr. int."], headers.size, [Setup::Type::AMOUNT, Setup::Type::FLOAT], false, 4)
+				headers << HeaderField.new(["Mkt. value (USD)","incl. accr. int."], headers.size, [Setup::Type::AMOUNT, Setup::Type::FLOAT], false, 4)
 				headers << HeaderField.new(["Unr. P&L","incl. FX"], headers.size, to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
 				headers << HeaderField.new(["% Acc.","% Eq."], headers.size, to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
 				skips = ["Developed Europe ex UK","North America (US, CA)","Japa"]
 				table = Table.new(headers, bottom, offset, skips)
-				puts "executing table"
 				table.execute @reader
-				puts "table done"
 				table.rows.each.with_index do |row, i|
-					@positions << Position.new(headers[2].results[i].result, 
+					new_positions << Position.new(headers[2].results[i].result, 
 						to_number(headers[1].results[i].result), 
 						to_number(to_type(headers[6].results[i].result, Custom::LONG_AMOUNT)), 
 						to_number(headers[8].results[i].result), 
 						Setup::AccType::EQUITY_MUTUAL_FUND)
 				end
-				table.print_results
+				#table.print_results
 			end
 			if present
-				@positions.map{|p| puts "#{p}"}
+				new_positions.map{|p| puts "#{p}"}
 				total = SingleField.new("Total Equity",[Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
 				total.execute @reader
 				total.print_results
+				acumulated = 0
+				new_positions.map{|p| acumulated += p.value}
+				puts "CHECK #{acumulated} - #{to_number(total.results[0])}"
 			else
 				puts " - No Equity for this account"
 				@reader.go_to original_page
+			end
+		end
+
+		def get_table(headers, offset, table_end, page_end, search, skips)
+			original_page = @reader.page
+			bottom = nil
+			present = true
+			new_positions = []
+			while bottom != table_end
+				@reader.go_to(@reader.page + 1) unless bottom.nil?
+				search.execute @reader
+				if search.position.nil?
+					present = false
+					break
+				end
+				bottom = @reader.read_next_field(table_end) ? table_end : page_end
+				table = Table.new(headers, bottom, offset, skips)
+				table.execute @reader
+				table.rows.each.with_index do |row, i|
+					new_positions << Position.new(headers[2].results[i].result, 
+						to_number(headers[1].results[i].result), 
+						to_number(to_type(headers[6].results[i].result, Custom::LONG_AMOUNT)), 
+						to_number(headers[8].results[i].result))
+				end
+				#table.print_results
+			end
+			if present
+				return new_positions
+			else
+				puts " - No Equity for this account"
+				@reader.go_to original_page
+				return nil
 			end
 		end
 

@@ -58,6 +58,14 @@ module Setup
 		EQUITY_MUTUAL_FUND = 	2
 	end
 
+	def debug_overview
+		return @debug_overview ||= false
+	end
+	
+	def debug_overview= value
+		@debug_overview = value
+	end
+
 	# Sets up the specific bank format to be loaded
 	def self.set_enviroment(format)
 		case format
