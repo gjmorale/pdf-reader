@@ -36,7 +36,6 @@ class HSBC < Bank
 		when Custom::GLITCH_AMOUNT
 			'(.*)'
 		when Setup::Type::FLOAT
-			#raise NoMethodError, "Float not implementd yet"
 			'.*'
 		end
 	end
@@ -50,7 +49,7 @@ class HSBC < Bank
 	private
 
 		def analyse_position
-			file = Dir["in/*"][1]
+			file = Dir["in/10 Octub*"][0]
 			@reader = Reader.new(file)
 			recognize_accounts
 			@accounts.reverse_each do |account|

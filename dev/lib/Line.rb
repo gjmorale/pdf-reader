@@ -79,13 +79,15 @@ class Multiline < String
 			return nil if @strings.size < regex.size
 			matches = [] 
 			index = 0
-			y = 0
-			@strings.each do |s|
+			yi = -1
+			yf = 0
+			@strings.each.with_index do |s, i|
 				s.match regex[index] {|m|
-					matches << [m.offset(0)[0], m.offset(0)[1], y]
+					matches << [m.offset(0)[0], m.offset(0)[1]]
 					index +=1
+					yi = i if yi == -1
+					yf = i
 				}
-				y += 1
 				break if index == regex.size
 			end
 			return false if index != regex.size
@@ -93,7 +95,8 @@ class Multiline < String
 				m = MultiMatchData.new
 				m.offset[0] = matches.map {|match| match[0]}.min
 				m.offset[1] = matches.map {|match| match[1]}.max
-				m.width = y
+				m.offset[2] = yi
+				m.offset[3] = yf
 				block.call(m) 
 			else
 				true

@@ -4,6 +4,7 @@ module Setup
 	# Bank document formats must match ARGV[0]
 	module Format
 		HSBC = "HSBC"
+		MS = "MS"
 		TEST = "test"
 	end
 
@@ -38,6 +39,10 @@ module Setup
 
 		def self.offset
 			@@offset ||= Setup.bank.class::TABLE_OFFSET
+		end
+
+		def self.header_orientation
+			@@orientation ||= Setup.bank.class::HEADER_ORIENTATION
 		end
 	end
 
@@ -75,6 +80,9 @@ module Setup
 		when Format::HSBC
 			puts "HSBC selected"
 			@@bank = HSBC.new()
+		when Format::MS
+			puts "Morgan Stanley selected"
+			@@bank = MorganStanley.new()
 		end
 
 	end
@@ -96,7 +104,8 @@ class Bank
 	# FINE TUNNING parameters:
 	# Override in sub-classes for bank specific
 	TABLE_OFFSET = 6
-	VERTICAL_SEARCH_RANGE = 30
+	HEADER_ORIENTATION = 8
+	VERTICAL_SEARCH_RANGE = 5
 	HORIZONTAL_SEARCH_RANGE = 15
 	CENTER_MASS_LIMIT = 0.40
 	WILDCHAR = '¶'

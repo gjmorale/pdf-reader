@@ -33,8 +33,20 @@ class PageContent
 			line.match(field.regex){|m|
 				xi = m.offset(0)[0]
 				xf = m.offset(0)[1]
-				field.position = TextNode.new(xi, xf-1, y) 
-				field.width = m.width if m.is_a? MultiMatchData
+				if m.is_a? MultiMatchData
+					width = (field.is_a? SingleField and field.enforced_width) ? field.width : m.offset[3]-m.offset[2]+1
+					if field.orientation > 7 or field.orientation < 3
+						top_y = y + m.offset[2]
+					elsif field.orientation < 7 or field.orientation > 3
+						top_y = y + m.offset[3] - (width)
+					else
+						top_y = y + width/2
+					end
+					field.position = TextNode.new(xi, xf-1, top_y+1) 
+					field.width = width 
+				else
+					field.position = TextNode.new(xi, xf-1, y) 
+				end
 				matched = true
 			}
 			break if matched
@@ -47,12 +59,14 @@ class PageContent
 				index -= 1
 				text[index..field.right+Setup::Read.horizontal_search_range].match(field.regex) do |m|
 					field.left = index + m.offset(0)[0]
+					field.right = field.right + field.text.length
 					return true
 				end
 			end
 			return true
+		else
+			return false
 		end
-		return false
 	end
 
 	# Calls a horizontal_search to the right until every result
@@ -147,7 +161,6 @@ class PageContent
 	#  1¶¶2.3%¶ => 12.3%
 	# ¶1¶¶2.3%¶ => 12.3%
 	def search_results_left(range, row, result)
-		#puts "#{result}" if temp
 		return true if range[2] >= range[3]
 		# Content line to be evaluated
 		line = Multiline.generate(@content.lines[row.yi..row.yf])
@@ -156,7 +169,7 @@ class PageContent
 		# The right-most index where the field could be
 		start = range[3]
 		# The left-most index where only the field can be
-		min = range[1] 
+		min = range[1] + 1
 		# The left-most index where the field could be
 		max = range[0] 
 		# The index of the search
@@ -166,7 +179,6 @@ class PageContent
 		# The last valid result recognized
 		last_match = ""
 		detected = false
-
 		# Until tolerance is beaten or left-most border exceeded
 		while tolerance <= Setup::Read.vertical_search_range and counter > range[0] 
 			counter -= 1
@@ -176,6 +188,7 @@ class PageContent
 			text = line[counter..start]
 			# Evaluate without wildchars
 			stripped_text = RegexHelper.strip_wildchar text
+
 			if stripped_text != last_match 
 				if stripped_text.match regex 
 					detected = true

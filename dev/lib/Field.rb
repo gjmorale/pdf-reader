@@ -4,13 +4,13 @@ class Field
 
 	attr_accessor :position
 	attr_reader :results
-	attr_reader :ocurrence
+	attr_reader :orientation
 	attr_reader :text
 	attr_accessor :width
 
-	def initialize(text, width = 1, ocurrence = 1, date = false)
+	def initialize(text, width = 1, orientation = 8, date = false)
 		@text = Multiline.generate text, true
-		@ocurrence = ocurrence
+		@orientation = orientation
 		@date = date
 		@width = width
 	end
@@ -24,7 +24,7 @@ class Field
 			#puts "expanded"
 			@text = Multiline.generate ["#{@text}"]
 		elsif @width == 1 and @text.is_a? Multiline
-			#puts "reduced"
+			#puts "reduced #{self}"
 			if @text.strings.size == 1
 				@text = @text.strings[0].dup
 			else
@@ -84,12 +84,16 @@ end
 
 class SingleField < Field
 
-	def initialize(text, types, width = 1, ocurrence = 1, date = false)
-		super text, width, ocurrence, date
+	attr_accessor :enforced_width
+	attr_accessor :types
+
+	def initialize(text, types, width = 1, orientation = Setup::Table.header_orientation, date = false)
+		super text, width, orientation, date
 		@results = []
 		types.each do |type|
 			@results << Result.new(type)
 		end
+		@enforced_width = (width > 1)
 	end
 
 	def print_results
@@ -119,8 +123,8 @@ class HeaderField < Field
 	attr_reader :order
 	attr_accessor :border
 
-	def initialize(text, order, type, guide = false, width = 1, ocurrence = 1, date = false)
-		super text, width, ocurrence, date
+	def initialize(text, order, type, guide = false, width = 1, orientation = orientation = Setup::Table.header_orientation, date = false)
+		super text, width, orientation, date
 		@order = order
 		@type = type
 		@guide = guide

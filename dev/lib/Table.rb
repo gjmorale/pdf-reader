@@ -101,8 +101,8 @@ class Table
 			end
 			@headers.each do |header|
 				r = header.results[-n-1].result
-				r = r == Result::NOT_FOUND ? "n/a" : r
-				r = Multiline.generate (["n/a"]) if line.is_a? Multiline and r == "n/a"
+				#r = r == Result::NOT_FOUND ? "n/a" : r
+				#r = Multiline.generate (["n/a"]) if line.is_a? Multiline and r == "n/a"
 				str = fit_in_space(r, get_header_size(header))
 				line << str
 				line.fill if line.is_a? Multiline
@@ -144,9 +144,11 @@ class Table
 	end
 
 	def execute reader
-		first_header = @headers.sort.first
-		reader.move_to first_header
 		set_headers_width
+		first_header = @headers.sort.first
+		slidder = @headers.map{|h| h.width}.max
+		reader.move_to first_header
+		reader.slide_up slidder
 		@headers_row = reader.set_header_limits(@headers)
 		reader.move_to @offset if @offset
 		reader.read_next_field @bottom if @bottom
@@ -155,6 +157,7 @@ class Table
 		@rows = reader.get_rows(@range, get_guide, @skips)
 		set_results
 		reader.get_columns(@headers, @rows)
+		#print_results
 		reader.correct_results(@headers, @rows)
 		reader.skip self
 	end

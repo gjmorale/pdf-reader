@@ -20,6 +20,14 @@ class Reader
 		@offset = offset
 	end
 
+	def slide_up value
+		if @offset - value > 0
+			@offset -= value
+		else
+			@offset = 0
+		end	 
+	end
+
 	# Retrieves the number of columns from the actual page
 	def line_size
 		@page_content ? @page_content.line_size : 0
