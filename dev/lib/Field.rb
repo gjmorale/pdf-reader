@@ -8,11 +8,21 @@ class Field
 	attr_reader :text
 	attr_accessor :width
 
-	def initialize(text, width = 1, orientation = 8, date = false)
-		@text = Multiline.generate text, true
+	def initialize(text, width = 1, orientation = Setup::Table.header_orientation, date = false)
+		if text.is_a? Array
+			@text = Multiline.generate text, true 
+		elsif text.is_a? Multiline
+			@text = Multiline.generate text.strings, true 
+		else
+			@text = text if text
+		end
 		@orientation = orientation
 		@date = date
 		@width = width
+	end
+
+	def clone
+		Field.new(@text,@width,@orientation,@date)
 	end
 
 	def position?
@@ -96,6 +106,10 @@ class SingleField < Field
 		@enforced_width = (width > 1)
 	end
 
+	def clone
+		SingleField.new(@text, @types, @width, @orientation, @date)
+	end
+
 	def print_results
 		line = "|#{@text}: "
 		results.each do |r|
@@ -123,11 +137,15 @@ class HeaderField < Field
 	attr_reader :order
 	attr_accessor :border
 
-	def initialize(text, order, type, guide = false, width = 1, orientation = orientation = Setup::Table.header_orientation, date = false)
+	def initialize(text, order, type, guide = false, width = 1, orientation = Setup::Table.header_orientation, date = false)
 		super text, width, orientation, date
 		@order = order
 		@type = type
 		@guide = guide
+	end
+
+	def clone 
+		HeaderField.new(@text, @order, @type, @guide, @width, @orientation, @date)
 	end
 
 	def guide?

@@ -100,9 +100,9 @@ class Table
 				line = Multiline.generate line, false
 			end
 			@headers.each do |header|
-				r = header.results[-n-1].result
-				#r = r == Result::NOT_FOUND ? "n/a" : r
-				#r = Multiline.generate (["n/a"]) if line.is_a? Multiline and r == "n/a"
+				rr = header.results[-n-1].result
+				r = rr == Result::NOT_FOUND ? " " : rr
+				r = Multiline.generate ([" "]) if line.is_a? Multiline and r == " "
 				str = fit_in_space(r, get_header_size(header))
 				line << str
 				line.fill if line.is_a? Multiline
@@ -147,19 +147,26 @@ class Table
 		set_headers_width
 		first_header = @headers.sort.first
 		slidder = @headers.map{|h| h.width}.max
-		reader.move_to first_header
+		reader.move_to first_header, 1
 		reader.slide_up slidder
 		@headers_row = reader.set_header_limits(@headers)
+		return false unless @headers_row
 		reader.move_to @offset if @offset
-		reader.read_next_field @bottom if @bottom
+		@bottom = reader.read_next_field @bottom if @bottom
 		set_range reader.line_size, reader.line_height
 		set_borders
+		#@headers.map{|h| puts "[#{h.left},#{h.right}]"}
 		@rows = reader.get_rows(@range, get_guide, @skips)
+		#puts "ROWS #{@rows}"
 		set_results
+		#puts "1"
 		reader.get_columns(@headers, @rows)
+		#puts "2"
 		#print_results
 		reader.correct_results(@headers, @rows)
+		#puts "3"
 		reader.skip self
+		return true
 	end
 
 	def print_borders

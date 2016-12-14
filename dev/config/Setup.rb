@@ -1,11 +1,40 @@
 
 module Setup
 
+	module Debug
+
+		def self.overview
+			return @debug_overview ||= false
+		end
+		
+		def self.overview= value
+			@debug_overview = value
+		end
+
+	end
+
 	# Bank document formats must match ARGV[0]
 	module Format
 		HSBC = "HSBC"
 		MS = "MS"
 		TEST = "test"
+	end
+
+	# Field text alignment
+	# 8--1--2
+	# | \|/ |
+	# 7— + —3
+	# | /|\ |
+	# 6--5--4
+	module Align
+		TOP = 			1
+		TOP_RIGHT = 	2
+		RIGHT = 		3
+		BOTTOM_RIGHT = 	4
+		BOTTOM = 		5
+		BOTTOM_LEFT = 	6
+		LEFT = 			7
+		TOP_LEFT = 		8
 	end
 
 	# Reading parameters taken from specific bank
@@ -61,14 +90,6 @@ module Setup
 	module AccType
 		FIXED_INCOME = 			1
 		EQUITY_MUTUAL_FUND = 	2
-	end
-
-	def debug_overview
-		return @debug_overview ||= false
-	end
-	
-	def debug_overview= value
-		@debug_overview = value
 	end
 
 	# Sets up the specific bank format to be loaded

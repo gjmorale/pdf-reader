@@ -1,6 +1,7 @@
 class Position
 
 	attr_reader :value
+	attr_reader :name
 
 	def initialize name, quantity, price, value
 		@name = name

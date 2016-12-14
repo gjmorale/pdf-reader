@@ -158,6 +158,8 @@ class HSBC < Bank
 				new_positions.map{|p| acumulated += p.value}
 				check acumulated, to_number(total.results[0])
 				new_positions.map{|p| @positions << p }
+			else
+				puts " - No Fixed Income for this account"
 			end
 		end
 
@@ -178,7 +180,7 @@ class HSBC < Bank
 			headers << HeaderField.new(["Mkt. value (USD)","incl. accr. int."], headers.size, [Setup::Type::AMOUNT, Setup::Type::AMOUNT], false, 4)
 			headers << HeaderField.new(["Unr. P&L","incl. FX"], headers.size, to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
 			headers << HeaderField.new(["% Acc.","% Eq."], headers.size, to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
-			skips = ["Developed Europe ex UK","North America (US, CA)","Japa"]
+			skips = ["Developed Europe ex UK","North America (US, CA)","Japa"].map{|s| Regexp.escape(s)}
 			new_positions = []
 			present = get_table(headers, offset, table_end, page_end, search, skips) do |table|
 				table.rows.each.with_index do |row, i|
@@ -197,6 +199,8 @@ class HSBC < Bank
 				new_positions.map{|p| acumulated += p.value}
 				check acumulated, to_number(total.results[0])
 				new_positions.map{|p| @positions << p }
+			else
+				puts " - No Equity for this account"
 			end
 		end
 
@@ -219,7 +223,6 @@ class HSBC < Bank
 			if present
 				return true
 			else
-				puts " - No Equity for this account"
 				@reader.go_to original_page
 				return nil
 			end

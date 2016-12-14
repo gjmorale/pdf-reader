@@ -109,6 +109,15 @@ class Multiline < String
 		end
 	end
 
+	def multi_match regex
+		return false unless regex or @string.size > 0
+		scope = Array.new(@strings.size, false)
+		@strings.each.with_index do |s, i|
+			scope[i] = s.match regex
+		end
+		return scope
+	end
+
 	def index regex, offset=0
 		first = nil
 		@strings.each do |s|

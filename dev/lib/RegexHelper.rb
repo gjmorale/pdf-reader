@@ -39,6 +39,7 @@ class RegexHelper
 		end
 		#term = term.to_s
 		raise if term.empty?
+		#puts "#{term}"
 		term = Regexp.escape term
 		regex = ""
 		skip = true
@@ -53,18 +54,19 @@ class RegexHelper
 			regex << "#{wildchar}*" unless skip
 			regex << " #{date_format}"
 		end
+		#puts "[[#{regex}]]"
 		Regexp.new(regex)
 	end
 
 	def self.regexify_skips skips
 		regex = ""
-		regex << '^('
+		regex << '('
 		first = true
 		skips.each do |skip|
 			first ? (first = false) : regex << '|'
-			regex << Regexp.escape(skip)
+			regex << skip
 		end
-		regex << '){1}$'
+		regex << '){1}'
 		Regexp.new regex
 	end
 end

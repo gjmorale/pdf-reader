@@ -30,6 +30,7 @@ class PageContent
 			if field.width > 1
 				line = Multiline.generate @content.lines[y, field.width]
 			end
+			#puts "#{line[0..100]} - #{line[0..50].match(field.regex)} - #{field.regex}" if @number == 50 and y_full ==25
 			line.match(field.regex){|m|
 				xi = m.offset(0)[0]
 				xf = m.offset(0)[1]
@@ -37,10 +38,10 @@ class PageContent
 					width = (field.is_a? SingleField and field.enforced_width) ? field.width : m.offset[3]-m.offset[2]+1
 					if field.orientation > 7 or field.orientation < 3
 						top_y = y + m.offset[2]
-					elsif field.orientation < 7 or field.orientation > 3
+					elsif field.orientation < 7 and field.orientation > 3
 						top_y = y + m.offset[3] - (width)
 					else
-						top_y = y + width/2
+						top_y = y + m.offset[2]/2 + m.offset[3]/2 - width/2 + 1
 					end
 					field.position = TextNode.new(xi, xf-1, top_y+1) 
 					field.width = width 
@@ -76,7 +77,10 @@ class PageContent
 		range = [field.left, field.right+1, field.top, field.width]
 		field.results.each.with_index do |result, i|
 			regex = result.regex
-			range[1] = horizontal_search result, range, regex
+			new_limit = horizontal_search result, range, regex
+			if result.result != Result::NOT_FOUND
+				range[1] = new_limit
+			end
 		end
 	end
 	
@@ -94,14 +98,25 @@ class PageContent
 			counter += 1
 			tolerance += 1 if detected
 			lines = (range[3] > 1 ? (range[2]..range[2]+range[3]-1) : range[2] )
-			lines = range[2]
 			text = (Multiline.generate @content.lines[lines])[range[1]..range[1]+counter]
+			debug = text
 			text = RegexHelper.strip_wildchar(text)
 			if text.match regex
 				detected = true
-				tolerance = 0
-				last_match = text
-				limit = range[1] + counter
+				if text.is_a? Multiline
+					m_scope = text.multi_match regex
+					scope ||= m_scope
+					m_scope.size do |i|
+						scope[i] = true if m_scope[i] and not scope[i]
+						detected = false if scope[i] and not m_scope[i]
+					end
+				end
+				if detected
+					#puts debug.to_s if Setup::Debug.overview
+					tolerance = 0 if text != last_match
+					last_match = text
+					limit = range[1] + counter
+				end
 			end
 		end
 		if not last_match.nil? and last_match.match regex
@@ -136,6 +151,7 @@ class PageContent
 		yf = table_range[3]
 		index = 0
 		regex = Setup.bank.get_regex(guide.type, false)
+		#puts "Looking for a row #{yf-index} >= #{yi} in #{xi} - #{xf} = #{xf-xi} (#{@number})"
 		while yf - index >= yi
 			range = (index == 0 ? yf : (yf - index..yf))
 			text = Multiline.generate @content.lines[range]

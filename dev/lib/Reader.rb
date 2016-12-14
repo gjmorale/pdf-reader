@@ -4,7 +4,8 @@ class Reader
 
 	INPUT_PATH = 'in'
 
-	attr_accessor :page
+	attr_reader :page
+	attr_reader :offset
 
 	# file: File to be read by page
 	# offset: y position of last read item
@@ -12,6 +13,10 @@ class Reader
 		@file = file
 		@page = 1
 		@offset = 0
+	end
+
+	def to_s
+		"[#{@page}:#{@offset}] => #{@file}"
 	end
 
 	# Allows banks execution to skip directly to a specific page
@@ -39,13 +44,20 @@ class Reader
 	end
 
 	# Moves the offset to the beggining of the specified field
-	def move_to field
-		while not read_next_field(field)
+	def move_to field, limit = 0
+		original_page = @page
+		original_offset = @offset
+		counter = 0
+		while not read_next_field(field) and counter <= limit
+			counter += 1 if limit != 0
 			@page += 1
 		end
 		if field.position?
 			@offset = field.position.y
+			return field
 		else
+			@page = original_page
+			@offset = original_offset
 			return false
 			#raise StopIteration, "Field #{field} is not present in the document"
 		end
@@ -58,6 +70,8 @@ class Reader
 
 	# Looks for the first occurrence of the field past the offset
 	def read_next_field(field)
+		field = first_match(field) if field.is_a? Array
+		#puts "s - #{field} - #{@page} : #{@offset}"
 		if not @page_content or @page_content.number != @page
 			#raise #debugg
 			file_name = "#{@file[@file.rindex('/')+1..-1]}"
@@ -65,14 +79,15 @@ class Reader
 			if File.exist? file_path
 				page = File.new(file_path, 'r')
 			else
-				return true
+				field.position = nil
+				return field
 			end
 			@page_content = PageContent.new(@page, page.read)
 			@offset = 0
 		end
 		if @page_content.search_next(field, @offset)
 			#puts "Found #{field} in page #{@page}"
-			return true
+			return field
 		else
 			#puts "Position for #{field} in page #{@page}: NOT FOUND"
 			return false
@@ -94,7 +109,7 @@ class Reader
 	def set_header_limits headers
 		row = Row.new
 		headers.each do |header|
-			read_next_field header
+			return nil unless read_next_field header
 			row.yi = row.yi ? [header.top, row.yi].min : header.top
 			row.yf = row.yf ? [header.bottom, row.yf].max : header.bottom
 		end
@@ -114,6 +129,7 @@ class Reader
 		range = []
 		headers.reverse_each.with_index do |header, col|
 			rows.each.with_index do |row, i|
+				#puts "1.#{col}.#{i} - #{header}"
 				range = [header.outer_left,header.left,header.right,header.outer_right]
 				while not @page_content.search_results_left(range, row, header.results[i])
 					range[3] -= 1
@@ -165,5 +181,15 @@ class Reader
 				end
 			end
 		end
+	end
+
+	def first_match posibilities
+		result = nil
+		posibilities.each do |p|
+			if read_next_field p
+				result = p if result.nil? or result.top > p.top
+			end
+		end
+		result
 	end
 end
