@@ -129,7 +129,6 @@ class Reader
 		range = []
 		headers.reverse_each.with_index do |header, col|
 			rows.each.with_index do |row, i|
-				#puts "1.#{col}.#{i} - #{header}"
 				range = [header.outer_left,header.left,header.right,header.outer_right]
 				while not @page_content.search_results_left(range, row, header.results[i])
 					range[3] -= 1

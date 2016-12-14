@@ -146,7 +146,7 @@ class Table
 	def execute reader
 		set_headers_width
 		first_header = @headers.sort.first
-		slidder = @headers.map{|h| h.width}.max
+		slidder = @headers.map{|h| h.width}.max - 1
 		reader.move_to first_header, 1
 		reader.slide_up slidder
 		@headers_row = reader.set_header_limits(@headers)
@@ -157,14 +157,10 @@ class Table
 		set_borders
 		#@headers.map{|h| puts "[#{h.left},#{h.right}]"}
 		@rows = reader.get_rows(@range, get_guide, @skips)
-		#puts "ROWS #{@rows}"
 		set_results
-		#puts "1"
 		reader.get_columns(@headers, @rows)
-		#puts "2"
 		#print_results
 		reader.correct_results(@headers, @rows)
-		#puts "3"
 		reader.skip self
 		return true
 	end

@@ -44,6 +44,8 @@ class HSBC < Bank
 		@positions = []
 		@accounts = []
 		analyse_position
+		out = File.open("out/10 Octubre 2016.csv",'w')
+		print_results out
 	end
 
 	private
@@ -143,10 +145,12 @@ class HSBC < Bank
 			new_positions = []
 			present = get_table(headers, offset, table_end, page_end, search) do |table|
 				table.rows.each.with_index do |row, i|
-					new_positions << Position.new(table.headers[2].results[i].result, 
+					titles = parse_position table.headers[2].results[i].result
+					new_positions << Position.new(titles[0], 
 						to_number(table.headers[1].results[i].result), 
 						to_number(to_type(table.headers[7].results[i].result, Custom::LONG_AMOUNT)), 
-						to_number(table.headers[9].results[i].result))
+						to_number(table.headers[9].results[i].result),
+						titles[1])
 				end
 			end
 			if present
@@ -161,6 +165,19 @@ class HSBC < Bank
 			else
 				puts " - No Fixed Income for this account"
 			end
+		end
+
+		def parse_position str
+			extra = ""
+			str.strings.each do |s|
+				if s.match /\(ISIN\)/
+					code = "ISIN #{s[0..s.index(' ')-1]}"
+					return [code, extra]
+				else
+					extra << s
+				end
+			end
+			return [extra,nil]
 		end
 
 		def equity_for account
@@ -184,10 +201,12 @@ class HSBC < Bank
 			new_positions = []
 			present = get_table(headers, offset, table_end, page_end, search, skips) do |table|
 				table.rows.each.with_index do |row, i|
-					new_positions << Position.new(table.headers[2].results[i].result, 
+					titles = parse_position table.headers[2].results[i].result
+					new_positions << Position.new(titles[0], 
 						to_number(table.headers[1].results[i].result), 
 						to_number(to_type(table.headers[6].results[i].result, Custom::LONG_AMOUNT)), 
-						to_number(table.headers[8].results[i].result))
+						to_number(table.headers[8].results[i].result),
+						titles[1])
 				end
 			end
 			if present
