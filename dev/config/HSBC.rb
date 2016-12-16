@@ -53,16 +53,20 @@ class HSBC < Bank
 		def analyse_position
 			file = Dir["in/10 Octub*"][0]
 			@reader = Reader.new(file)
+			puts "\nSEARCHING ACCOUNTS"
 			recognize_accounts
 			@accounts.reverse_each do |account|
-				#puts "\nSEARCHING LIQUIDITY FOR #{account} in #{@reader.page}".green_bg
-				#liquidity_for(account)
+				puts "\nSEARCHING LIQUIDITY FOR #{account}"
+				liquidity_for(account)
 				puts "\nSEARCHING FIXED INCOME FOR #{account}"
 				fixed_income_for(account)
 				puts "\nSEARCHING EQUITIES FOR #{account}"
 				equity_for(account)
+				puts "\nSEARCHING HEDGE FUNDS FOR #{account}"
+				hedge_funds_for(account)
+				puts "\nSEARCHING OTHERS FOR #{account}"
+				others_for(account)
 			end
-			#@positions.each{|p| puts "#{p}"}
 		end
 
 		def recognize_accounts
@@ -116,19 +120,37 @@ class HSBC < Bank
 			table = Table.new(headers, bottom, offset)
 			table.execute @reader
 			#table.print_results
+			new_positions = []
+			table.rows.each.with_index do |r,i|
+				results = table.headers.map{|h| h.results[i].result}
+				titles = parse_position results[2], 'ACCOUNT'
+
+				new_positions << Position.new(titles[0], 
+					to_number(results[1]), 
+					1.0,
+					to_number(results[4]), 
+					titles[1])
+			end
 			total = SingleField.new("Total",[Setup::Type::AMOUNT])
 			total.execute @reader
 			#total.print_results
-			global = SingleField.new("Total Liquidity and Money Market",[Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
-			global.execute @reader
+			acumulated = 0
+			new_positions.map{|p| acumulated += p.value}
+			check acumulated, to_number(total.results[0].result)
+			new_positions.map{|p| @positions << p }
+			
+			#TODO: Table Money Market might be missing
+
+			#global = SingleField.new("Total Liquidity and Money Market",[Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
+			#global.execute @reader
 			#global.print_results
 		end
 
 		def fixed_income_for account
 			table_end = Field.new("Total Fixed Income")
-			page_end = Field.new("31 OCTOBER 2016")
+			page_end = Field.new(" Account: ")
 			search = Field.new("Fixed Income - Portfolio #{account.code} - #{account.name}")
-			offset = Field.new("Fixed Income Mutual Funds")
+			offset = [Field.new("Fixed Income Mutual Funds"), Field.new("Bonds")]
 			headers = []
 			headers << HeaderField.new("Cur.", headers.size, Setup::Type::CURRENCY, true)
 			headers << HeaderField.new("Qty. / Nominal", headers.size, Setup::Type::AMOUNT)
@@ -145,7 +167,7 @@ class HSBC < Bank
 			new_positions = []
 			present = get_table(headers, offset, table_end, page_end, search) do |table|
 				table.rows.each.with_index do |row, i|
-					titles = parse_position table.headers[2].results[i].result
+					titles = parse_position table.headers[2].results[i].result, 'ISIN'
 					new_positions << Position.new(titles[0], 
 						to_number(table.headers[1].results[i].result), 
 						to_number(to_type(table.headers[7].results[i].result, Custom::LONG_AMOUNT)), 
@@ -160,29 +182,56 @@ class HSBC < Bank
 				#total.print_results
 				acumulated = 0
 				new_positions.map{|p| acumulated += p.value}
-				check acumulated, to_number(total.results[0])
+				check acumulated, to_number(total.results[0].result)
 				new_positions.map{|p| @positions << p }
 			else
 				puts " - No Fixed Income for this account"
 			end
 		end
 
-		def parse_position str
-			extra = ""
-			str.strings.each do |s|
-				if s.match /\(ISIN\)/
-					code = "ISIN #{s[0..s.index(' ')-1]}"
-					return [code, extra]
-				else
-					extra << s
+		def hedge_funds_for account
+			table_end = Field.new("Total Hedge Funds")
+			page_end = Field.new(" Account: ")
+			search = Field.new("Hedge Funds - Portfolio #{account.code} - #{account.name}")
+			offset = Field.new("Hedge Funds")
+			headers = []
+			headers << HeaderField.new("Cur.", headers.size, Setup::Type::CURRENCY, true)
+			headers << HeaderField.new("Qty. / Balance", headers.size, Setup::Type::AMOUNT)
+			headers << HeaderField.new(["Description","ISIN / Reference"], headers.size, to_arr(Setup::Type::LABEL, 2), false, 4)
+			headers << HeaderField.new("Maturity", headers.size, Setup::Type::PERCENTAGE, false)
+			headers << HeaderField.new(["Avg. price","Last buy/trsf. date"], headers.size, Custom::LONG_AMOUNT, false, 4)
+			headers << HeaderField.new(["Market price","Date"], headers.size, [Custom::LONG_AMOUNT, Setup::Type::DATE], false, 4)
+			headers << HeaderField.new(["Mkt. value","incl. accr. int."], headers.size, to_arr(Setup::Type::AMOUNT, 2), false, 4)
+			headers << HeaderField.new(["Mkt. value (USD)","incl. accr. int."], headers.size, to_arr(Setup::Type::AMOUNT, 2), false, 4)
+			headers << HeaderField.new(["Unr. P&L","incl. FX"], headers.size, to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
+			headers << HeaderField.new(["% Acc.","% HF."], headers.size, to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
+			new_positions = []
+			present = get_table(headers, offset, table_end, page_end, search) do |table|
+				table.rows.each.with_index do |row, i|
+					titles = parse_position table.headers[2].results[i].result, 'ISIN'
+					new_positions << Position.new(titles[0], 
+						to_number(table.headers[1].results[i].result), 
+						to_number(to_type(table.headers[5].results[i].result, Custom::LONG_AMOUNT)), 
+						to_number(table.headers[7].results[i].result),
+						titles[1])
 				end
 			end
-			return [extra,nil]
+			if present
+				total = SingleField.new("Total Hedge Funds",[Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
+				total.execute @reader
+				#total.print_results
+				acumulated = 0
+				new_positions.map{|p| acumulated += p.value}
+				check acumulated, to_number(total.results[0].result)
+				new_positions.map{|p| @positions << p }
+			else
+				puts " - No Hedge Funds for this account"
+			end
 		end
 
 		def equity_for account
 			table_end = Field.new("Total Equity")
-			page_end = Field.new("31 OCTOBER 2016")
+			page_end = Field.new(" Account: ")
 			search = Field.new("Equities - Portfolio #{account.code} - #{account.name}")
 			offset = Field.new("Equity Mutual Funds")
 			headers = []
@@ -201,7 +250,7 @@ class HSBC < Bank
 			new_positions = []
 			present = get_table(headers, offset, table_end, page_end, search, skips) do |table|
 				table.rows.each.with_index do |row, i|
-					titles = parse_position table.headers[2].results[i].result
+					titles = parse_position table.headers[2].results[i].result, 'ISIN'
 					new_positions << Position.new(titles[0], 
 						to_number(table.headers[1].results[i].result), 
 						to_number(to_type(table.headers[6].results[i].result, Custom::LONG_AMOUNT)), 
@@ -216,10 +265,49 @@ class HSBC < Bank
 				#total.print_results
 				acumulated = 0
 				new_positions.map{|p| acumulated += p.value}
-				check acumulated, to_number(total.results[0])
+				check acumulated, to_number(total.results[0].result)
 				new_positions.map{|p| @positions << p }
 			else
 				puts " - No Equity for this account"
+			end
+		end
+
+		def others_for account
+			table_end = Field.new("Total Others")
+			page_end = Field.new(" Account: ")
+			search = Field.new("Others - Portfolio #{account.code} - #{account.name}")
+			offset = Field.new("Other Mutual Funds")
+			headers = []
+			headers << HeaderField.new("Cur.", headers.size, Setup::Type::CURRENCY, true)
+			headers << HeaderField.new("Qty. / Balance", headers.size, Setup::Type::AMOUNT)
+			headers << HeaderField.new(["Description","ISIN / Reference"], headers.size, to_arr(Setup::Type::LABEL, 2), false, 4)
+			headers << HeaderField.new(["YTM / Duration","Maturity"], headers.size, Setup::Type::PERCENTAGE, false, 4)
+			headers << HeaderField.new(["Avg. price","Last buy/trsf. date"], headers.size, Custom::LONG_AMOUNT, false, 4)
+			headers << HeaderField.new(["Market price","Date"], headers.size, [Setup::Type::AMOUNT, Setup::Type::DATE], false, 4)
+			headers << HeaderField.new(["Mkt. value","incl. accr. int."], headers.size, [Setup::Type::AMOUNT, Setup::Type::FLOAT], false, 4)
+			headers << HeaderField.new(["Mkt. value (USD)","incl. accr. int."], headers.size, [Setup::Type::AMOUNT, Setup::Type::AMOUNT], false, 4)
+			headers << HeaderField.new(["Unr. P&L","incl. FX"], headers.size, to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
+			headers << HeaderField.new(["% Acc.","% Others."], headers.size, to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
+			new_positions = []
+			present = get_table(headers, offset, table_end, page_end, search) do |table|
+				table.rows.each.with_index do |row, i|
+					titles = parse_position table.headers[2].results[i].result, 'ISIN'
+					new_positions << Position.new(titles[0], 
+						to_number(table.headers[1].results[i].result), 
+						to_number(to_type(table.headers[5].results[i].result, Custom::LONG_AMOUNT)), 
+						to_number(table.headers[7].results[i].result),
+						titles[1])
+				end
+			end
+			if present
+				total = SingleField.new("Total Others",[Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
+				total.execute @reader
+				acumulated = 0
+				new_positions.map{|p| acumulated += p.value}
+				check acumulated, to_number(total.results[0].result)
+				new_positions.map{|p| @positions << p }
+			else
+				puts " - No Others for this account"
 			end
 		end
 
@@ -247,6 +335,21 @@ class HSBC < Bank
 			end
 		end
 
+		def parse_position str, type
+			extra = ""
+			regex = '\('<< type <<'\)'
+			regex = Regexp.new(regex)
+			str.strings.each do |s|
+				if s.match regex
+					code = "#{type} #{s[0..s.index(' ')-1]}"
+					return [code, extra]
+				else
+					extra << s
+				end
+			end
+			return [extra,nil]
+		end
+
 		def to_type str, type
 			if str.is_a? Multiline
 				str.strings.each do |s|
@@ -256,20 +359,6 @@ class HSBC < Bank
 				end
 			else
 				return str
-			end
-		end
-
-		def to_number str
-			str = str.to_s.strip.delete(',').to_f
-		end
-
-		def check acumulated, stated
-			delta = acumulated - stated
-			delta = delta * delta
-			if delta > 1
-				puts "CHECK #{acumulated} - #{stated}".red
-			else
-				puts "CHECK #{acumulated} - #{stated}".green
 			end
 		end
 end

@@ -607,25 +607,6 @@ class MorganStanley < Bank
 			end
 		end
 
-		def to_number str
-			str = str.inspect if str.is_a? Multiline
-			str = str.strip
-			str = str.delete('$')
-			str = str.delete(',')
-			negative = (str.include? '(' and str.include? ')')
-			str = str.delete('(')
-			str = str.delete(')')
-			str = str.delete('ST')
-			str = str.delete('LT')
-			if str == '—' or str == Result::NOT_FOUND
-				return 0.0
-			else
-				num = str.to_f
-				num = num*(-1) if negative
-				num
-			end
-		end
-
 		def parse_account str
 			if str.is_a? Multiline
 				str.strings.each do |s|
@@ -633,25 +614,6 @@ class MorganStanley < Bank
 				end
 			else
 				return str
-			end
-		end
-
-		def check acumulated, stated
-			delta = acumulated - stated
-			delta = delta * delta
-			if delta > 1
-				puts "CHECK #{acumulated.round(2)} - #{stated}".red
-			else
-				puts "CHECK #{acumulated.round(2)} - #{stated}".green
-			end
-		end
-
-		def clone_it field
-			return nil if field.nil?
-			if field.is_a? Array
-				return field.map{|f| f.clone}
-			else
-				return field.clone
 			end
 		end
 
