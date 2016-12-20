@@ -250,9 +250,9 @@ class Result < Field
 
 	def regex
 		if @type.is_a? Array
-			r = @type.map {|type| Setup.bank.get_regex(type)}
+			r = @type.map {|type| Setup.inst.get_regex(type)}
 		else
-			r = Setup.bank.get_regex(@type)
+			r = Setup.inst.get_regex(@type)
 		end
 		r
 	end

@@ -22,7 +22,7 @@ class PageContent
 	# The field width must be at least as big as the field.
 	# Once the field is found, it sets it's position and
 	# width if it's multiline
-	def search_next(field, offset)
+	def search_next(field, offset, from)
 		xi = 0
 		matched = false
 		@content.lines[offset..@content.lines.size-field.width].each.with_index do |line, y_full|
@@ -30,10 +30,9 @@ class PageContent
 			if field.width > 1
 				line = Multiline.generate @content.lines[y, field.width]
 			end
-			#puts "#{line[0..100]} - #{line[0..50].match(field.regex)} - #{field.regex}" if @number == 50 and y_full ==25
-			line.match(field.regex){|m|
-				xi = m.offset(0)[0]
-				xf = m.offset(0)[1]
+			line[from..-1].match(field.regex){|m|
+				xi = from + m.offset(0)[0]
+				xf = from + m.offset(0)[1] + field.text.length/2
 				if m.is_a? MultiMatchData
 					width = (field.is_a? SingleField and field.enforced_width) ? field.width : m.offset[3]-m.offset[2]+1
 					if field.orientation > 7 or field.orientation < 3
@@ -58,9 +57,9 @@ class PageContent
 			index = field.right
 			while index > field.left
 				index -= 1
-				text[index..field.right+Setup::Read.horizontal_search_range].match(field.regex) do |m|
+				text[index..field.right].match(field.regex) do |m|
 					field.left = index + m.offset(0)[0]
-					field.right = field.right + field.text.length
+					field.right = field.right
 					return true
 				end
 			end
@@ -150,7 +149,8 @@ class PageContent
 		yi = table_range[2]
 		yf = table_range[3]
 		index = 0
-		regex = Setup.bank.get_regex(guide.type, false)
+		regex = Setup.inst.get_regex(guide.type, false)
+		debug = nil
 		#puts "Looking for a row #{yf-index} >= #{yi} in #{xi} - #{xf} = #{xf-xi} (#{@number})"
 		while yf - index >= yi
 			range = (index == 0 ? yf : (yf - index..yf))

@@ -1,4 +1,3 @@
-
 module Setup
 
 	module Debug
@@ -13,11 +12,12 @@ module Setup
 
 	end
 
-	# Bank document formats must match ARGV[0]
+	# Institutional document's formats must match ARGV[0]
 	module Format
 		HSBC = "HSBC"
 		MS = "MS"
 		TEST = "test"
+		COLMENA = "COLMENA"
 	end
 
 	# Field text alignment
@@ -43,35 +43,39 @@ module Setup
 	module Read
 
 		def self.wildchar
-			@@wildchar ||= Setup.bank.class::WILDCHAR
+			@@wildchar ||= Setup.inst.class::WILDCHAR
 		end
 
 		def self.date_format
-			@@date_format ||= Setup.bank.class::DATE_FORMAT
+			@@date_format ||= Setup.inst.class::DATE_FORMAT
 		end
 
 		def self.horizontal_search_range
-			@@horizontal_search_range ||= Setup.bank.class::HORIZONTAL_SEARCH_RANGE
+			@@horizontal_search_range ||= Setup.inst.class::HORIZONTAL_SEARCH_RANGE
 		end
 
 		def self.vertical_search_range
-			@@vertical_search_range ||= Setup.bank.class::VERTICAL_SEARCH_RANGE
+			@@vertical_search_range ||= Setup.inst.class::VERTICAL_SEARCH_RANGE
 		end
 
 		def self.center_mass_limit
-			@@center_mass_limit ||= Setup.bank.class::CENTER_MASS_LIMIT
+			@@center_mass_limit ||= Setup.inst.class::CENTER_MASS_LIMIT
 		end
 	end
 
 	# Table specific constants
 	module Table
 
+		def self.global_offset
+			@@global_offset ||= Setup.inst.class::GLOBAL_OFFSET
+		end
+
 		def self.offset
-			@@offset ||= Setup.bank.class::TABLE_OFFSET
+			@@offset ||= Setup.inst.class::TABLE_OFFSET
 		end
 
 		def self.header_orientation
-			@@orientation ||= Setup.bank.class::HEADER_ORIENTATION
+			@@orientation ||= Setup.inst.class::HEADER_ORIENTATION
 		end
 	end
 
@@ -96,34 +100,35 @@ module Setup
 	def self.set_enviroment(format)
 		case format
 		when Format::TEST
-			puts "TEST BANK selected"
-			@@bank = Test.new()
+			puts "TEST selected"
+			@@institution = Test.new()
 		when Format::HSBC
 			puts "HSBC selected"
-			@@bank = HSBC.new()
+			@@institution = HSBC.new()
 		when Format::MS
 			puts "Morgan Stanley selected"
-			@@bank = MorganStanley.new()
+			@@institution = MorganStanley.new()
+		when Format::COLMENA
+			puts "Colmena selected"
+			@@institution = Colmena.new()
+		else
+			puts "Wrong input, try again or CTRL + C to exit"
+			return false
 		end
-
 	end
 
-	def self.bank
-		@@bank
+	def self.inst
+		@@institution
 	end
 
 end
 
 # Abstract bank class never to be instantiated
-class Bank
-
-	# Accounts to store information
-	attr_accessor :accounts
-	# Accounts to store information
-	attr_accessor :positions
+class Institution
 
 	# FINE TUNNING parameters:
 	# Override in sub-classes for bank specific
+	GLOBAL_OFFSET = [0,0,0,0]
 	TABLE_OFFSET = 6
 	HEADER_ORIENTATION = 8
 	VERTICAL_SEARCH_RANGE = 5
@@ -141,7 +146,20 @@ class Bank
 
 	# Method to be overriden and executed
 	def run 
-		raise NoMethodError, "Bank is an abstract class"
+		files = Dir["in/#{dir}/*"]
+		files.each do |file|
+			dir_path = File.dirname(file)
+			dir_name = dir_path[dir_path.rindex('/')+1..-1]
+			file_name = file[file.rindex('/')+1..-1]
+			puts "\n***************************************** - #{file_name}\n"
+			analyse_position file
+			unless File.exist? "out/#{dir_name}"
+				Dir.mkdir("out/#{dir_name}")
+			end
+			out = File.open("out/#{dir_name}/#{file_name}.csv",'w')
+			print_results out
+		end
+		puts "\n*****************************************\n"
 	end
 
 	def to_number str
@@ -169,12 +187,6 @@ class Bank
 			r << item
 		end
 		r
-	end
-
-	def print_results  file
-		@positions.each do |p|
-			file.write(p.print)
-		end
 	end
 	
 	def check acumulated, stated

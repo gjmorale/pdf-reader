@@ -69,9 +69,8 @@ class Reader
 	end
 
 	# Looks for the first occurrence of the field past the offset
-	def read_next_field(field)
+	def read_next_field(field, from = 0)
 		field = first_match(field) if field.is_a? Array
-		#puts "s - #{field} - #{@page} : #{@offset}"
 		if not @page_content or @page_content.number != @page
 			#raise #debugg
 			file_name = "#{@file[@file.rindex('/')+1..-1]}"
@@ -85,7 +84,7 @@ class Reader
 			@page_content = PageContent.new(@page, page.read)
 			@offset = 0
 		end
-		if @page_content.search_next(field, @offset)
+		if @page_content.search_next(field, @offset, from)
 			#puts "Found #{field} in page #{@page}"
 			return field
 		else
@@ -108,10 +107,12 @@ class Reader
 	# Sets the table headers borders to touch the neighbours positions
 	def set_header_limits headers
 		row = Row.new
+		last = 0
 		headers.each do |header|
-			return nil unless read_next_field header
+			return nil unless read_next_field header, last
 			row.yi = row.yi ? [header.top, row.yi].min : header.top
 			row.yf = row.yf ? [header.bottom, row.yf].max : header.bottom
+			last = header.right
 		end
 		row
 	end

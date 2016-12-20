@@ -6,6 +6,7 @@ class Table
 
 	def initialize(headers, bottom = nil, offset = nil, skips = nil)
 		@bottom = bottom
+		@offset = offset
 		@headers = headers
 		@skips = skips
 	end
@@ -40,16 +41,19 @@ class Table
 	def set_range (line_size, line_height)
 		unless @range
 			yi = (@offset ? @offset.bottom+1 : @headers_row.yf+1)
+			if yi < Setup::Table.global_offset[2]
+				yi = Setup::Table.global_offset[2]
+			end
 			if @bottom
 				yf = @bottom.top - 1 
 			else
-				yf = line_height - 1
+				yf = line_height - 1 - Setup::Table.global_offset[3]
 			end
 			xi = @headers.first.left
 			xf = @headers.last.right
 			table_offset = Setup::Table.offset
-			xi = xi - table_offset >= 0 ? xi - table_offset : 0
-			xf = xf + table_offset <= line_size ? xf + table_offset : line_size
+			xi = xi - table_offset >= Setup::Table.global_offset[0] ? xi - table_offset : Setup::Table.global_offset[0]
+			xf = xf + table_offset <= line_size - Setup::Table.global_offset[1] ? xf + table_offset : line_size - Setup::Table.global_offset[1]
 			@width = yf-yi+1
 			@range = [xi,xf,yi,yf]
 		end
