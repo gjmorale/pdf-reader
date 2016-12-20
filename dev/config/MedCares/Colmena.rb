@@ -57,8 +57,7 @@ class Colmena < Medcare
 		def get_accounts category, titles
 			accounts = []
 			titles.each.with_index do |title, i|
-				type = i > 10 ? "Libre Elección" : "Preferente" 
-				accounts << AccountColmena.new(title, category, type)
+				accounts << AccountColmena.new(title, category)
 			end
 			accounts
 		end
@@ -67,8 +66,8 @@ class Colmena < Medcare
 			print "Proccesing prices ... "
 			table_end = Field.new(bottom)
 			headers = []
-			headers << HeaderField.new(@accounts.first.name, headers.size, Setup::Type::LABEL, false, 4, Setup::Align::BOTTOM_LEFT)
-			headers << HeaderField.new("% DE BONIFICACIÓN", headers.size, Setup::Type::PERCENTAGE, true)
+			headers << HeaderField.new(@accounts.first.name, headers.size, Setup::Type::LABEL, true, 4, Setup::Align::BOTTOM_LEFT)
+			headers << HeaderField.new("% DE BONIFICACIÓN", headers.size, Setup::Type::PERCENTAGE, false)
 			headers << HeaderField.new("TOPE", headers.size, Setup::Type::AMOUNT, false)
 			headers << HeaderField.new("% DE BONIFICACIÓN", headers.size, Setup::Type::PERCENTAGE, false)
 			headers << HeaderField.new("TOPE", headers.size, Setup::Type::AMOUNT, false)
@@ -89,7 +88,7 @@ class Colmena < Medcare
 
 		def clean percentage
 			return "" if percentage.nil?
-			percentage.delete('*').delete('(').delete(')')
+			percentage.delete('*').delete('(').delete(')').strip
 		end
 		def clear_not_found results
 			results.map{|r| r == Result::NOT_FOUND ? "" : r}

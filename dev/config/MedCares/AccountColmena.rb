@@ -1,10 +1,9 @@
 class AccountColmena < Account
-	def initialize(title, category, type)
+	def initialize(title, category)
 		super(title, category)
-		@type = type
 	end
 
 	def print
-		"\n[#{@type}] #{@category}: #{@title}"
+		"\n[#{@category}] #{@name}:"
 	end
 end

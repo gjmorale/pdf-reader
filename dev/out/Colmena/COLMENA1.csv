@@ -1,68 +1,68 @@
 ATENCIÓN;% DE BONIFICACIÓN;TOPE;% DE BONIFICACIÓN;TOPE
-[Preferente] HOSPITALARIA: 
-Visita del Neoatólogo;17,5%                           ;5.731;;
-Ateció Imediata del recié acido;17,5%                  ;6.126;;
-Hoorarios Matroa;17,5%                           ;8.140;;
-Hoorarios Médicos;17,5%                  ;52.241;;
-Derecho de Pabelló 6;17,5%                           ;21.556;;
-[Preferente] HOSPITALARIA: 
-;17,5%                  ;731;;
-Ateció Imediata del recié acidoVisita del Neoatólogo;17,5%                           ;16.126;;
-;17,5%                  ;8.140;;
-Hoorarios MédicosHoorarios Matroa;17,5%                           ;189.399;;
-;17,5%                  ;47.612;;
-[Preferente] HOSPITALARIA: 
-Hoorarios Médicos(E);70%                                          ;758.508;70%                                          ;SIN TOPE
-;70%                            ;589.388;70%                            ;SIN TOPE
-[Preferente] HOSPITALARIA: 
-;70%                            ;1.424.946;70%                            ;SIN TOPE
-Derecho de Pabelló 10(E)Hoorarios Médicos(E);70%                                          ;70.706;70%                                          ;SIN TOPE
-[Preferente] HOSPITALARIA: 
-Hoorarios Médicos(E);70%                                          ;071.862;70%                                          ;SIN TOPE
-Derecho de Pabelló 8(E);70%                            ;745.365;70%                            ;SIN TOPE
-[Preferente] HOSPITALARIA: 
-Hoorarios Médicos(E);70%                            ;89.651;70%                            ;SIN TOPE
-Derecho de Pabelló 5(E);70%                                          ;18.570;70%                                          ;SIN TOPE
-[Preferente] HOSPITALARIA: 
-Hoorarios Médicos(E);70%                                          ;131.711;70%                                          ;SIN TOPE
-Derecho de Pabelló 14(E);70%                            ;820.100;70%                            ;SIN TOPE
-[Preferente] HOSPITALARIA: 
-Hoorarios Médicos(E);70%                            ;998.961;70%                            ;SIN TOPE
-Derecho de Pabelló 12(E);70%                                          ;1.352.080;70%                                          ;SIN TOPE
-[Preferente] HOSPITALARIA: 
-U.T.I. Neoatal;17,5%                  ;02.906;;
-U.T.I. Pediatría;17,5%                           ;102.906;;
-U.T.I. Adulto(E);70%                            ;11.623;70%                            ;SIN TOPE
-Sala cua;70%                                          ;1.262;;
-Medicia y/o Cirugía(E);70%                            ;293.086;70%                            ;SIN TOPE
-[Preferente] HOSPITALARIA: 
-Hospitalizació por Neumoía (B)(E);70%                                                                      ;172.343;70%                                                                      ;SIN TOPE
-Apedicectomía (B)(E);70%                            ;1.172.343;70%                            ;SIN TOPE
-[Preferente] AMBULATORIA: 
-;70%                            ;1.984;;
-Cosulta médica electva o urgecia(E)Cosulta psiquiátrica (A);70%                                          ;22.665;70%                                          ;SIN TOPE
-[Preferente] AMBULATORIA: 
-Rodillera, bota larga o corta de yeso(E);70%                                          ;7.996;70%                                          ;SIN TOPE
-Hemodiálisis co sumos icluídos(E);70%                            ;3.572;70%                            ;SIN TOPE
-Gastroduodeoscopía(E);70%                                          ;15.668;70%                                          ;SIN TOPE
-Ecocardiograma Doppler(E);70%                            ;56.802;70%                            ;SIN TOPE
-Electrocardiograma de reposo(E);70%                                          ;6.136;70%                                          ;SIN TOPE
-Exploració vitreorretial(E);70%                            ;934;70%                            ;SIN TOPE
-Estudio histopatológico corriete(E);70%                                          ;2.550;70%                                          ;SIN TOPE
-;70%                            ;8.044;70%                            ;SIN TOPE
-Desitometría ósea(E)Citodiagóstico corriete(E);70%                                          ;41.982;70%                                          ;SIN TOPE
-;70%                            ;2.138;;
-UrocultivoOria Completa;70%                                          ;580;;
-;70%                            ;732;;
-Estudio de lípidos saguíeosPerfil bioquímico;70%                                          ;152;;
-;70%                            ;254;;
-[Preferente] AMBULATORIA: 
-Ecotomografía giecológica;70%                            ;12.980;;
-Ecotomografía abdomial;70%                                          ;4.560;;
-Tomografía axial computarizada de cerebro;70%                            ;69.778;;
-Radiografía de brazo, codo, muñeca o similares;70%                                          ;8.498;;
-Mamografía blateral;70%                            ;1.154;;
-Radiografía de tórax;70%                                          ;24.398;;
-[Preferente] AMBULATORIA: 
-Reeducació motriz (A);70%                                                        ;175;;
-Ejercicios respiratorios (A);70%                            ;2.002;;
+[HOSPITALARIA] PARTO NORMAL:
+Visita del Neoatólogo;17,5%;5.731;;
+Ateció Imediata del recié acido;17,5%;6.126;;
+Hoorarios Matroa;17,5%;8.140;;
+Hoorarios Médicos;17,5%;52.241;;
+Derecho de Pabelló 6;17,5%;21.556;;
+[HOSPITALARIA] PARTO POR CESAREA:
+Visita del Neoatólogo;17,5%;731;;
+Ateció Imediata del recié acido;17,5%;16.126;;
+Hoorarios Matroa;17,5%;8.140;;
+Hoorarios Médicos;17,5%;189.399;;
+Derecho de Pabelló 7;17,5%;47.612;;
+[HOSPITALARIA] APENDICENTOMIA:
+Hoorarios Médicos(E);70%;758.508;70%;SIN TOPE
+Derecho de Pabelló 7(E);70%;589.388;70%;SIN TOPE
+[HOSPITALARIA] COLECISTECTOMIA POR VIDEOLAPAROSCOPIA:
+Hoorarios Médicos(E);70%;1.424.946;70%;SIN TOPE
+Derecho de Pabelló 10(E);70%;70.706;70%;SIN TOPE
+[HOSPITALARIA] HISTERECTOMIA TOTAL:
+Hoorarios Médicos(E);70%;071.862;70%;SIN TOPE
+Derecho de Pabelló 8(E);70%;745.365;70%;SIN TOPE
+[HOSPITALARIA] AMIGDALECTOMIA:
+Hoorarios Médicos(E);70%;89.651;70%;SIN TOPE
+Derecho de Pabelló 5(E);70%;18.570;70%;SIN TOPE
+[HOSPITALARIA] CIRUGIA CARDIACA DE COMPLEJIDAD MAYOR:
+Hoorarios Médicos(E);70%;131.711;70%;SIN TOPE
+Derecho de Pabelló 14(E);70%;820.100;70%;SIN TOPE
+[HOSPITALARIA] EXTIRPACION DE TUMOR Y/O QUISTE ENCEFALICO:
+Hoorarios Médicos(E);70%;998.961;70%;SIN TOPE
+Derecho de Pabelló 12(E);70%;1.352.080;70%;SIN TOPE
+[HOSPITALARIA] DIAS CAMA:
+U.T.I. Neoatal;17,5%;02.906;;
+U.T.I. Pediatría;17,5%;102.906;;
+U.T.I. Adulto(E);70%;11.623;70%;SIN TOPE
+Sala cua;70%;1.262;;
+Medicia y/o Cirugía(E);70%;293.086;70%;SIN TOPE
+[HOSPITALARIA] MEDICAMENTOS Y MAT. CLINICOS, Para los siguientes eventos::
+Hospitalizació por Neumoía (B)(E);70%;172.343;70%;SIN TOPE
+Apedicectomía (B)(E);70%;1.172.343;70%;SIN TOPE
+[AMBULATORIA] CONSULTAS:
+Cosulta psiquiátrica (A);70%;1.984;;
+Cosulta médica electva o urgecia(E);70%;22.665;70%;SIN TOPE
+[AMBULATORIA] EXAMENES Y PROCEDIMIENTOS:
+Rodillera, bota larga o corta de yeso(E);70%;7.996;70%;SIN TOPE
+Hemodiálisis co sumos icluídos(E);70%;3.572;70%;SIN TOPE
+Gastroduodeoscopía(E);70%;15.668;70%;SIN TOPE
+Ecocardiograma Doppler(E);70%;56.802;70%;SIN TOPE
+Electrocardiograma de reposo(E);70%;6.136;70%;SIN TOPE
+Exploració vitreorretial(E);70%;934;70%;SIN TOPE
+Estudio histopatológico corriete(E);70%;2.550;70%;SIN TOPE
+Citodiagóstico corriete(E);70%;8.044;70%;SIN TOPE
+Desitometría ósea(E);70%;41.982;70%;SIN TOPE
+Oria Completa;70%;2.138;;
+Urocultivo;70%;580;;
+Perfil bioquímico;70%;732;;
+Estudio de lípidos saguíeos;70%;152;;
+Hemograma;70%;254;;
+[AMBULATORIA] IMAGENOLOGIA:
+Ecotomografía giecológica;70%;12.980;;
+Ecotomografía abdomial;70%;4.560;;
+Tomografía axial computarizada de cerebro;70%;69.778;;
+Radiografía de brazo, codo, muñeca o similares;70%;8.498;;
+Mamografía blateral;70%;1.154;;
+Radiografía de tórax;70%;24.398;;
+[AMBULATORIA] MEDICINA FISICA:
+Reeducació motriz (A);70%;175;;
+Ejercicios respiratorios (A);70%;2.002;;
