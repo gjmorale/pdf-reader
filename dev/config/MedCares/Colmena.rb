@@ -56,8 +56,9 @@ class Colmena < Medcare
 
 		def get_accounts category, titles
 			accounts = []
-			titles.each do |title|
-				accounts << Account.new(title, category)
+			titles.each.with_index do |title, i|
+				type = i > 10 ? "Libre Elección" : "Preferente" 
+				accounts << AccountColmena.new(title, category, type)
 			end
 			accounts
 		end
@@ -81,7 +82,16 @@ class Colmena < Medcare
 			@reader.go_to 1
 			table.rows.each.with_index do |row, i|
 				results = table.headers.map{|h| h.results[i].result}
-				account.elements << results
+				results = clear_not_found results
+				account.elements << Record.new(results[0], clean(results[1]), results[2], clean(results[3]), results[4])
 			end
+		end
+
+		def clean percentage
+			return "" if percentage.nil?
+			percentage.delete('*').delete('(').delete(')')
+		end
+		def clear_not_found results
+			results.map{|r| r == Result::NOT_FOUND ? "" : r}
 		end
 end
