@@ -148,6 +148,7 @@ class PageContent
 		xf = guide.outer_right
 		yi = table_range[2]
 		yf = table_range[3]
+		puts "[#{xi},#{xf}] - #{guide}"
 		index = 0
 		regex = Setup.inst.get_regex(guide.type, false)
 		debug = nil
@@ -211,7 +212,6 @@ class PageContent
 					tolerance = 0
 					last_match = stripped_text
 					# min is the posible new left for result
-					#puts "#{center_mass(text)} < #{Setup::Read.center_mass_limit}"
 					min = counter #if center_mass(text) < 0.5
 					# Resets the max value because format has been recovered
 					max = range[0]

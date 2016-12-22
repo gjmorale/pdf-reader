@@ -154,12 +154,15 @@ class Table
 		reader.move_to first_header, 1
 		reader.slide_up slidder
 		@headers_row = reader.set_header_limits(@headers)
-		return false unless @headers_row
+		unless @headers_row
+			puts "Headers couldn't be found"
+			return false 
+		end
 		reader.move_to @offset if @offset
 		@bottom = reader.read_next_field @bottom if @bottom
 		set_range reader.line_size, reader.line_height
 		set_borders
-		#@headers.map{|h| puts "[#{h.left},#{h.right}]"}
+		@headers.map{|h| puts "[#{h.left},#{h.right}]"}
 		@rows = reader.get_rows(@range, get_guide, @skips)
 		set_results
 		reader.get_columns(@headers, @rows)

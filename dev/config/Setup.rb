@@ -16,8 +16,9 @@ module Setup
 	module Format
 		HSBC = "HSBC"
 		MS = "MS"
-		TEST = "test"
+		TEST = "TEST"
 		COLMENA = "COLMENA"
+		CONSALUD = "CONSALUD"
 	end
 
 	# Field text alignment
@@ -111,6 +112,9 @@ module Setup
 		when Format::COLMENA
 			puts "Colmena selected"
 			@@institution = Colmena.new()
+		when Format::CONSALUD
+			puts "Consalud selected"
+			@@institution = Consalud.new
 		else
 			puts "Wrong input, try again or CTRL + C to exit"
 			return false

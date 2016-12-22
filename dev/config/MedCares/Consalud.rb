@@ -1,9 +1,10 @@
 require_relative "MedCare.rb"
-class Colmena < Medcare
+class Consalud < Medcare
 
-	GLOBAL_OFFSET = [10,0,0,0]
+	#GLOBAL_OFFSET = [10,0,0,0]
+	TABLE_OFFSET = 50
 
-	DIR = "Colmena"
+	DIR = "Consalud"
 
 	def dir
 		DIR
@@ -34,14 +35,14 @@ class Colmena < Medcare
 			@accounts.concat(get_accounts("HOSPITALARIA", 
 									["PARTO NORMAL",
 									"PARTO POR CESAREA",
-									"APENDICENTOMIA",
+									"APENDICECTOMIA",
 									"COLECISTECTOMIA POR VIDEOLAPAROSCOPIA",
 									"HISTERECTOMIA TOTAL",
 									"AMIGDALECTOMIA",
 									"CIRUGIA CARDIACA DE COMPLEJIDAD MAYOR",
-									"EXTIRPACION DE TUMOR Y/O QUISTE ENCEFALICO",
+									"EXTIRPACION TUMOR Y/O QUISTE ENCEFALICO",
 									"DIAS CAMA",
-									"MEDICAMENTOS Y MAT. CLINICOS, Para los siguientes eventos:"]))
+									"MEDICAMENTOS Y MATERIAL CLINICO : (B)"]))
 			@accounts.concat(get_accounts("AMBULATORIA", 
 									["CONSULTAS",
 									"EXAMENES Y PROCEDIMIENTOS",
@@ -49,7 +50,7 @@ class Colmena < Medcare
 									"MEDICINA FISICA"]))
 			@accounts.each.with_index do |account, i|
 				puts "\nACC: #{account.name}"
-				bottom = @accounts.size == i+1 ? "etas al siguiente tope anual" : @accounts[i+1].name
+				bottom = @accounts.size == i+1 ? "Prestación sujeta al siguiente Tope Anual" : @accounts[i+1].name
 				analyse_prices account, bottom
 			end
 		end
@@ -64,15 +65,17 @@ class Colmena < Medcare
 
 		def analyse_prices account, bottom
 			print "Proccesing prices ... "
+			Field.new("SELECCIÓN DE PRESTACIONES VALORIZADAS").execute @reader
+			puts "#{@reader}"
 			table_end = Field.new(bottom)
 			headers = []
-			headers << HeaderField.new(@accounts.first.name, headers.size, Setup::Type::LABEL, true, 4, Setup::Align::BOTTOM_LEFT)
-			headers << HeaderField.new("% DE BONIFICACIÓN", headers.size, Setup::Type::PERCENTAGE, false)
-			headers << HeaderField.new("TOPE", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new("% DE BONIFICACIÓN", headers.size, Setup::Type::PERCENTAGE, false)
-			headers << HeaderField.new("TOPE", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new("COPAGO", headers.size, Setup::Type::PERCENTAGE, false)
-			headers << HeaderField.new("Nº CONVENIO", headers.size, Setup::Type::INTEGER, false)
+			headers << HeaderField.new("PRESTACIONES", headers.size, Setup::Type::LABEL, true, 4, Setup::Align::TOP)
+			headers << HeaderField.new(["%","BONIFICACIÓN"], headers.size, Setup::Type::PERCENTAGE, false, 4)
+			headers << HeaderField.new(["TOPE","$"], headers.size, Setup::Type::AMOUNT, false, 4)
+			headers << HeaderField.new(["%","BONIFICACIÓN"], headers.size, Setup::Type::PERCENTAGE, false, 4)
+			headers << HeaderField.new(["TOPE","$"], headers.size, Setup::Type::AMOUNT, false, 4)
+			headers << HeaderField.new(["COPAGO(*)","$"], headers.size, Setup::Type::PERCENTAGE, false, 4)
+			headers << HeaderField.new(["NÚMERO DEL","PRESTADOR(E)"], headers.size, Setup::Type::INTEGER, false, 4)
 			offset = Field.new(account.name)
 			table = Table.new(headers, Field.new(bottom), offset)
 			table.execute @reader

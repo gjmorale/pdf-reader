@@ -1,0 +1,69 @@
+ATENCIÓN;% DE BONIFICACIÓN;TOPE;% DE BONIFICACIÓN;TOPE
+[HOSPITALARIA] PARTO NORMAL:
+Visita Neoatólogo;25%;4.809;;
+Ateció Imediata Recié Nacido;25%;8.789;;
+Hoorarios Matroa;25%;20.329;;
+Hoorarios Médicos;25%;83.188;;
+Derecho de Pabelló 6 ;25%;41.813;;
+[HOSPITALARIA] PARTO POR CESAREA:
+Visita Neoatólogo;25%;4.809;;
+Ateció Imediata Recié Nacido;25%;8.789;;
+Hoorarios Matroa;25%;20.329;;
+Hoorarios Médicos;25%;102.195;;
+Derecho de Pabelló 7;25%;56.744;;
+[HOSPITALARIA] APENDICECTOMIA:
+Hoorarios Médicos;90%;294.872;80%;SIN TOPE
+Derecho de Pabello 7;90%;226.976;80%;SIN TOPE
+[HOSPITALARIA] COLECISTECTOMIA POR VIDEOLAPAROSCOPIA:
+Hoorarios Médicos;90%;535.938;;
+Derecho de Pabelló 10;90%;529.444;;
+[HOSPITALARIA] HISTERECTOMIA TOTAL:
+Hoorarios Médicos;90%;712.328;;
+Derecho de Pabelló 8;90%;321.508;;
+[HOSPITALARIA] AMIGDALECTOMIA:
+Hoorarios Médicos;90%;224.846;;
+Derecho de Pabelló 5;90%;131.208;;
+[HOSPITALARIA] CIRUGIA CARDIACA DE COMPLEJIDAD MAYOR:
+Hoorarios Médicos;90%;2.077.276;80%;SIN TOPE
+Derecho de Pabelló 14;90%;1.040.192;80%;SIN TOPE
+[HOSPITALARIA] EXTIRPACION TUMOR Y/O QUISTE ENCEFALICO:
+Hoorarios Médicos;90%;1.038.634;80%;SIN TOPE
+Derecho de Pabelló 12;90%;796.060;80%;SIN TOPE
+[HOSPITALARIA] DIAS CAMA:
+U.T.I. NEONATAL;90%;192.362;80%;SIN TOPE
+U.T.I. PEDIATRIA;90%;192.362;80%;SIN TOPE
+U.T.I. ADULTO;90%;192.362;80%;SIN TOPE
+Sala Cua;25%;21.160;;
+Medicia;90%;84.158;80%;SIN TOPE
+[HOSPITALARIA] MEDICAMENTOS Y MATERIAL CLINICO : (B):
+Hospitalizació Neumoia;90%;480.904;;
+Apedicectomía;90%;480.904;;
+[AMBULATORIA] CONSULTAS:
+Cosulta Psiquíatrica (A);70%;17.152;;
+Cosulta Médica Electiva ;70%;9.618;80%;SIN TOPE
+[AMBULATORIA] EXAMENES Y PROCEDIMIENTOS:
+Rodillera, Bota Larga o Corta;70%;13.990;;
+Hemodiálisis co Isumos Icluidos;70%;46.770;;
+Gastroduodeoscopia;70%;105.763;;
+Ecocardiograma Doppler;70%;51.944;;
+Electrocardiograma de reposo;70%;5.724;;
+Exploració Vitreorretial;70%;5.469;;
+Estudio Histopatológico Corriete;70%;12.144;80%;SIN TOPE
+Citodiagóstico Corriete;70%;5.950;80%;SIN TOPE
+Desitometría Ósea;70%;36.902;;
+Oria Completa;70%;1.750;80%;SIN TOPE
+Urocultivo;70%;3.414;80%;SIN TOPE
+Perfíl Bioquímico;70%;7.942;80%;SIN TOPE
+Estudio De Lípidos Saguíeos;70%;5.848;80%;SIN TOPE
+Hemograma;70%;2.815;80%;SIN TOPE
+[AMBULATORIA] IMAGENOLOGIA:
+Ecotomografía Giecológica;70%;10.591;80%;SIN TOPE
+Ecotomografía Abdomial;70%;20.011;80%;SIN TOPE
+Tomografía Axial Computarizada;70%;50.365;80%;SIN TOPE
+Radiografía de brazo, codo, muñeca;70%;7.146;80%;SIN TOPE
+Mamografía Bilateral;70%;16.992;80%;SIN TOPE
+Radiografía de Tórax;70%;14.651;80%;SIN TOPE
+[AMBULATORIA] MEDICINA FISICA:
+ ;;;;
+Reeducació Motriz (A);70%;2.342;;
+Ejercicios Respiratorios (A);70%;3.974;;

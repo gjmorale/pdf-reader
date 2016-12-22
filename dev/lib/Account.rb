@@ -18,4 +18,8 @@ class Account
 	def inspect
 		to_s
 	end
+
+	def print
+		"\n[#{@category}] #{@name}:"
+	end
 end

@@ -1,0 +1,69 @@
+ATENCIÓN;% DE BONIFICACIÓN;TOPE;% DE BONIFICACIÓN;TOPE
+[HOSPITALARIA] PARTO NORMAL:
+Visita Neoatólogo;25%;4.805;;
+Ateció Imediata Recié Nacido;25%;13.271;;
+Hoorarios Matroa;25%;30.696;;
+Hoorarios Médicos;25%;125.614;;
+Derecho de Pabelló 6 ;25%;20.907;;
+[HOSPITALARIA] PARTO POR CESAREA:
+Visita Neoatólogo;25%;4.805;;
+Ateció Imediata Recié Nacido;25%;13.271;;
+Hoorarios Matroa;25%;30.696;;
+Hoorarios Médicos;25%;154.314;;
+Derecho de Pabelló 7;25%;28.372;;
+[HOSPITALARIA] APENDICECTOMIA:
+Hoorarios Médicos;100%;427.564;;
+Derecho de Pabello 7;100%;113.488;90%;SIN TOPE
+[HOSPITALARIA] COLECISTECTOMIA POR VIDEOLAPAROSCOPIA:
+Hoorarios Médicos;100%;777.110;;
+Derecho de Pabelló 10;100%;264.722;90%;SIN TOPE
+[HOSPITALARIA] HISTERECTOMIA TOTAL:
+Hoorarios Médicos;100%;1.032.876;;
+Derecho de Pabelló 8;100%;160.754;90%;SIN TOPE
+[HOSPITALARIA] AMIGDALECTOMIA:
+Hoorarios Médicos;100%;326.027;;
+Derecho de Pabelló 5;100%;65.604;90%;SIN TOPE
+[HOSPITALARIA] CIRUGIA CARDIACA DE COMPLEJIDAD MAYOR:
+Hoorarios Médicos;100%;3.012.050;;
+Derecho de Pabelló 14;100%;520.096;90%;SIN TOPE
+[HOSPITALARIA] EXTIRPACION TUMOR Y/O QUISTE ENCEFALICO:
+Hoorarios Médicos;100%;1.506.019;;
+Derecho de Pabelló 12;100%;398.030;90%;SIN TOPE
+[HOSPITALARIA] DIAS CAMA:
+U.T.I. NEONATAL;100%;120.130;90%;SIN TOPE
+U.T.I. PEDIATRIA;100%;120.130;90%;SIN TOPE
+U.T.I. ADULTO;100%;120.130;90%;SIN TOPE
+Sala Cua;25%;18.020;;
+Medicia;100%;72.078;90%;SIN TOPE
+[HOSPITALARIA] MEDICAMENTOS Y MATERIAL CLINICO : (B):
+Hospitalizació Neumoia;100%;1.441.561;90%;SIN TOPE
+Apedicectomía;100%;1.441.561;90%;SIN TOPE
+[AMBULATORIA] CONSULTAS:
+Cosulta Psiquíatrica (A);90%;12.006;;
+Cosulta Médica Electiva ;90%;16.818;;
+[AMBULATORIA] EXAMENES Y PROCEDIMIENTOS:
+Rodillera, Bota Larga o Corta;90%;12.718;;
+Hemodiálisis co Isumos Icluidos;90%;42.518;;
+Gastroduodeoscopia;90%;47.112;;
+Ecocardiograma Doppler;90%;47.222;;
+Electrocardiograma de reposo;90%;5.204;;
+Exploració Vitreorretial;90%;4.972;;
+Estudio Histopatológico Corriete;90%;12.144;;
+Citodiagóstico Corriete;90%;5.950;;
+Desitometría Ósea;90%;33.547;;
+Oria Completa;90%;1.750;;
+Urocultivo;90%;3.414;;
+Perfíl Bioquímico;90%;7.942;;
+Estudio De Lípidos Saguíeos;90%;5.848;;
+Hemograma;90%;2.815;;
+[AMBULATORIA] IMAGENOLOGIA:
+Ecotomografía Giecológica;90%;12.709;;
+Ecotomografía Abdomial;90%;24.013;;
+Tomografía Axial Computarizada;90%;60.438;;
+Radiografía de brazo, codo, muñeca;90%;8.575;;
+Mamografía Bilateral;90%;20.390;;
+Radiografía de Tórax;90%;17.581;;
+[AMBULATORIA] MEDICINA FISICA:
+ ;;;;
+Reeducació Motriz (A);90%;1.405;;
+Ejercicios Respiratorios (A);90%;2.384;;
