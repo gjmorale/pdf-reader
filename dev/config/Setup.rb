@@ -19,6 +19,7 @@ module Setup
 		TEST = "TEST"
 		COLMENA = "COLMENA"
 		CONSALUD = "CONSALUD"
+		CRUZBLANCA = "CRUZBLANCA"
 	end
 
 	# Field text alignment
@@ -115,6 +116,9 @@ module Setup
 		when Format::CONSALUD
 			puts "Consalud selected"
 			@@institution = Consalud.new
+		when Format::CRUZBLANCA
+			puts "Cruz Blanca selected"
+			@@institution = CruzBlanca.new
 		else
 			puts "Wrong input, try again or CTRL + C to exit"
 			return false

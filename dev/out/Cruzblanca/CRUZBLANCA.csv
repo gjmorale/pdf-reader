@@ -1,0 +1,70 @@
+ATENCIÓN;% DE BONIFICACIÓN;TOPE;% DE BONIFICACIÓN;TOPE
+[HOSPITALARIA] PARTO NORMAL:
+Visita Neonatólogo;100%;16,559;;
+Atención Inmediata recién nacido;100%;34,849;;
+Honorarios Matrona;100%;125,646;;
+Honorarios Médicos;100%;454,924;;
+Derecho de pabellón 6 ;100%;Sin Tope;;
+[HOSPITALARIA] PARTO POR CES¶REA:
+Visita Neonatólogo;100%;16,559;;
+Atención Inmediata recién nacido;100%;34,849;;
+Honorarios Matrona;100%;125,646;;
+Honorarios Médicos;100%;586,274;;
+Derecho de pabellón 7;100%;Sin Tope;;
+[HOSPITALARIA] APENDICE¶TOM¶A:
+Honorarios Médicos;100%;1,914,723;;
+Derecho de pabellón 7;100%;Sin Tope;;
+[HOSPITALARIA] COLECISTECTOMIA POR VIDEOLAPAROSCOPIA:
+Honorarios Médicos;100%;3,457,679;;
+Derecho de pabellón 10;100%;Sin Tope;;
+[HOSPITALARIA] HISTERECTOM¶A TOTAL:
+Honorarios Médicos;100%;938,731;;
+Derecho de pabellón 8;100%;Sin Tope;;
+[HOSPITALARIA] AMIGDALECTOMIA:
+Honorarios Médicos;100%;1,435,537;;
+Derecho de pabellón 5;100%;Sin Tope;;
+[HOSPITALARIA] CIRUG¶A CARDIACA DE COMPLEJIDAD MAYOR:
+Honorarios Médicos;100%;14,400,714;;
+Derecho de pabellón 14;100%;Sin Tope;;
+[HOSPITALARIA] EXTIRPACI¶N TUMOR Y/O QUISTE CEREBRAL:
+Honorarios Médicos;100%;6,043,840;;
+Derecho de pabellón 12;100%;Sin Tope;;
+[HOSPITALARIA] D¶AS CAMA:
+UTI Neonatal ;25%;Sin Tope;;
+UTI Pediatría ;25%;Sin Tope;;
+UTI Adulto ;100%;Sin Tope;;
+SalaCuna ;25%;Sin Tope;;
+Medicina ;100%;Sin Tope;;
+[HOSPITALARIA] MEDICAMENTOS : Para los siguientes eventos :
+Apendicetomía -Hospitalización Neumonía;100%;Sin Tope;;
+MAT. CLÍNICOS: Para los siguientes eventos : (B);;;;
+Apendicetomía -Hospitalización Neumonía;100%;Sin Tope;;
+[AMBULATORIA] CONSULTAS:
+Consulta Psiquiátrica (A);80%;Sin Tope;;
+Consulta Médica de Urgencia;90%;Sin Tope;;
+Consulta Médica electiva ;90%;Sin Tope;;
+[AMBULATORIA] EX¶MENES Y PROCEDIMIENTOS:
+Rodillera, bota corta de yeso, bota larga yeso;90%;66,649;;
+Hemodiálisis con insumos incluidos;90%;198,640;;
+Gastroduodenoscopía;90%;235,247;;
+Ecocardiograma Doppler;90%;250,913;;
+Electrocardiograma de reposo;90%;24,830;;
+Exploración Vitreorretinal;90%;23,523;;
+Estudio Histopatológico corriente;90%;288,962;;
+Citodiagnóstico Corriente;90%;27,520;;
+Densitometría Ósea;90%;151,593;;
+Orina Completa;90%;37,528;;
+Urocultivo;90%;66,716;;
+Perfil Bioquímico;90%;233,505;;
+Estudio de Lípidos Sanguíneos;90%;112,583;;
+Hemograma;90%;54,206;;
+[AMBULATORIA] IMAGENOLOGIA:
+Ecotomografía Ginecológica;90%;56,465;;
+Ecotomografía Abdominal;90%;429,134;;
+TAC de cerebro;90%;1,084,129;;
+Radiografía de brazo, codo, muñeca o sim.;90%;158,102;;
+Mamografía Bilateral;90%;91,473;;
+Radiografía de Tórax;90%;316,204;;
+[AMBULATORIA] MEDICINA F¶SICA:
+Reeducación Motriz (A);90%;5,227;;
+Ejercicios Respiratorios (A);90%;7,841;;

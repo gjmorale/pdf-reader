@@ -98,7 +98,6 @@ class PageContent
 			tolerance += 1 if detected
 			lines = (range[3] > 1 ? (range[2]..range[2]+range[3]-1) : range[2] )
 			text = (Multiline.generate @content.lines[lines])[range[1]..range[1]+counter]
-			debug = text
 			text = RegexHelper.strip_wildchar(text)
 			if text.match regex
 				detected = true
@@ -111,7 +110,6 @@ class PageContent
 					end
 				end
 				if detected
-					#puts debug.to_s if Setup::Debug.overview
 					tolerance = 0 if text != last_match
 					last_match = text
 					limit = range[1] + counter
@@ -148,7 +146,6 @@ class PageContent
 		xf = guide.outer_right
 		yi = table_range[2]
 		yf = table_range[3]
-		puts "[#{xi},#{xf}] - #{guide}"
 		index = 0
 		regex = Setup.inst.get_regex(guide.type, false)
 		debug = nil
@@ -207,6 +204,7 @@ class PageContent
 			stripped_text = RegexHelper.strip_wildchar text
 
 			if stripped_text != last_match 
+				puts stripped_text if stripped_text.match(/Si Tope/)
 				if stripped_text.match regex 
 					detected = true
 					tolerance = 0

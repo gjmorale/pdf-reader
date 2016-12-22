@@ -64,9 +64,8 @@ class Consalud < Medcare
 		end
 
 		def analyse_prices account, bottom
-			print "Proccesing prices ... "
+			puts "Proccesing prices ... "
 			Field.new("SELECCIÓN DE PRESTACIONES VALORIZADAS").execute @reader
-			puts "#{@reader}"
 			table_end = Field.new(bottom)
 			headers = []
 			headers << HeaderField.new("PRESTACIONES", headers.size, Setup::Type::LABEL, true, 4, Setup::Align::TOP)

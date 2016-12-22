@@ -245,7 +245,7 @@ class HSBC < Bank
 			headers << HeaderField.new(["Mkt. value (USD)","incl. accr. int."], headers.size, [Setup::Type::AMOUNT, Setup::Type::AMOUNT], false, 4)
 			headers << HeaderField.new(["Unr. P&L","incl. FX"], headers.size, to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
 			headers << HeaderField.new(["% Acc.","% Eq."], headers.size, to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
-			skips = ["Developed Europe ex UK","North America (US, CA)","Japa"].map{|s| Regexp.escape(s)}
+			skips = ["Developed Europe ex UK","North America (US, CA)","Japan"].map{|s| Regexp.escape(s)}
 			new_positions = []
 			present = get_table(headers, offset, table_end, page_end, search, skips) do |table|
 				table.rows.each.with_index do |row, i|
