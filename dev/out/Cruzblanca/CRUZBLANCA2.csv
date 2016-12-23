@@ -1,70 +1,70 @@
 ATENCIÓN;% DE BONIFICACIÓN;TOPE;% DE BONIFICACIÓN;TOPE
 [HOSPITALARIA] PARTO NORMAL:
-Visita Neonatólogo;90%;11,945;;
-Atención Inmediata recién nacido;90%;17,721;;
-Honorarios Matrona;25%;75,576;;
-Honorarios Médicos;25%;273,638;;
 Derecho de pabellón 6;25%;99,031;;
-[HOSPITALARIA] PARTO POR CES¶REA:
-Visita Neonatólogo;90%;11,945;;
-Atención Inmediata recién nacido;90%;17,721;;
+Honorarios Médicos;25%;273,638;;
 Honorarios Matrona;25%;75,576;;
-Honorarios Médicos;25%;352,646;;
+Atención Inmediata recién nacido;90%;17,721;;
+Visita Neonatólogo;90%;11,945;;
+[HOSPITALARIA] PARTO POR CES¶REA:
 Derecho de Pabelón 7;25%;138,122;;
+Honorarios Médicos;25%;352,646;;
+Honorarios Matrona;25%;75,576;;
+Atención Inmediata recién nacido;90%;17,721;;
+Visita Neonatólogo;90%;11,945;;
 [HOSPITALARIA] APENDICE¶TOM¶A:
-Honorarios Médicos;90%;287,928;90%;Sin Tope
 Derecho de Pabelón 7;90%;138,122;90%;Sin Tope
+Honorarios Médicos;90%;287,928;90%;Sin Tope
 [HOSPITALARIA] COLECISTECTOMIA POR VIDEOLAPAROSCOPIA:
-Honorarios Médicos;90%;520,173;90%;Sin Tope
 Derecho de Pabelón 10;90%;323,805;90%;Sin Tope
+Honorarios Médicos;90%;520,173;90%;Sin Tope
 [HOSPITALARIA] HISTERECTOM¶A TOTAL:
-Honorarios Médicos;90%;565,649;90%;Sin Tope
 Derecho de Pabelón 8;90%;198,713;90%;Sin Tope
+Honorarios Médicos;90%;565,649;90%;Sin Tope
 [HOSPITALARIA] AMIGDALECTOMIA:
-Honorarios Médicos;90%;211,049;90%;Sin Tope
 Derecho de Pabelón 5;90%;69,061;90%;Sin Tope
+Honorarios Médicos;90%;211,049;90%;Sin Tope
 [HOSPITALARIA] CIRUG¶A CARDIACA DE COMPLEJIDAD MAYOR:
-Honorarios Médicos;90%;2,300,125;90%;Sin Tope
 Derecho de Pabelón 14;90%;667,156;90%;Sin Tope
+Honorarios Médicos;90%;2,300,125;90%;Sin Tope
 [HOSPITALARIA] EXTIRPACI¶N TUMOR Y/O QUISTE CEREBRAL:
-Honorarios Médicos;90%;908,848;90%;Sin Tope
 Derecho de Pabelón 12;90%;493,852;90%;Sin Tope
+Honorarios Médicos;90%;908,848;90%;Sin Tope
 [HOSPITALARIA] D¶AS CAMA:
-UTI Neonatal;90%;156,365;90%;Sin Tope
-UTI Pediatria;90%;156,365;90%;Sin Tope
-UTI Adulto;90%;156,365;90%;Sin Tope
-Sala Cuna;90%;43,435;90%;Sin Tope
 Medicina;90%;86,869;90%;Sin Tope
+Sala Cuna;90%;43,435;90%;Sin Tope
+UTI Adulto;90%;156,365;90%;Sin Tope
+UTI Pediatria;90%;156,365;90%;Sin Tope
+UTI Neonatal;90%;156,365;90%;Sin Tope
 [HOSPITALARIA] MEDICAMENTOS : Para los siguientes eventos :
-Apendicectomia- Hospitaización por Meumonia;90%;195,456;90%;234,547
-MAT. CLÍNICOS: Para los siguientes eventos : (B);;;;
 Apendicectomia- Hospitaización por Meumonia;90%;390,912;90%;469,094
+MAT. CLÍNICOS: Para los siguientes eventos : (B);;;;
+Apendicectomia- Hospitaización por Meumonia;90%;195,456;90%;234,547
 [AMBULATORIA] CONSULTAS:
-Consulta Psiquiatrica (A);70%;5,701;;
-Consulta Médica de Urgencia;70%;9,501;70%;Sin Tope
 Consulta Médica electiva ;70%;7,601;70%;Sin Tope
+Consulta Médica de Urgencia;70%;9,501;70%;Sin Tope
+Consulta Psiquiatrica (A);70%;5,701;;
 [AMBULATORIA] EX¶MENES Y PROCEDIMIENTOS:
-Rodillera, bota larga o corta de yeso;70%;13,291;;
-Hemodiálisis con insumos incluidos;70%;39,612;;
-Gastroduodenoscopía;70%;50,688;;
-Ecocardiograma Doppler;70%;50,037;;
-Electrocardiograma de reposo;70%;4,952;;
-Exporacón Vitreorretinal;70%;4,691;;
-Estudio Histopatológico corriente;70%;15,050;70%;Sin Tope
-Citodiagnóstico Corriente;70%;5,733;70%;Sin Tope
-Densitometría Osea;70%;30,231;;
-Orina Completa;70%;1,955;70%;Sin Tope
-Urocultvo;70%;3,475;70%;Sin Tope
-Perfil Bioquímico;70%;12,162;70%;Sin Tope
-Estudio de Lípidos Sanguneos;70%;5,864;70%;Sin Tope
 Hemograma;70%;2,823;70%;Sin Tope
+Estudio de Lípidos Sanguneos;70%;5,864;70%;Sin Tope
+Perfil Bioquímico;70%;12,162;70%;Sin Tope
+Urocultvo;70%;3,475;70%;Sin Tope
+Orina Completa;70%;1,955;70%;Sin Tope
+Densitometría Osea;70%;30,231;;
+Citodiagnóstico Corriente;70%;5,733;70%;Sin Tope
+Estudio Histopatológico corriente;70%;15,050;70%;Sin Tope
+Exporacón Vitreorretinal;70%;4,691;;
+Electrocardiograma de reposo;70%;4,952;;
+Ecocardiograma Doppler;70%;50,037;;
+Gastroduodenoscopía;70%;50,688;;
+Hemodiálisis con insumos incluidos;70%;39,612;;
+Rodillera, bota larga o corta de yeso;70%;13,291;;
 [AMBULATORIA] IMAGENOLOGIA:
-Ecotomografía Ginecológica;70%;14,116;70%;Sin Tope
-Ecotomografía Abdominal;70%;26,821;70%;Sin Tope
-TAC de cerebro;70%;67,758;70%;Sin Tope
-Radiografía de brazo,codo,muñeca o sim.;70%;9,881;70%;Sin Tope
-Mamografía Bilateral;70%;22,868;70%;Sin Tope
 Radiografía de Tórax;70%;19,763;70%;Sin Tope
+Mamografía Bilateral;70%;22,868;70%;Sin Tope
+Radiografía de brazo,codo,muñeca o sim.;70%;9,881;70%;Sin Tope
+TAC de cerebro;70%;67,758;70%;Sin Tope
+Ecotomografía Abdominal;70%;26,821;70%;Sin Tope
+Ecotomografía Ginecológica;70%;14,116;70%;Sin Tope
 [AMBULATORIA] MEDICINA F¶SICA:
-Reeducación Motriz (A);70%;1,042;;
 Ejercicios Respiratorios (A);70%;1,564;;
+Reeducación Motriz (A);70%;1,042;;

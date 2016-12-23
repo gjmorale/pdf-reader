@@ -1,68 +1,68 @@
 ATENCIÓN;% DE BONIFICACIÓN;TOPE;% DE BONIFICACIÓN;TOPE
 [HOSPITALARIA] PARTO NORMAL:
-Visita del Neoatólogo;18,75%;992;;
-Ateció Imediata del recié acido;18,75%;17.167;;
-Hoorarios Matroa;18,75%;8.140;;
-Hoorarios Médicos;18,75%;162.063;;
-Derecho de Pabelló 6;17,5%;124.616;;
+Derecho de Pabellón 6;17,5%;124.616;;
+Honorarios Médicos;18,75%;162.063;;
+Honorarios Matrona;18,75%;8.140;;
+Atención Inmediata del recién nacido;18,75%;17.167;;
+Visita del Neonatólogo;18,75%;992;;
 [HOSPITALARIA] PARTO POR CESAREA:
-Visita del Neoatólogo;18,75%;5.992;;
-Ateció Imediata del recié acido;18,75%;7.167;;
-Hoorarios Matroa;18,75%;8.140;;
-Hoorarios Médicos;18,75%;01.618;;
-Derecho de Pabelló 7;17,5%;51.329;;
+Derecho de Pabellón 7;17,5%;51.329;;
+Honorarios Médicos;18,75%;01.618;;
+Honorarios Matrona;18,75%;8.140;;
+Atención Inmediata del recién nacido;18,75%;7.167;;
+Visita del Neonatólogo;18,75%;5.992;;
 [HOSPITALARIA] APENDICENTOMIA:
-Hoorarios Médicos(E);75%;807.444;75%;SIN TOPE
-Derecho de Pabelló 7(E);70%;605.317;70%;SIN TOPE
+Derecho de Pabellón 7(E);70%;605.317;70%;SIN TOPE
+Honorarios Médicos(E);75%;807.444;75%;SIN TOPE
 [HOSPITALARIA] COLECISTECTOMIA POR VIDEOLAPAROSCOPIA:
-Hoorarios Médicos(E);75%;1.516.878;75%;SIN TOPE
-Derecho de Pabelló 10(E);70%;96.941;70%;SIN TOPE
+Derecho de Pabellón 10(E);70%;96.941;70%;SIN TOPE
+Honorarios Médicos(E);75%;1.516.878;75%;SIN TOPE
 [HOSPITALARIA] HISTERECTOMIA TOTAL:
-Hoorarios Médicos(E);75%;1.141.015;75%;SIN TOPE
-Derecho de Pabelló 8(E);70%;65.510;70%;SIN TOPE
+Derecho de Pabellón 8(E);70%;65.510;70%;SIN TOPE
+Honorarios Médicos(E);75%;1.141.015;75%;SIN TOPE
 [HOSPITALARIA] AMIGDALECTOMIA:
-Hoorarios Médicos(E);75%;14.790;75%;SIN TOPE
-Derecho de Pabelló 5(E);70%;327.180;70%;SIN TOPE
+Derecho de Pabellón 5(E);70%;327.180;70%;SIN TOPE
+Honorarios Médicos(E);75%;14.790;75%;SIN TOPE
 [HOSPITALARIA] CIRUGIA CARDIACA DE COMPLEJIDAD MAYOR:
-Hoorarios Médicos(E);75%;4.398.273;75%;SIN TOPE
-Derecho de Pabelló 14(E);70%;1.869.292;70%;SIN TOPE
+Derecho de Pabellón 14(E);70%;1.869.292;70%;SIN TOPE
+Honorarios Médicos(E);75%;4.398.273;75%;SIN TOPE
 [HOSPITALARIA] EXTIRPACION DE TUMOR Y/O QUISTE ENCEFALICO:
-Hoorarios Médicos(E);75%;127.926;75%;SIN TOPE
-Derecho de Pabelló 12(E);70%;388.623;70%;SIN TOPE
+Derecho de Pabellón 12(E);70%;388.623;70%;SIN TOPE
+Honorarios Médicos(E);75%;127.926;75%;SIN TOPE
 [HOSPITALARIA] DIAS CAMA:
-U.T.I. Neoatal;17,5%;04.990;;
-U.T.I. Pediatría;17,5%;104.990;;
+Medicina y/o Cirugía(E);70%;99.599;70%;SIN TOPE
+Sala cuna;70%;2.044;;
 U.T.I. Adulto(E);70%;419.438;70%;SIN TOPE
-Sala cua;70%;2.044;;
-Medicia y/o Cirugía(E);70%;99.599;70%;SIN TOPE
+U.T.I. Pediatría;17,5%;104.990;;
+U.T.I. Neonatal;17,5%;04.990;;
 [HOSPITALARIA] MEDICAMENTOS Y MAT. CLINICOS, Para los siguientes eventos::
-Hospitalizació por Neumoía (B)(E);70%;1.615.228;70%;SIN TOPE
-Apedicectomía (B)(E);70%;615.228;70%;SIN TOPE
+Apendicectomía (B)(E);70%;615.228;70%;SIN TOPE
+Hospitalización por Neumonía (B)(E);70%;1.615.228;70%;SIN TOPE
 [AMBULATORIA] CONSULTAS:
-Cosulta psiquiátrica (A);70%;2.244;;
-Cosulta médica electva o urgecia(E);70%;3.707;70%;SIN TOPE
+Consulta médica electva o urgencia(E);70%;3.707;70%;SIN TOPE
+Consulta psiquiátrica (A);70%;2.244;;
 [AMBULATORIA] EXAMENES Y PROCEDIMIENTOS:
-Rodillera, bota larga o corta de yeso(E);70%;31.216;70%;SIN TOPE
-Hemodiálisis co sumos icluídos(E);70%;9.733;70%;SIN TOPE
-Gastroduodeoscopía(E);70%;226.501;70%;SIN TOPE
-Ecocardiograma Doppler(E);70%;63.334;70%;SIN TOPE
-Electrocardiograma de reposo(E);70%;6.842;70%;SIN TOPE
-Exploració vitreorretial(E);70%;616;70%;SIN TOPE
-Estudio histopatológico corriete(E);70%;3.993;70%;SIN TOPE
-Citodiagóstico corriete(E);70%;969;70%;SIN TOPE
-Desitometría ósea(E);70%;46.810;70%;SIN TOPE
-Oria Completa;70%;2.384;;
-Urocultivo;70%;3.992;;
-Perfil bioquímico;70%;621;;
-Estudio de lípidos saguíeos;70%;7.974;;
 Hemograma;70%;3.628;;
+Estudio de lípidos sanguíneos;70%;7.974;;
+Perfil bioquímico;70%;621;;
+Urocultivo;70%;3.992;;
+Orina Completa;70%;2.384;;
+Densitometría ósea(E);70%;46.810;70%;SIN TOPE
+Citodiagnóstico corriente(E);70%;969;70%;SIN TOPE
+Estudio histopatológico corriente(E);70%;3.993;70%;SIN TOPE
+Exploración vitreorretinal(E);70%;616;70%;SIN TOPE
+Electrocardiograma de reposo(E);70%;6.842;70%;SIN TOPE
+Ecocardiograma Doppler(E);70%;63.334;70%;SIN TOPE
+Gastroduodenoscopía(E);70%;226.501;70%;SIN TOPE
+Hemodiálisis con nsumos incluídos(E);70%;9.733;70%;SIN TOPE
+Rodillera, bota larga o corta de yeso(E);70%;31.216;70%;SIN TOPE
 [AMBULATORIA] IMAGENOLOGIA:
-Ecotomografía giecológica;70%;14.473;;
-Ecotomografía abdomial;70%;7.384;;
-Tomografía axial computarizada de cerebro;70%;77.802;;
-Radiografía de brazo, codo, muñeca o similares;70%;9.475;;
-Mamografía blateral;70%;23.587;;
 Radiografía de tórax;70%;7.204;;
+Mamografía blateral;70%;23.587;;
+Radiografía de brazo, codo, muñeca o similares;70%;9.475;;
+Tomografía axial computarizada de cerebro;70%;77.802;;
+Ecotomografía abdominal;70%;7.384;;
+Ecotomografía ginecológica;70%;14.473;;
 [AMBULATORIA] MEDICINA FISICA:
-Reeducació motriz (A);70%;366;;
 Ejercicios respiratorios (A);70%;328;;
+Reeducación motriz (A);70%;366;;

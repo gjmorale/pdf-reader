@@ -1,0 +1,72 @@
+ATENCIÓN;% DE BONIFICACIÓN;TOPE;% DE BONIFICACIÓN;TOPE
+[HOSPITALARIA] PARTO NORMAL:
+Derecho De Pabellon 6                                 ;(E)90%;235.834;70%;Sin Tope
+Honorarios Medicos                            ;(E)90%;484.651;70%;Sin Tope
+Honorarios Matrona                                          ;(E)90%;161.547;70%;Sin Tope
+Atencion Inmediata Recien Nacido;(E)90%;58.289;70%;Sin Tope
+Visita Neonatologo                                          ;(E)90%;43.668;70%;Sin Tope
+[HOSPITALARIA] PARTO POR CESAREA:
+Derecho De Pabellon 7                      ;(E)90%;332.978;70%;Sin Tope
+Honorarios Medicos                                          ;(E)90%;592.882;70%;Sin Tope
+Honorarios Matrona                                          ;(E)90%;161.547;70%;Sin Tope
+Atencion Inmediata Recien Nacido;(E)90%;58.289;70%;Sin Tope
+Visita Neonatologo                                          ;(E)90%;43.668;70%;Sin Tope
+[HOSPITALARIA] APENDICECTOMIA:
+Derecho De Pabellon 7;(E)90%;332.978;70%;Sin Tope
+Honorarios Medicos         ;(E)90%;581.100;70%;Sin Tope
+[HOSPITALARIA] COLECISTECTOMIA POR VIDEOLAPAROSCOPIA:
+Derecho De Pabellon 10;(E)90%;757.625;70%;Sin Tope
+Honorarios Medicos            ;(E)90%;1.054.009;70%;Sin Tope
+[HOSPITALARIA] HISTEROCTOMIA TOTAL:
+Derecho De Pabellon 8;(E)90%;471.736;70%;Sin Tope
+Honorarios Medicos      ;(E)90%;926.593;70%;Sin Tope
+[HOSPITALARIA] AMIGDALECTOMIA:
+Derecho De Pabellon 5;(E)90%;166.472;70%;Sin Tope
+Honorarios Medicos      ;(E)90%;310.549;70%;Sin Tope
+[HOSPITALARIA] CIRUGIA CARDIACA DE COMPLEJIDAD MAYOR:
+Derecho De Pabellon 14;(E)90%;1.526.184;70%;Sin Tope
+Honorarios Medicos        ;(E)90%;3.237.371;70%;Sin Tope
+[HOSPITALARIA] EXTIRPACION DE TUMOR Y/O QUISTE ENCEFALICO Y DE HIPOFISIS:
+Derecho De Pabellon 12;(E)90%;1.165.423;70%;Sin Tope
+Honorarios Medicos            ;(E)90%;1.581.028;70%;Sin Tope
+[HOSPITALARIA] DIAS CAMA:
+Medicina                      ;(E)90%;259.931;70%;Sin Tope
+Sala Cuna                              ;(E)90%;93.575;70%;Sin Tope
+U.T.I. Adulto                  ;(E)90%;415.889;70%;Sin Tope
+U.T.I. Pediatria      ;(E)90%;415.889;70%;Sin Tope
+U.T.I. Neonatologia;(E)90%;415.889;70%;Sin Tope
+[HOSPITALARIA] MEDICAMENTOS (B):
+Apendicectomia                                          ;(E)90%;2.729.270;70%;Sin Tope
+Hospitalizacion Por Neumonia;(E)90%;2.729.270;70%;Sin Tope
+[HOSPITALARIA] MATERIALES CLINICOS (B):
+Apendicectomia                                          ;(E)90%;      1.559.583            ;70%;Sin Tope                        
+Hospitalizacion Por Neumonia;(E)90%;1.559.583                                    ;70%;Sin Tope                                                
+PRESTACIONES AMBULATORIAS      ;;;;
+[AMBULATORIA] CONSULTAS MEDICAS:
+Consulta Medica Electiva O Urgencia;(E)70%;36.390;90%;Sin Tope                        
+Consulta Psiquiatrica (A)                              ;70%;36.390;;
+[AMBULATORIA] EXAMENES Y PROCEDIMIENTOS:
+Hemograma                                                                                                ;(E)70%;3.385;90%;Sin Tope
+Estudio Lipidos Sanguineos                                             ;(E)70%;6.837;90%;Sin Tope
+Perfil Bioquimico                                                ;(E)70%;6.395;90%;Sin Tope
+Urocultivo                                                                                             ;(E)70%;3.421;90%;Sin Tope
+Orina Completa                                                      ;(E)70%;2.051;90%;Sin Tope
+Densitometria Osea                                                                     ;(E)70%;44.347;90%;Sin Tope
+Citodiagnostico Corriente                                                ;(E)70%;7.090;90%;Sin Tope
+Estudio Histopatologico Corriente                ;(E)70%;11.115;90%;Sin Tope
+Exploracion Vitreorretinal                                             ;(E)70%;5.868;90%;Sin Tope
+Electrocardiograma De Reposo                                       ;(E)70%;6.526;90%;Sin Tope
+Ecocardiograma Doppler                                      ;(E)70%;56.277;90%;Sin Tope
+Gastroduodenoscopia (Incluye Pabellon 3 );(E)70%;46.123;90%;Sin Tope
+Hemodialisis Con Insumos Incluidos              ;(E)70%;56.277;90%;Sin Tope
+Rodillera, Bota Larga O Corta De Yeso            ;(E)70%;23.494;90%;Sin Tope
+[AMBULATORIA] IMAGENOLOGIA:
+Radiografia De Torax                                          ;(E)70%;24.035;90%;Sin Tope
+Mamografia Bilateral                                                               ;(E)70%;25.678;90%;Sin Tope
+Radiografia Brazo,Codo,Mu?Eca O Similar      ;(E)70%;10.446;90%;Sin Tope
+Tomografia Axial Computarizada De Cerebro;(E)70%;74.491;90%;Sin Tope
+Ecotomografia Abdominal                                                      ;(E)70%;30.468;90%;Sin Tope
+Ecotomografia Ginecologica                              ;(E)70%;15.674;90%;Sin Tope
+[AMBULATORIA] MEDICINA FISICA:
+Ejercicios Respiratorios (A);(E)70%;2.992;90%;Sin Tope
+Reeducacion Motriz (A)                                                                                                                              ;(E)70%;1.424;90%;Sin Tope

@@ -27,7 +27,7 @@ class Multiline < String
 	def initialize(strings)
 		legacy = ""
 		strings.each do |s|
-			legacy << s
+			legacy << s if s
 		end
 		super legacy
 		@inline = legacy

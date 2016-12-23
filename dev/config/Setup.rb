@@ -20,6 +20,9 @@ module Setup
 		COLMENA = "COLMENA"
 		CONSALUD = "CONSALUD"
 		CRUZBLANCA = "CRUZBLANCA"
+		MASVIDA = "MASVIDA"
+		VIDATRES = "VIDA3"
+		BANMEDICA = "BANMEDICA"
 	end
 
 	# Field text alignment
@@ -62,6 +65,10 @@ module Setup
 
 		def self.center_mass_limit
 			@@center_mass_limit ||= Setup.inst.class::CENTER_MASS_LIMIT
+		end
+
+		def self.text_expand
+			@@text_expand ||= Setup.inst.class::TEXT_EXPAND
 		end
 	end
 
@@ -119,6 +126,15 @@ module Setup
 		when Format::CRUZBLANCA
 			puts "Cruz Blanca selected"
 			@@institution = CruzBlanca.new
+		when Format::MASVIDA
+			puts "Más Vida selected"
+			@@institution = MasVida.new
+		when Format::VIDATRES
+			puts "Vida Tres selected"
+			@@institution = VidaTres.new
+		when Format::BANMEDICA
+			puts "Banmedica selected"
+			@@institution = Banmedica.new
 		else
 			puts "Wrong input, try again or CTRL + C to exit"
 			return false
@@ -142,6 +158,7 @@ class Institution
 	VERTICAL_SEARCH_RANGE = 5
 	HORIZONTAL_SEARCH_RANGE = 15
 	CENTER_MASS_LIMIT = 0.40
+	TEXT_EXPAND = 0.5
 	WILDCHAR = '¶'
 	DATE_FORMAT = '\d\d\/\d\d\/\d\d\d\d'
 

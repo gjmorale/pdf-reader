@@ -16,7 +16,7 @@ class Medcare < Institution
 		file.write(heading)
 		@accounts.each do |account|
 			file.write(account.print)
-			account.elements.each do |record|
+			account.elements.reverse_each do |record|
 				file.write(record.print)
 			end
 		end

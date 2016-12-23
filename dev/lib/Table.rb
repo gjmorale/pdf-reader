@@ -105,7 +105,7 @@ class Table
 			end
 			@headers.each do |header|
 				rr = header.results[-n-1].result
-				r = rr == Result::NOT_FOUND ? " " : rr
+				r = rr == Result::NOT_FOUND ? "*" : rr
 				r = Multiline.generate ([" "]) if line.is_a? Multiline and r == " "
 				str = fit_in_space(r, get_header_size(header))
 				line << str
@@ -159,7 +159,7 @@ class Table
 			return false 
 		end
 		if @offset
-			unless reader.move_to @offset 
+			unless (@offset = reader.move_to @offset) 
 				puts "Couldn't find offset #{@offset}"
 			end
 		end

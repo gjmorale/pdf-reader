@@ -48,13 +48,15 @@ class Reader
 		original_page = @page
 		original_offset = @offset
 		counter = 0
-		while not read_next_field(field) and counter <= limit
+		match = read_next_field field
+		while not match and counter <= limit
 			counter += 1 if limit != 0
 			@page += 1
+			match = read_next_field(field)
 		end
-		if field.position?
-			@offset = field.position.y
-			return field
+		if match and match.position?
+			@offset = match.position.y
+			return match
 		else
 			@page = original_page
 			@offset = original_offset

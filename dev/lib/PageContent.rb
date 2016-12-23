@@ -32,7 +32,7 @@ class PageContent
 			end
 			line[from..-1].match(field.regex){|m|
 				xi = from + m.offset(0)[0]
-				xf = from + m.offset(0)[1] + field.text.length/2
+				xf = (from + m.offset(0)[1] + field.text.length*Setup::Read.text_expand).to_i
 				if m.is_a? MultiMatchData
 					width = (field.is_a? SingleField and field.enforced_width) ? field.width : m.offset[3]-m.offset[2]+1
 					if field.orientation > 7 or field.orientation < 3
@@ -175,6 +175,7 @@ class PageContent
 	#  1¶¶2.3%¶ => 12.3%
 	# ¶1¶¶2.3%¶ => 12.3%
 	def search_results_left(range, row, result)
+		#puts "Searching"
 		return true if range[2] >= range[3]
 		# Content line to be evaluated
 		line = Multiline.generate(@content.lines[row.yi..row.yf])
@@ -204,7 +205,7 @@ class PageContent
 			stripped_text = RegexHelper.strip_wildchar text
 
 			if stripped_text != last_match 
-				puts stripped_text if stripped_text.match(/Si Tope/)
+				#puts "#{text}" if stripped_text and counter > 230
 				if stripped_text.match regex 
 					detected = true
 					tolerance = 0
@@ -284,6 +285,7 @@ class PageContent
 		line = Multiline.generate @content.lines[row.yi..row.yf]
 		if result.right >= result_n.left #Overstepping
 			limit = result_n.left
+			solved = false
 			while limit <= result.outer_right
 				left = RegexHelper.strip_wildchar line[result.left..limit-1]
 				right = RegexHelper.strip_wildchar line[limit..result_n.right]
@@ -292,11 +294,16 @@ class PageContent
 					result_n.left = limit
 					result.result = left
 					result_n.result = right
+					solved = true
 					break
 				else
 					limit += 1
 				end 
-			end 
+			end
+			unless solved
+				result_n.left = result.right + 1
+				result_n.result = Result::NOT_FOUND
+			end
 		end
 
 		if result.result == Result::NOT_FOUND
@@ -308,7 +315,6 @@ class PageContent
 				text = RegexHelper.strip_wildchar(line[result_n.left - 1 - i .. result_n.left - 1])
 				#puts text.strings if not text.empty?
 				if text != result.result and text.match result.regex
-					#puts "SETTED!!"
 					result.result = text
 					result.left = result_n.left - 1 - i
 				end
