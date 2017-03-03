@@ -70,6 +70,16 @@ class MorganStanley < Bank
 				analyse_etfs
 				analyse_alternative_investments
 			end
+			get_grand_total
+		end
+
+		def get_grand_total
+			@reader.go_to 1
+			total = SingleField.new("$", [Setup::Type::AMOUNT])
+			total.execute @reader
+			acumulated = 0
+			accounts.map{|p| acumulated += p.value}
+			puts "GRAND TOTAL: #{total.results[0].result} vs #{acumulated}".red
 		end
 
 		def analyse_cash
@@ -597,8 +607,8 @@ class MorganStanley < Bank
 				original_page = @reader.page
 				if table.execute @reader and table.width > 1
 					yield table
-					puts "\n" 
-					table.print_results
+					#puts "\n" 
+					#table.print_results
 				else
 					@reader.go_to original_page, original_offset
 				end 
