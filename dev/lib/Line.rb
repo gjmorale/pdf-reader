@@ -17,7 +17,7 @@ class Multiline < String
 
 	def self.generate str, remove_n = true
 		if str.is_a? Array
-			str = str.map {|s| s = s.delete('\n')} if remove_n
+			str = str.map {|s| s = s.delete("\n")} if remove_n
 			return  Multiline.new(str)
 		else
 			return str

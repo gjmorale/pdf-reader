@@ -32,7 +32,7 @@ class MorganStanley < Bank
 		when Setup::Type::LABEL
 			'.+'
 		when Setup::Type::DATE
-			'\(?\d{1,2}\/\d{2}\/\d{2}\)?'
+			'(\(?\d{1,2}\/\d{1,2}\/\d{2}\)?|(?:\342\200\224)){1}'
 		when Setup::Type::FLOAT
 			'(\(?(?:[1-9]{1}\d*|0)\.\d+\)?|(?:\342\200\224)){1}'
 		when Custom::ACC_CODE
@@ -40,7 +40,7 @@ class MorganStanley < Bank
 		when Custom::PAGE
 			'[1-9][0-9]*'
 		when Custom::DATE_OR_TOTAL
-			'(\d{1,2}\/\d{1,2}\/\d{2}|Total){1}\s*'
+			'(\d{1,2}\/\d{1,2}\/\d{2}|Total|(?:\342\200\224)){1}\s*'
 		when Custom::AMOUNT_W_TERM
 			'([$]?\(?[0-9]{1,3}(?:,?[0-9]{3})*\.[0-9]{2}\)?(\s*(LT|ST))|(?:\342\200\224)){1}\s*'
 		end
@@ -93,7 +93,7 @@ class MorganStanley < Bank
 				end
 			end
 			if present
-				total = SingleField.new("CASH, BDP, AND MMFs",[Setup::Type::PERCENTAGE, Setup::Type::AMOUNT, Setup::Type::AMOUNT])
+				total = SingleField.new("CASH, BDP, AND MMFs",[Setup::Type::PERCENTAGE, Setup::Type::AMOUNT, Setup::Type::AMOUNT], 2)
 				total.execute @reader
 				acumulated = 0
 				new_positions.map{|p| acumulated += p.value}
@@ -167,7 +167,7 @@ class MorganStanley < Bank
 					Custom::AMOUNT_W_TERM, 
 					Setup::Type::AMOUNT, 
 					Setup::Type::PERCENTAGE], 
-					4, Setup::Align::LEFT)
+					6, Setup::Align::LEFT)
 				total.execute @reader
 				acumulated = 0
 				new_positions.map{|p| acumulated += p.value}
@@ -248,7 +248,7 @@ class MorganStanley < Bank
 					Setup::Type::AMOUNT, 
 					Custom::AMOUNT_W_TERM, 
 					Setup::Type::AMOUNT], 
-					4, Setup::Align::LEFT)
+					5, Setup::Align::LEFT)
 				total.execute @reader
 				acumulated = 0
 				new_positions.map{|p| acumulated += p.value}
@@ -256,7 +256,7 @@ class MorganStanley < Bank
 				new_positions.map{|p| @positions << p }
 				return new_positions
 			else 
-				puts "STOCKS table is missing."
+				puts "FIXED INCOME table is missing."
 			end
 		end
 
@@ -534,9 +534,9 @@ class MorganStanley < Bank
 		end
 
 		def accounts_table
-			table_end = Field.new("Total Business Accounts")
+			table_end = [Field.new("Total Business Accounts"),Field.new("Total Personal Accounts")]
 			search = Field.new("OVERVIEW OF YOUR ACCOUNT")
-			offset = Field.new("Business Accounts")
+			offset = [Field.new("Business Accounts"),Field.new("Personal Accounts")]
 			headers = []
 			headers << HeaderField.new("Account Number", headers.size, Custom::ACC_CODE, false)
 			headers << HeaderField.new("Beginning Value", headers.size, Setup::Type::INTEGER)
@@ -556,6 +556,7 @@ class MorganStanley < Bank
 				end
 			end
 			if present
+				#TODO: check total from accounts
 				total = SingleField.new("Total Business Accounts",to_arr(Setup::Type::INTEGER, 3))
 				total.execute @reader
 				return new_accounts
@@ -566,9 +567,8 @@ class MorganStanley < Bank
 
 		def single_account
 			@reader.go_to(3)
-			code = SingleField.new("Account detail", [Custom::ACC_CODE], 4)
+			code = SingleField.new("Account Detail", [Custom::ACC_CODE], 4)
 			code.execute @reader
-			puts "RESULT: #{code.results[0].result}"
 			code_s = parse_account code.results[0].result
 			value = SingleField.new("TOTAL VALUE", [Setup::Type::AMOUNT])
 			value.execute @reader
@@ -590,11 +590,20 @@ class MorganStanley < Bank
 				cloned_table_end = clone_it table_end
 				cloned_headers = clone_it headers
 				cloned_offset = clone_it offset
-				bottom = @reader.read_next_field(cloned_table_end) ? cloned_table_end : nil
+				bottom = @reader.read_next_field(cloned_table_end)
+				bottom = nil unless bottom
 				table = Table.new(cloned_headers, bottom, cloned_offset, skips)
-				aux = @reader.page
-				yield table if table.execute @reader
+				original_offset = @reader.offset
+				original_page = @reader.page
+				if table.execute @reader and table.width > 1
+					yield table
+					puts "\n" 
+					table.print_results
+				else
+					@reader.go_to original_page, original_offset
+				end 
 				@reader.go_to(@reader.page + 1) if bottom.nil?
+				#@reader.print 30
 			end
 			if present
 				return true

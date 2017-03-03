@@ -32,6 +32,7 @@ class PageContent
 			end
 			#puts "#{RegexHelper.strip_wildchar(line[from..-1]).to_s}<"
 			line[from..-1].match(field.regex){|m|
+				#puts "match".green
 				xi = from + m.offset(0)[0]
 				xf = from + m.offset(0)[1] + field.text.length/2
 				if m.is_a? MultiMatchData
@@ -51,7 +52,7 @@ class PageContent
 				matched = true
 			}
 			break if matched
-		end 
+		end
 		if matched
 			scope = field.width > 1 ? @content.lines[field.top, field.width] : @content.lines[field.top]
 			text = Multiline.generate scope
@@ -151,9 +152,9 @@ class PageContent
 		yf = table_range[3]
 		index = 0
 		regex = Setup.inst.get_regex(guide.type, false)
-		debug = nil
 		#puts "Looking for a row #{yf-index} >= #{yi} in #{xi} - #{xf} = #{xf-xi} (#{@number})"
 		while yf - index >= yi
+			#puts "#{yf} - #{index} >= #{yi}"
 			range = (index == 0 ? yf : (yf - index..yf))
 			text = Multiline.generate @content.lines[range]
 			text = text[xi..xf]
@@ -318,6 +319,18 @@ class PageContent
 			end
 			return (result.result != Result::NOT_FOUND)
 		end
+	end
+
+	def print range, offset, start, show
+		top = offset - range
+		bottom = range + offset
+		top = 0 if top < 0
+		bottom = @line_height - 1 unless bottom < @line_height
+		start = @line_size - show - 1 unless start < @line_size - show
+		@content.lines[top..bottom].each.with_index do |line, i|
+			prefix = i == range ? ">" : " "
+			puts "#{prefix}#{line[start,show]}"
+		end 
 	end
 
 end

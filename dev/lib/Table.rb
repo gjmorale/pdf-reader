@@ -78,6 +78,7 @@ class Table
 	end
 
 	def print_results
+		return if @headers_row.nil?
 		if @headers_row.multiline?
 			line = []
 			@headers_row.width.times.map {|n| line[n] = "|"}
@@ -150,20 +151,17 @@ class Table
 	def execute reader
 		set_headers_width
 		first_header = @headers.sort.first
-		slidder = @headers.map{|h| h.width}.max - 1
-		reader.move_to first_header, 1
-		reader.slide_up slidder
+		#slidder = @headers.map{|h| h.width}.max - 1
+		#reader.slide_up slidder
 		@headers_row = reader.set_header_limits(@headers)
 		return false unless @headers_row
-		reader.move_to @offset if @offset
+		@offset = nil if @offset and not reader.move_to @offset 
 		@bottom = reader.read_next_field @bottom if @bottom
 		set_range reader.line_size, reader.line_height
 		set_borders
-		#@headers.map{|h| puts "[#{h.left},#{h.right}]"}
 		@rows = reader.get_rows(@range, get_guide, @skips)
 		set_results
 		reader.get_columns(@headers, @rows)
-		#print_results
 		reader.correct_results(@headers, @rows)
 		reader.skip self
 		return true

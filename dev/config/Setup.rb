@@ -195,6 +195,7 @@ class Institution
 		delta = delta * delta
 		if delta > 1
 			puts "CHECK #{acumulated.round(2)} - #{stated}".red
+			raise CustomError::NO_MATCH
 		else
 			puts "CHECK #{acumulated.round(2)} - #{stated}".green
 		end
