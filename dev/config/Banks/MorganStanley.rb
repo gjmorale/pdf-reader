@@ -1,3 +1,4 @@
+require_relative "Bank.rb"
 class MorganStanley < Bank
 
 	DIR = "MS"
@@ -520,8 +521,10 @@ class MorganStanley < Bank
 		def check_multiple_accounts
 			consolidated = Field.new("Consolidated Summary")
 			if consolidated.execute @reader
+				puts "MULTIPLE"
 				@accounts = accounts_table
 			else
+				puts "SINGLE"
 				@accounts = []
 				@accounts << single_account
 			end
@@ -563,8 +566,9 @@ class MorganStanley < Bank
 
 		def single_account
 			@reader.go_to(3)
-			code = SingleField.new("Account Summary", [Custom::ACC_CODE], 4)
+			code = SingleField.new("Account detail", [Custom::ACC_CODE], 4)
 			code.execute @reader
+			puts "RESULT: #{code.results[0].result}"
 			code_s = parse_account code.results[0].result
 			value = SingleField.new("TOTAL VALUE", [Setup::Type::AMOUNT])
 			value.execute @reader

@@ -1,3 +1,4 @@
+require_relative "Bank.rb"
 class HSBC < Bank
 
 	DIR = "HSBC"

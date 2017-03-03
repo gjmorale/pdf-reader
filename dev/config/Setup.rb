@@ -164,6 +164,7 @@ class Institution
 
 	def to_number str
 		str = str.inspect if str.is_a? Multiline
+		return 0.0 if str.nil? or str.empty?
 		str = str.strip
 		str = str.delete('$')
 		str = str.delete(',')

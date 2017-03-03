@@ -30,6 +30,7 @@ class PageContent
 			if field.width > 1
 				line = Multiline.generate @content.lines[y, field.width]
 			end
+			#puts "#{RegexHelper.strip_wildchar(line[from..-1]).to_s}<"
 			line[from..-1].match(field.regex){|m|
 				xi = from + m.offset(0)[0]
 				xf = from + m.offset(0)[1] + field.text.length/2
