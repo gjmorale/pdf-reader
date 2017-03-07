@@ -20,4 +20,4 @@ class Position
 		"#{@name};#{@quantity.to_s.sub('.',',')};#{@price.to_s.sub('.',',')};#{@value.to_s.sub('.',',')};#{@extra}\n"
 	end
 
-end
+end 

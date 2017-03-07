@@ -1,11 +1,13 @@
 class AccountMS < Account
 
 	attr_accessor :value
+	attr_accessor :positions
 	attr_reader :code
 
 	def initialize code, value
 		@code = code.strip
 		@value = value
+		@positions = []
 	end
 
 	def to_s
@@ -14,6 +16,18 @@ class AccountMS < Account
 
 	def inspect
 		to_s
+	end
+
+	def pos_value
+		acumulated = 0
+		positions.map{|p| acumulated += p.value}
+		acumulated
+	end
+
+	def add_pos pos
+		if pos
+			@positions += pos
+		end
 	end
 
 end
