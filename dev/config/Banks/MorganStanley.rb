@@ -1,16 +1,14 @@
 require_relative "Bank.rb"
 class MorganStanley < Bank
+	DIR = "MS"
 end
 
 Dir[File.dirname(__FILE__) + '/MS/*.rb'].each {|file| require_relative file }
 
 MorganStanley.class_eval do
 
-
-	DIR = "MS"
-
 	def dir
-		DIR
+		self.class::DIR
 	end
 
 	HEADER_ORIENTATION = 6
@@ -60,7 +58,6 @@ MorganStanley.class_eval do
 			check_multiple_accounts
 			last_acc = ""
 			code_s = ""
-			@positions = []
 			@accounts.reverse_each do |account|
 				Field.new("Account Summary").execute @reader
 				Field.new("Account Detail").execute @reader
@@ -134,7 +131,6 @@ MorganStanley.class_eval do
 				acumulated = 0
 				new_positions.map{|p| acumulated += p.value}
 				check acumulated, to_number(total.results[1].result)
-				new_positions.map{|p| @positions << p }
 				return new_positions
 			else 
 				puts "Cash, BDP and MMFs table is missing."
@@ -208,7 +204,6 @@ MorganStanley.class_eval do
 				acumulated = 0
 				new_positions.map{|p| acumulated += p.value}
 				check acumulated, to_number(total.results[2].result)
-				new_positions.map{|p| @positions << p }
 				return new_positions
 			else 
 				puts "STOCKS table is missing."
@@ -282,7 +277,6 @@ MorganStanley.class_eval do
 				acumulated = 0
 				new_positions.map{|p| acumulated += p.value}
 				check acumulated, to_number(total.results[2].result)
-				new_positions.map{|p| @positions << p }
 				return new_positions
 			else 
 				puts "STOCKS alternative table is missing."
@@ -440,7 +434,6 @@ MorganStanley.class_eval do
 				acumulated = 0
 				new_positions.map{|p| acumulated += p.value}
 				check acumulated, (to_number(total.results[3].result) + to_number(accured_interest(total.results[5].result)))
-				new_positions.map{|p| @positions << p }
 				return new_positions
 			else 
 				puts "GOVERNMENT SECURITIES table is missing."

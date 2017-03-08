@@ -23,6 +23,7 @@ class PageContent
 	# Once the field is found, it sets it's position and
 	# width if it's multiline
 	def search_next(field, offset, from)
+		#puts "LOOKING FOR #{field}"
 		xi = 0
 		matched = false
 		@content.lines[offset..@content.lines.size-field.width].each.with_index do |line, y_full|
@@ -54,6 +55,7 @@ class PageContent
 			break if matched
 		end
 		if matched
+			#puts "CUAK: #{field.top}, #{field.width} [#{field.right}, #{field.left}]".yellow
 			scope = field.width > 1 ? @content.lines[field.top, field.width] : @content.lines[field.top]
 			text = Multiline.generate scope
 			index = field.right

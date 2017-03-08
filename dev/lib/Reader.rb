@@ -109,19 +109,16 @@ class Reader
 		row = Row.new
 		last = 0
 		headers.each do |header|
-<<<<<<< HEAD
-			return nil unless read_next_field header, last, true
-=======
 			#puts "#{header.text}"
 			#print 10, 10
 			#print header.width, last, 100
 			found = read_next_field header, last
-			#unless found
-			#	puts "NOT FOUND: #{header.text}".red
-			#end
+			unless found
+				puts "NOT FOUND: #{header.text} #{last}-#{@offset} : #{@page}".red
+				#print 7
+			end
 			return nil unless found
 			#raise unless read_next_field header, last
->>>>>>> master
 			row.yi = row.yi ? [header.top, row.yi].min : header.top
 			row.yf = row.yf ? [header.bottom, row.yf].max : header.bottom
 			last = header.right

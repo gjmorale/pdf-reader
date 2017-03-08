@@ -1,10 +1,14 @@
 require_relative "Bank.rb"
 class HSBC < Bank
-
 	DIR = "HSBC"
+end
+
+Dir[File.dirname(__FILE__) + '/HSBC/*.rb'].each {|file| require_relative file }
+
+HSBC.class_eval do
 
 	def dir 
-		DIR
+		self.class::DIR
 	end
 
 	module Custom
@@ -43,30 +47,42 @@ class HSBC < Bank
 		when Custom::GLITCH_AMOUNT
 			'(.*)'
 		when Setup::Type::FLOAT
-			'.*'
+			'[1-9]\d+\.\d{6}'
 		end
 	end
 
 	private
 
 		def analyse_position file
-			@accounts = []
-			@positions = []
 			@reader = Reader.new(file)
 			puts "\nSEARCHING ACCOUNTS"
-			recognize_accounts
+			@accounts, grand_total = recognize_accounts
 			@accounts.reverse_each do |account|
 				puts "\nSEARCHING LIQUIDITY FOR #{account}"
-				liquidity_for(account)
+				account.add_pos liquidity_for(account)
 				puts "\nSEARCHING FIXED INCOME FOR #{account}"
-				fixed_income_for(account)
+				account.add_pos fixed_income_for(account)
 				puts "\nSEARCHING EQUITIES FOR #{account}"
-				equity_for(account)
+				account.add_pos equity_for(account)
 				puts "\nSEARCHING HEDGE FUNDS FOR #{account}"
-				hedge_funds_for(account)
+				account.add_pos hedge_funds_for(account)
+				puts "\nSEARCHING PRIVATE EQUITY FOR #{account}"
+				account.add_pos private_equity_for(account)
+				puts "\nSEARCHING REAL ESTATE FOR #{account}"
+				account.add_pos real_estate_for(account)
 				puts "\nSEARCHING OTHERS FOR #{account}"
-				others_for(account)
+				account.add_pos others_for(account)
+				puts "\nCHECKING NET ASSETS FOR #{account}"
+				check account.pos_value, account.value
 			end
+			puts "\nCHECKING TOTAL NET ASSETS"
+			acumulated = 0
+			@accounts.map{|a| acumulated += a.pos_value}
+			check acumulated, grand_total
+		end
+
+		def get_grand_total
+			total = SingleField.new("")
 		end
 
 		def recognize_accounts
@@ -80,19 +96,23 @@ class HSBC < Bank
 			bottom = Field.new("TOTAL PORTFOLIOS IN CREDIT")
 			table = Table.new(headers, bottom)
 			table.execute @reader
+			table.print_results
+			new_accounts = []
 			portfolio.results.each.with_index do |result, i|
 				account_data = parse_account(result.result)
 				account = AccountHSBC.new(account_data[0], account_data[1])
 				account.value = values.results[i].result.to_s.delete(',').to_f
-				@accounts << account
+				new_accounts << account
 			end
 			net_assets = SingleField.new("NET ASSETS",[Setup::Type::AMOUNT])
 			net_assets.execute @reader
 			total = 0
-			@accounts.each do |account|
+			new_accounts.each do |account|
 				total += account.value
 			end
-			check total.round(2), to_number(net_assets.results[0].result)
+			grand_total = to_number(net_assets.results[0].result)
+			check total.round(2), grand_total
+			return new_accounts, grand_total
 		end
 
 		def parse_account str
@@ -105,47 +125,6 @@ class HSBC < Bank
 			return account_data
 		end
 
-		def liquidity_for account
-			search = Field.new("Liquidity and Money Market - Portfolio #{account.code} - #{account.name}")
-			search.execute @reader
-			offset = Field.new("Current Accounts")
-			bottom = Field.new("Total")
-			headers = []
-			headers << HeaderField.new("Cur.", headers.size, Setup::Type::CURRENCY, true)
-			headers << HeaderField.new("Qty. / Balance", headers.size, Setup::Type::AMOUNT)
-			headers << HeaderField.new(["Description","ISIN / Reference"], headers.size, to_arr(Setup::Type::LABEL, 2), false, 4)
-			headers << HeaderField.new(["Mkt. value","incl. accr. int."], headers.size, to_arr(Setup::Type::AMOUNT, 2), false, 4)
-			headers << HeaderField.new(["Mkt. value (USD)","incl. accr. int."], headers.size, to_arr(Setup::Type::AMOUNT, 2), false, 4)
-			headers << HeaderField.new(["% Acc.","% Liq."], headers.size, to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
-			table = Table.new(headers, bottom, offset)
-			table.execute @reader
-			#table.print_results
-			new_positions = []
-			table.rows.each.with_index do |r,i|
-				results = table.headers.map{|h| h.results[i].result}
-				titles = parse_position results[2], 'ACCOUNT'
-
-				new_positions << Position.new(titles[0], 
-					to_number(results[1]), 
-					1.0,
-					to_number(results[4]), 
-					titles[1])
-			end
-			total = SingleField.new("Total",[Setup::Type::AMOUNT])
-			total.execute @reader
-			#total.print_results
-			acumulated = 0
-			new_positions.map{|p| acumulated += p.value}
-			check acumulated, to_number(total.results[0].result)
-			new_positions.map{|p| @positions << p }
-			
-			#TODO: Table Money Market might be missing
-
-			#global = SingleField.new("Total Liquidity and Money Market",[Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
-			#global.execute @reader
-			#global.print_results
-		end
-
 		def fixed_income_for account
 			table_end = Field.new("Total Fixed Income")
 			page_end = Field.new(" Account: ")
@@ -154,7 +133,7 @@ class HSBC < Bank
 			headers = []
 			headers << HeaderField.new("Cur.", headers.size, Setup::Type::CURRENCY, true)
 			headers << HeaderField.new("Qty. / Nominal", headers.size, Setup::Type::AMOUNT)
-			headers << HeaderField.new(["Description","ISIN / Reference"], headers.size, to_arr(Setup::Type::LABEL, 2), false, 4)
+			headers << HeaderField.new(["Description","ISIN / Reference"], headers.size, to_arr(Setup::Type::LABEL, 2), false, 5)
 			headers << HeaderField.new("Region", headers.size, Setup::Type::PERCENTAGE, false, 4)
 			headers << HeaderField.new(["Rating","Coupon"], headers.size, Setup::Type::PERCENTAGE, false, 4)
 			headers << HeaderField.new(["YTM / Duration","Maturity"], headers.size, Setup::Type::PERCENTAGE, false, 4)
@@ -183,7 +162,7 @@ class HSBC < Bank
 				acumulated = 0
 				new_positions.map{|p| acumulated += p.value}
 				check acumulated, to_number(total.results[0].result)
-				new_positions.map{|p| @positions << p }
+				return new_positions
 			else
 				puts " - No Fixed Income for this account"
 			end
@@ -223,7 +202,7 @@ class HSBC < Bank
 				acumulated = 0
 				new_positions.map{|p| acumulated += p.value}
 				check acumulated, to_number(total.results[0].result)
-				new_positions.map{|p| @positions << p }
+				return new_positions
 			else
 				puts " - No Hedge Funds for this account"
 			end
@@ -266,7 +245,7 @@ class HSBC < Bank
 				acumulated = 0
 				new_positions.map{|p| acumulated += p.value}
 				check acumulated, to_number(total.results[0].result)
-				new_positions.map{|p| @positions << p }
+				return new_positions
 			else
 				puts " - No Equity for this account"
 			end
@@ -305,7 +284,7 @@ class HSBC < Bank
 				acumulated = 0
 				new_positions.map{|p| acumulated += p.value}
 				check acumulated, to_number(total.results[0].result)
-				new_positions.map{|p| @positions << p }
+				return new_positions
 			else
 				puts " - No Others for this account"
 			end
