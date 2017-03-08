@@ -1,5 +1,10 @@
-dev/test_cases/*.pdf
-dev/test_cases/*.txt
-dev/test_cases/*.txt~
 dev/in/*
 !dev/in/.gitkeep
+dev/out/*
+in/*
+!in/.gitkeep
+/**/*~
+*~
+out/*
+!out/.gitkeep
+pdf_ghost/source.private

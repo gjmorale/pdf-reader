@@ -68,7 +68,6 @@ MorganStanley.class_eval do
 			acumulated = 0
 			new_positions.map{|p| acumulated += p.value}
 			check acumulated, to_number(total.results[2].result)
-			new_positions.map{|p| @positions << p }
 			return new_positions
 		else 
 			puts "ETFS table is missing."

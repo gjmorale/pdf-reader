@@ -171,7 +171,7 @@ class Institution
 
 	# Method to be overriden and executed
 	def run 
-		files = Dir["in/#{dir}/*"]
+		files = Dir["dev/in/#{dir}/*"]
 		files.each do |file|
 			dir_path = File.dirname(file)
 			dir_name = dir_path[dir_path.rindex('/')+1..-1]
