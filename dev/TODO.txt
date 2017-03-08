@@ -1,0 +1,16 @@
+TODO:
+
+En stocks, etfs y otros con total juntar nombre de primer resultado con total del final.
+	- Revisar resultados de gloria
+	- STOKS 					DONE
+	- ETFS 						DONE
+	- FIXED INCOME 				DONE
+	- MUTUAL FUNDS 				NOT YET
+	- ALTERNATIVE INVESTMENTS	NOT YET
+	
+Obtener resultados de cada posicion para comparar con total final
+	- Ver caso MS dd el total sale mal
+Revisar output
+Agregar campos faltantes
+Agregar checkeo de totales finales y por cuenta
+

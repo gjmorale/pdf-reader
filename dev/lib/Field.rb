@@ -89,7 +89,6 @@ class Field
 	def right= value
 		position.xf = value
 	end
-
 end
 
 class SingleField < Field

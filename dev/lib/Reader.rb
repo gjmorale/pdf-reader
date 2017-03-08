@@ -47,16 +47,15 @@ class Reader
 	def move_to field, limit = 0
 		original_page = @page
 		original_offset = @offset
-		counter = 0
-		match = read_next_field field
-		while not match and counter <= limit
+		counter = limit != 0 ? 1 : 0
+		while counter <= limit and not read_next_field(field) 
 			counter += 1 if limit != 0
 			@page += 1
 			match = read_next_field(field)
 		end
-		if match and match.position?
-			@offset = match.position.y
-			return match
+		if field.is_a? Field and field.position?
+			@offset = field.position.y
+			return field
 		else
 			@page = original_page
 			@offset = original_offset
@@ -74,7 +73,6 @@ class Reader
 	def read_next_field(field, from = 0, verbose = false)
 		field = first_match(field) if field.is_a? Array
 		if not @page_content or @page_content.number != @page
-			#raise #debugg
 			file_name = "#{@file[@file.rindex('/')+1..-1]}"
 			file_path = "#{@file}/#{file_name}_#{@page}.page"
 			if File.exist? file_path
@@ -111,7 +109,19 @@ class Reader
 		row = Row.new
 		last = 0
 		headers.each do |header|
+<<<<<<< HEAD
 			return nil unless read_next_field header, last, true
+=======
+			#puts "#{header.text}"
+			#print 10, 10
+			#print header.width, last, 100
+			found = read_next_field header, last
+			#unless found
+			#	puts "NOT FOUND: #{header.text}".red
+			#end
+			return nil unless found
+			#raise unless read_next_field header, last
+>>>>>>> master
 			row.yi = row.yi ? [header.top, row.yi].min : header.top
 			row.yf = row.yf ? [header.bottom, row.yf].max : header.bottom
 			last = header.right
@@ -193,5 +203,10 @@ class Reader
 			end
 		end
 		result
+	end
+
+	def print range = 3, start = 0, show = 200
+		puts "LINES FOR: #{@page} - #{@offset}"
+		@page_content.print range, @offset, start, show
 	end
 end
