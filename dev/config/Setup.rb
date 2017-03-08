@@ -216,6 +216,10 @@ class Institution
 	end
 	
 	def check acumulated, stated
+		if stated == 0
+			puts "UNABLE TO CHECK #{acumulated}".yellow
+			return
+		end
 		delta = acumulated - stated
 		delta = delta * delta
 		if delta > 1

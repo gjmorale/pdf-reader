@@ -182,6 +182,15 @@ class Multiline < String
 			s << " " while s.length < max + offset
 		end
 	end
+
+	def append value
+		if value.is_a? Multiline
+			lines = @strings + value.strings
+			Multiline.generate(lines)
+		else
+			self << value
+		end
+	end
 end
 
 class String
