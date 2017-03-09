@@ -1,10 +1,11 @@
 HSBC.class_eval do
 	def private_equity_for account
 		new_positions = []
-		search = Field.new("Private Equity - Portfolio #{account.code} - #{account.name}")
+		search = Field.new("Private Equity#{account.title}")
 		if search.execute @reader
-			pos = nil
-			new_positions += pos if(pos = get_private_funds)
+			@reader.stash
+			pos = get_private_funds
+			pos ? new_positions += pos : @reader.pop
 			return new_positions
 		else
 			puts " - No Private Equity for this account"
@@ -15,6 +16,7 @@ HSBC.class_eval do
 	def get_private_funds
 		offset = Field.new("Private Equity Funds")
 		bottom = Field.new("Total Private Equity")
+		page_end = Field.new(" Account: ")
 		headers = []
 		headers << HeaderField.new("Cur.", headers.size, Setup::Type::CURRENCY, true)
 		headers << HeaderField.new("Qty. / Balance", headers.size, Setup::Type::AMOUNT)
@@ -27,26 +29,31 @@ HSBC.class_eval do
 		headers << HeaderField.new("Mkt. value", headers.size, Setup::Type::AMOUNT)
 		headers << HeaderField.new("Mkt. value (USD)", headers.size, Setup::Type::AMOUNT)
 		headers << HeaderField.new(["% Acc.","% Pri. Eq."], headers.size, to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
-		table = Table.new(headers, bottom, offset)
-		table.execute @reader
 		#table.print_results
 		new_positions = []
-		table.rows.each.with_index do |r,i|
-			results = table.headers.map{|h| h.results[i].result}
-			titles = parse_position results[2], 'Reference'
+		present = get_table(headers, offset, bottom, page_end, nil, nil) do |table|
+			table.rows.each.with_index do |r,i|
+				results = table.headers.map{|h| h.results[i].result}
+				titles = parse_position results[2], 'Reference'
 
-			new_positions << Position.new(titles[0], 
-				1.0,
-				to_number(results[9]), 
-				to_number(results[9]), 
-				titles[1])
+				new_positions << Position.new(titles[0], 
+					1.0,
+					to_number(results[9]), 
+					to_number(results[9]), 
+					titles[1])
+			end
 		end
-		total = SingleField.new("Total Private Equity",[Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
-		total.execute @reader
-		#total.print_results
-		acumulated = 0
-		new_positions.map{|p| acumulated += p.value}
-		check acumulated, to_number(total.results[0].result)
-		return new_positions
+		if present
+			total = SingleField.new("Total Private Equity",[Setup::Type::AMOUNT, Setup::Type::PERCENTAGE])
+			total.execute @reader
+			#total.print_results
+			acumulated = 0
+			new_positions.map{|p| acumulated += p.value}
+			check acumulated, to_number(total.results[0].result)
+			return new_positions
+		else
+			puts "Unable to read Private Equity Funds table".red
+			return false
+		end
 	end
 end

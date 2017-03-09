@@ -171,7 +171,7 @@ class Institution
 
 	# Method to be overriden and executed
 	def run 
-		files = Dir["dev/in/#{dir}/*"]
+		files = Dir["#{Dir.home}/pdf_reader/raw/#{dir}/*"]
 		files.each do |file|
 			dir_path = File.dirname(file)
 			dir_name = dir_path[dir_path.rindex('/')+1..-1]
@@ -181,7 +181,7 @@ class Institution
 			unless File.exist? "out/#{dir_name}"
 				Dir.mkdir("out/#{dir_name}")
 			end
-			out = File.open("out/#{dir_name}/#{file_name}.csv",'w')
+			out = File.open("out/#{dir_name}/#{file_name}.csv",'w:UTF-8')
 			print_results out
 		end
 		puts "\n*****************************************\n"

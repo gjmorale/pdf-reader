@@ -15,6 +15,16 @@ class Reader
 		@offset = 0
 	end
 
+	def stash
+		@last_page = @page
+		@last_offset = @offset
+	end
+
+	def pop
+		@page = @last_page
+		@offset = @last_offset
+	end
+
 	def to_s
 		"[#{@page}:#{@offset}] => #{@file}"
 	end
@@ -76,7 +86,7 @@ class Reader
 			file_name = "#{@file[@file.rindex('/')+1..-1]}"
 			file_path = "#{@file}/#{file_name}_#{@page}.page"
 			if File.exist? file_path
-				page = File.new(file_path, 'r')
+				page = File.new(file_path, 'r:UTF-8')
 			else
 				field.position = nil
 				return field
@@ -114,7 +124,7 @@ class Reader
 			#print header.width, last, 100
 			found = read_next_field header, last
 			unless found
-				puts "NOT FOUND: #{header.text} #{last}-#{@offset} : #{@page}".red
+				#puts "NOT FOUND: #{header.text} #{last}-#{@offset} : #{@page}".red
 				#print 7
 			end
 			return nil unless found

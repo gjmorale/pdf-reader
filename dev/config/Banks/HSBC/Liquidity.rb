@@ -2,7 +2,7 @@ HSBC.class_eval do
 
 	def liquidity_for account
 		new_positions = []
-		search = Field.new("Liquidity and Money Market - Portfolio #{account.code} - #{account.name}")
+		search = Field.new("Liquidity and Money Market#{account.title}")
 		if search.execute @reader
 			pos = nil
 			new_positions += pos if(pos = get_current_account)
@@ -16,6 +16,7 @@ HSBC.class_eval do
 
 	def get_current_account
 		offset = Field.new("Current Accounts")
+		page_end = Field.new(" Account: ")
 		bottom = Field.new("Total")
 		headers = []
 		headers << HeaderField.new("Cur.", headers.size, Setup::Type::CURRENCY, true)
@@ -24,9 +25,9 @@ HSBC.class_eval do
 		headers << HeaderField.new(["Mkt. value","incl. accr. int."], headers.size, to_arr(Setup::Type::AMOUNT, 2), false, 4)
 		headers << HeaderField.new(["Mkt. value (USD)","incl. accr. int."], headers.size, to_arr(Setup::Type::AMOUNT, 2), false, 4)
 		headers << HeaderField.new(["% Acc.","% Liq."], headers.size, to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
-		table = Table.new(headers, bottom, offset)
-		if table.execute @reader
-			new_positions = []
+		#table = Table.new(headers, bottom, offset)
+		new_positions = []
+		present = get_table(headers, offset, bottom, page_end, nil, nil) do |table|
 			table.rows.each.with_index do |r,i|
 				results = table.headers.map{|h| h.results[i].result}
 				titles = parse_position results[2], 'ACCOUNT'
@@ -37,6 +38,8 @@ HSBC.class_eval do
 					to_number(results[4]), 
 					titles[1])
 			end
+		end
+		if present
 			total = SingleField.new("Total",[Setup::Type::AMOUNT])
 			total.execute @reader
 			acumulated = 0
@@ -53,6 +56,7 @@ HSBC.class_eval do
 		if Field.new("Foreign Exchange").execute @reader
 			@reader.slide_up 10
 			offset = Field.new("Foreign Exchange")
+			page_end = Field.new(" Account: ")
 			bottom = Field.new("Total")
 			headers = []
 			# TODO: Headers skkiped due t repeated text Nominal amount
@@ -67,9 +71,8 @@ HSBC.class_eval do
 			headers << HeaderField.new("Forward mark to market", headers.size, Setup::Type::FLOAT)
 			headers << HeaderField.new("P&L (USD)", headers.size, Setup::Type::AMOUNT)
 			headers << HeaderField.new(["% Acc.","% Liq."], headers.size, to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
-			table = Table.new(headers, bottom, offset)
-			if table.execute @reader
-				new_positions = []
+			new_positions = []
+			present = get_table(headers, offset, bottom, page_end, nil, nil) do |table|
 				table.rows.each.with_index do |r,i|
 					results = table.headers.map{|h| h.results[i].result}
 					new_positions << Position.new( 
@@ -78,6 +81,8 @@ HSBC.class_eval do
 						1.0,
 						to_number(results[7]))
 				end
+			end
+			if present
 				total = SingleField.new("Total",[Setup::Type::AMOUNT])
 				total.execute @reader
 				acumulated = 0

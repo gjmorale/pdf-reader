@@ -8,7 +8,7 @@ module FileFilter
 
 	def self.filter_files format
 		cleaner = Cleaner.new
-		cleaner.load "in", "dev/in", format
+		cleaner.load "#{Dir.home}/pdf_reader/in", "#{Dir.home}/pdf_reader/raw", format
 		cleaner.execute
 	end
 end

@@ -28,17 +28,17 @@ class Cleaner
 				Dir.mkdir(sub_file_name) 
 				Dir.mkdir("#{sub_file_name}/raw")
 			end
-			f_input = File.open(file)
+			f_input = File.open(file, 'rb')
 			@reader = PDF::Reader.new(f_input)
 			n = @reader.pages.size
 			step = 0
 			@reader.pages.each.with_index do |page, j|
-				raw_output = File.open("#{sub_file_name}/raw/#{name}_#{page.number}.raw", "w")
+				raw_output = File.open("#{sub_file_name}/raw/#{name}_#{page.number}.raw", "w:UTF-8")
 				write(page.raw_content, raw_output, 1)
 				receiver = PDF::Reader::PageTextReceiver.new
 				page.walk(receiver)
 				content = receiver.content
-				f_output = File.open("#{sub_file_name}/#{name}_#{page.number}.page",'w')
+				f_output = File.open("#{sub_file_name}/#{name}_#{page.number}.page", "w:UTF-8")
 				write(content, f_output)
 				if ( prog = ((j+1)*100)/(n)) >= step
 					delta = ((prog-step)/4+1)
@@ -57,7 +57,7 @@ class Cleaner
 		content.each_line do |line|
 			new_content << clean(line, raw)
 		end
-		file.write(new_content)
+		file.write(new_content.encode("UTF-8", invalid: :replace, undef: :replace))
 	end
 
 

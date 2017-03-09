@@ -5,12 +5,25 @@ class AccountHSBC < Account
 	attr_reader :name
 
 	def initialize code, name
-		@name = name.strip
-		@code = code.strip
+		if code == ""
+			@name = nil
+			@code = nil
+		else
+			@name = name.strip
+			@code = code.strip
+		end
+	end
+
+	def title_2
+		if @name.nil? or @code.nil?
+			return ""
+		else
+			return " - Portfolio #{@code} - #{@name}}"
+		end
 	end
 
 	def to_s
-		"#{@code} - #{@name} : #{@value.round(2)}"
+		"#{@code} - #{@name}}"
 	end
 
 	def inspect

@@ -112,6 +112,16 @@ HSBC.class_eval do
 			end
 			grand_total = to_number(net_assets.results[0].result)
 			check total.round(2), grand_total
+			unless Field.new("At a glance - Portfolio ").execute @reader
+				only_acc = AccountHSBC.new("",nil)
+				only_acc.value = 0.0 
+				new_accounts.map{|a| only_acc.value += a.value}
+				new_accounts = [only_acc]
+				puts only_acc.title
+				while Field.new("Top 5 performers since inception").execute @reader
+					#puts @reader.page
+				end
+			end
 			return new_accounts, grand_total
 		end
 
@@ -128,7 +138,7 @@ HSBC.class_eval do
 		def fixed_income_for account
 			table_end = Field.new("Total Fixed Income")
 			page_end = Field.new(" Account: ")
-			search = Field.new("Fixed Income - Portfolio #{account.code} - #{account.name}")
+			search = Field.new("Fixed Income#{account.title}")
 			offset = [Field.new("Fixed Income Mutual Funds"), Field.new("Bonds")]
 			headers = []
 			headers << HeaderField.new("Cur.", headers.size, Setup::Type::CURRENCY, true)
@@ -171,7 +181,7 @@ HSBC.class_eval do
 		def hedge_funds_for account
 			table_end = Field.new("Total Hedge Funds")
 			page_end = Field.new(" Account: ")
-			search = Field.new("Hedge Funds - Portfolio #{account.code} - #{account.name}")
+			search = Field.new("Hedge Funds#{account.title}")
 			offset = Field.new("Hedge Funds")
 			headers = []
 			headers << HeaderField.new("Cur.", headers.size, Setup::Type::CURRENCY, true)
@@ -211,7 +221,7 @@ HSBC.class_eval do
 		def equity_for account
 			table_end = Field.new("Total Equity")
 			page_end = Field.new(" Account: ")
-			search = Field.new("Equities - Portfolio #{account.code} - #{account.name}")
+			search = Field.new("Equities#{account.title}")
 			offset = Field.new("Equity Mutual Funds")
 			headers = []
 			headers << HeaderField.new("Cur.", headers.size, Setup::Type::CURRENCY, true)
@@ -254,7 +264,7 @@ HSBC.class_eval do
 		def others_for account
 			table_end = Field.new("Total Others")
 			page_end = Field.new(" Account: ")
-			search = Field.new("Others - Portfolio #{account.code} - #{account.name}")
+			search = Field.new("Others#{account.title}")
 			offset = Field.new("Other Mutual Funds")
 			headers = []
 			headers << HeaderField.new("Cur.", headers.size, Setup::Type::CURRENCY, true)
@@ -290,26 +300,45 @@ HSBC.class_eval do
 			end
 		end
 
-		def get_table(headers, offset, table_end, page_end, search, skips = nil)
-			original_page = @reader.page
+		def get_table(headers, offset, table_end, page_end, search, skips = nil, verbose = false)
+			@reader.stash
 			bottom = nil
+			exit = false
 			present = true
-			while bottom != table_end
+			while not exit
 				@reader.go_to(@reader.page + 1) unless bottom.nil?
+				if search
 				search.execute @reader
-				if search.position.nil?
-					present = false
-					break
+					if search.position.nil?
+						present = false
+						break
+					end
 				end
-				bottom = @reader.read_next_field(table_end) ? table_end : page_end
-				table = Table.new(headers, bottom, offset, skips)
-				table.execute @reader
-				yield table
+				cloned_table_end = clone_it table_end
+				cloned_page_end = clone_it page_end
+				cloned_headers = clone_it headers
+				cloned_offset = clone_it offset
+				if @reader.read_next_field(cloned_table_end)
+					bottom = cloned_table_end
+					exit = true
+				else
+				 	bottom = cloned_page_end
+				end
+				table = Table.new(cloned_headers, bottom, cloned_offset, skips)
+				if table.execute @reader
+					table.print_results if verbose
+					yield table
+				else
+					if not exit
+						@reader.pop
+						return false
+					end
+				end
 			end
 			if present
 				return true
 			else
-				@reader.go_to original_page
+				@reader.pop
 				return nil
 			end
 		end

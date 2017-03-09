@@ -8,13 +8,25 @@ class AccountHSBC < Institution
 	FAILS = [["AMPACTIVE", "AMP ACTIVE"]]
 
 	def initialize code, name
-		@name = unfail(name.strip)
+		if @consolidated = name.nil?
+			@name = "CONSOLIDATED ACCOUNT"
+		else
+			@name = unfail(name.strip)
+		end
 		@code = code.strip
 		@positions = []
 	end
 
+	def title
+		if @consolidated
+			return ""
+		else
+			return " - Portfolio #{@code} - #{@name}}"
+		end
+	end
+
 	def to_s
-		"#{@code} - #{@name} : #{@value.round(2)}"
+		"#{@code} - #{@name}"
 	end
 
 	def inspect
