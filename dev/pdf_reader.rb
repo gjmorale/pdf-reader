@@ -20,7 +20,7 @@ module FileReader
 	def self.read_files format
 		format = format
 		Setup.set_enviroment(format)
-
+		puts '------------------------------------'
 		Setup.inst.run
 	end
 end

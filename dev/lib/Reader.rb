@@ -13,6 +13,12 @@ class Reader
 		@file = file
 		@page = 1
 		@offset = 0
+		file_name = "#{@file[@file.rindex('/')+1..-1]}"
+		file_path = "#{@file}/#{file_name}_#{@page}.page"
+		if File.exist? file_path
+			first_page = File.new(file_path, 'r:UTF-8')
+		end
+		@page_content = PageContent.new(@page, first_page.read)
 	end
 
 	def stash
@@ -82,6 +88,7 @@ class Reader
 	# Looks for the first occurrence of the field past the offset
 	def read_next_field(field, from = 0, verbose = false)
 		field = first_match(field) if field.is_a? Array
+		return false if field.nil?
 		if not @page_content or @page_content.number != @page
 			file_name = "#{@file[@file.rindex('/')+1..-1]}"
 			file_path = "#{@file}/#{file_name}_#{@page}.page"
@@ -215,5 +222,9 @@ class Reader
 	def print range = 3, start = 0, show = 200
 		puts "LINES FOR: #{@page} - #{@offset}"
 		@page_content.print range, @offset, start, show
+	end
+
+	def find_text text
+		@page_content.find_text text
 	end
 end

@@ -17,6 +17,16 @@ class PageContent
 		@content
 	end
 
+	def find_text text
+		@content.each_line do |line|
+			line = RegexHelper.strip_wildchar(line)
+			line.match(text) do |m|
+				return line[m.offset(0)[0]..m.offset(0)[1]]
+			end
+		end
+		return false
+	end
+
 	# Looks for the first match of the field regex in
 	# the page from offset to bottom.
 	# The field width must be at least as big as the field.

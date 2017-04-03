@@ -1,6 +1,8 @@
 require_relative "Bank.rb"
 class MorganStanley < Bank
 	DIR = "MS"
+	LEGACY = "MStanley"
+	TABLE_OFFSET = 10
 end
 
 Dir[File.dirname(__FILE__) + '/MS/*.rb'].each {|file| require_relative file }
@@ -11,6 +13,10 @@ MorganStanley.class_eval do
 		self.class::DIR
 	end
 
+	def legacy_code
+		self.class::LEGACY
+	end
+
 	HEADER_ORIENTATION = 6
 	HORIZONTAL_SEARCH_RANGE = 10
 
@@ -19,6 +25,7 @@ MorganStanley.class_eval do
 		PAGE = 			-2
 		DATE_OR_TOTAL = -3
 		AMOUNT_W_TERM = -4
+		DOC_DATE = -5
 	end
 
 	def regex(type)
@@ -40,13 +47,15 @@ MorganStanley.class_eval do
 		when Setup::Type::FLOAT
 			'(\(?(?:[1-9]{1}\d*|0)\.\d+\)?|(?:\342\200\224)){1}'
 		when Custom::ACC_CODE
-			'[0-9]{3}\-[0-9]{6}\-[0-9]{3}'
+			'[0-9]{3}\-[0-9]{6}\-[0-9]{3}\+?'
 		when Custom::PAGE
 			'[1-9][0-9]*'
 		when Custom::DATE_OR_TOTAL
 			'(\d{1,2}\/\d{1,2}\/\d{2}|Total|(?:\342\200\224)){1}\s*'
 		when Custom::AMOUNT_W_TERM
 			'([$]?\(?[0-9]{1,3}(?:,?[0-9]{3})*\.[0-9]{2}\)?(\s*(LT|ST))|(?:\342\200\224)){1}\s*'
+		when Custom::DOC_DATE
+			'[A-Z][a-z]+\ \d{1,2}\-\d{1,2}\,\ 20\d{2}'
 		end
 	end
 
@@ -55,6 +64,8 @@ MorganStanley.class_eval do
 		def analyse_position file
 			puts "ANALYSING #{file}"
 			@reader = Reader.new(file)
+			set_date @reader.find_text(/[A-Z][a-z]+\ \d{1,2}\-\d{1,2}\,\ 20\d{2}/i)
+			puts "DATE! #{@date_out}"
 			check_multiple_accounts
 			last_acc = ""
 			code_s = ""
@@ -93,6 +104,8 @@ MorganStanley.class_eval do
 			accounts.map{|p| acumulated += p.pos_value}
 			print "GRAND TOTAL: "
 			check acumulated, to_number(total.results[0].result)
+			@total_out = to_number(total.results[0].result)
+			puts "TOTAL! #{@total_out}"
 		end
 
 		def analyse_cash
@@ -510,7 +523,7 @@ MorganStanley.class_eval do
 				print "Proccesing hedge fund shares ... "
 			end
 
-			table_end = Field.new("HEDGE FUNDS - SHARES")
+			table_end = [Field.new("HEDGE FUNDS - SHARES"),Field.new('PRIVATE EQUITY')]
 			headers = []
 			headers << HeaderField.new("Security Description", headers.size, Setup::Type::LABEL, false)
 			headers << HeaderField.new("Trade Date", headers.size, Setup::Type::DATE, false)
@@ -621,7 +634,7 @@ MorganStanley.class_eval do
 				print "Proccesing private equity ... "
 			end
 
-			table_end = Field.new("PRIVATE EQUITY")
+			table_end = [Field.new("PRIVATE EQUITY"),Field.new(["Percentage","of Holdings"],4, Setup::Align::BOTTOM)]
 			headers = []
 			headers << HeaderField.new("Security Description", headers.size, Setup::Type::LABEL, false)
 			headers << HeaderField.new("Commitment", headers.size, Setup::Type::AMOUNT, false)
@@ -800,7 +813,7 @@ MorganStanley.class_eval do
 
 		def single_account
 			@reader.go_to(3)
-			code = SingleField.new("Account Summary", [Custom::ACC_CODE], 4)
+			code = SingleField.new("Account Summary", [Custom::ACC_CODE], 4, Setup::Align::LEFT)
 			code.execute @reader
 			code.print_results
 			code_s = parse_account code.results[0].result

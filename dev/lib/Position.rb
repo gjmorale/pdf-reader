@@ -2,6 +2,9 @@ class Position
 
 	attr_reader :value
 	attr_reader :name
+	attr_reader :quantity
+	attr_reader :price
+	attr_reader :value
 
 	def initialize name, quantity, price, value, extra = nil
 		@name = name
