@@ -330,7 +330,7 @@ class PageContent
 				#puts text.strings if not text.empty?
 				if text != result.result and text.match result.regex
 					result.result = text
-					result.left = result_n.left - 1 - i
+					result.left = result_n.left - 2 - i
 				end
 			end
 			return (result.result != Result::NOT_FOUND)

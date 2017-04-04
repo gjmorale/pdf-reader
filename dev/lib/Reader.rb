@@ -225,6 +225,21 @@ class Reader
 	end
 
 	def find_text text
-		@page_content.find_text text
+		stash
+		result = nil
+		@page = 1
+		file_name = "#{@file[@file.rindex('/')+1..-1]}"
+
+		while File.exist?(file_path = "#{@file}/#{file_name}_#{@page}.page")
+			first_page = File.new(file_path, 'r:UTF-8')
+			@page_content = PageContent.new(@page, first_page.read)
+			if result = @page_content.find_text(text)
+				break
+			else
+				@page += 1
+			end
+		end
+		pop
+		return result
 	end
 end

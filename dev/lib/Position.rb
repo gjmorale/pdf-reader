@@ -7,11 +7,11 @@ class Position
 	attr_reader :value
 
 	def initialize name, quantity, price, value, extra = nil
-		@name = name
+		@name = name.strip unless name.nil?
 		@quantity = quantity
 		@price = price
 		@value = value
-		@extra = extra
+		@extra = extra.strip unless extra.nil?
 	end
 
 	def to_s

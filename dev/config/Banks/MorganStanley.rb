@@ -25,7 +25,7 @@ MorganStanley.class_eval do
 		PAGE = 			-2
 		DATE_OR_TOTAL = -3
 		AMOUNT_W_TERM = -4
-		DOC_DATE = -5
+		TOTAL_AMOUNT = -5
 	end
 
 	def regex(type)
@@ -54,8 +54,8 @@ MorganStanley.class_eval do
 			'(\d{1,2}\/\d{1,2}\/\d{2}|Total|(?:\342\200\224)){1}\s*'
 		when Custom::AMOUNT_W_TERM
 			'([$]?\(?[0-9]{1,3}(?:,?[0-9]{3})*\.[0-9]{2}\)?(\s*(LT|ST))|(?:\342\200\224)){1}\s*'
-		when Custom::DOC_DATE
-			'[A-Z][a-z]+\ \d{1,2}\-\d{1,2}\,\ 20\d{2}'
+		when Custom::TOTAL_AMOUNT
+			'(Total|Purchases)?([$]?\(?[0-9]{1,3}(?:,?[0-9]{3})*\.[0-9]{1,3}\)?|(?:\342\200\224)){1}\s*'
 		end
 	end
 
@@ -295,83 +295,6 @@ MorganStanley.class_eval do
 			end
 		end
 
-		def analyse_mutual_funds
-			unless @reader.move_to(Field.new("MUTUAL FUNDS"), 2)
-				puts "No mutual funds for this account"
-				return false
-			else
-				print "Proccesing mutual funds ... "
-			end
-
-			table_end = Field.new(["Percentage","of Holdings"],4, Setup::Align::BOTTOM)
-			headers = []
-			headers << HeaderField.new("Security Description", headers.size, Setup::Type::LABEL, false)
-			headers << HeaderField.new("Trade Date", headers.size, Custom::DATE_OR_TOTAL, true)
-			headers << HeaderField.new("Quantity", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new("Unit Cost", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new("Share Price", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new("Total Cost", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new("Market Value", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new(["Unrealized","Gain/(Loss)"], headers.size, Custom::AMOUNT_W_TERM, false,4)
-			headers << HeaderField.new("Est Ann Income", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new(["Current","Yield %"], headers.size, Setup::Type::FLOAT, false,4)
-			skips = ['.*(?:Asset Class:).*']
-			new_positions = []
-			quantity = price = value = "0.0"
-			title = false
-			total = false
-			title_dump = /(Long Term Reinvestments|Short Term Reinvestments|Total Purchases vs Market Value|Net Value Increase\/\(Decrease\))/
-			present = get_table(headers, nil, table_end, nil, skips) do |table|
-				table.rows.each.with_index do |row, i|
-					results = table.headers.map {|h| h.results[-i-1].result}
-					if results[1] == "Total"
-						total = true
-						price = results[4]
-						quantity = results[2] 
-						value = results[6]
-					end
-					new_title = "#{results[0]}".gsub(title_dump, "")
-					new_title = (new_title.nil? or new_title.empty? or new_title == Result::NOT_FOUND) ? false : new_title
-					if new_title
-						if title 
-							new_positions << Position.new(title, 
-								to_number(quantity), 
-								to_number(price), 
-								to_number(value))
-						end
-						title = new_title
-						price = results[4]
-						quantity = results[2] 
-						value = results[6]
-						total = false
-					end
-				end
-			end
-			if title
-				new_positions << Position.new(title, 
-					to_number(quantity), 
-					to_number(price), 
-					to_number(value))
-			end
-			if present
-				total = SingleField.new("MUTUAL FUNDS",
-					[Setup::Type::PERCENTAGE, 
-					Setup::Type::AMOUNT, 
-					Setup::Type::AMOUNT, 
-					Custom::AMOUNT_W_TERM, 
-					Setup::Type::AMOUNT, 
-					Setup::Type::FLOAT], 
-					4, Setup::Align::LEFT)
-				total.execute @reader
-				acumulated = 0
-				new_positions.map{|p| acumulated += p.value}
-				check acumulated, to_number(total.results[2].result)
-				return new_positions
-			else 
-				puts "MUTUAL FUNDS table is missing."
-			end
-		end
-
 		def analyse_government_securities
 			unless @reader.move_to(Field.new("GOVERNMENT SECURITIES"),2)
 				puts "No gov. securities for this account"
@@ -536,6 +459,7 @@ MorganStanley.class_eval do
 			skips = ['.*(?:Asset Class:).*']
 			new_positions = []
 			price = quantity = value = "0.0"
+			Setup::Debug.overview = true
 			present = get_table(headers, nil, table_end, nil, skips) do |table|
 				table.rows.each.with_index do |row, i|
 					results = table.headers.map {|h| h.results[-i-1].result}
