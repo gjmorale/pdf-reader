@@ -14,6 +14,10 @@ class AccountMS < Account
 		"#{@code} : #{@value.round(2)}"
 	end
 
+	def value_s
+		@value.to_s.sub(".",",")
+	end
+
 	def inspect
 		to_s
 	end

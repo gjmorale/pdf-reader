@@ -32,15 +32,19 @@ MONTHS = [[1, /jan/i],
 		@date_out = "#{day}-#{month}-#{year}"
 	end
 
+	def total_s
+		@total_out.to_s.sub(".",",")
+	end
+
 	def print_results  file
 		file.write("Id_sec1;Id_fi1;Fecha;Instrumento;Cantidad;Precio;Monto\n")
 		accounts.reverse_each do |acc|
-			file.write("#{acc.code};;;;;Total;#{acc.value}\n")
+			file.write("#{acc.code};;;Total;;;;#{acc.value_s}\n")
 			acc.positions.each do |pos|
 				file.write("#{acc.code};#{legacy_code};#{date_out};#{pos.print}")
 			end
 		end
-		file.write(";;;;;Total;#{total_out}\n")
+		file.write(";;;Total;;;;#{total_s}\n")
 		#positions = []
 		#@accounts.map{|a| positions += a.positions}
 		#positions.each do |p|
