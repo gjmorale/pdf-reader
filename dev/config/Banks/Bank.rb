@@ -33,7 +33,8 @@ MONTHS = [[1, /jan/i],
 	end
 
 	def print_results  file
-		accounts.each do |acc|
+		file.write("Id_sec1;Id_fi1;Fecha;Instrumento;Cantidad;Precio;Monto\n")
+		accounts.reverse_each do |acc|
 			file.write("#{acc.code};;;;;Total;#{acc.value}\n")
 			acc.positions.each do |pos|
 				file.write("#{acc.code};#{legacy_code};#{date_out};#{pos.print}")

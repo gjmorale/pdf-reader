@@ -6,10 +6,10 @@ module FileFilter
 	Dir[File.dirname(__FILE__) + '/lib/*.rb'].each {|file| require file }
 
 
-	def self.filter_files format
+	def self.filter_files format, in_path, out_path
 		cleaner = Cleaner.new
 		#cleaner.load "#{Dir.home}/pdf_reader/in", "#{Dir.home}/pdf_reader/raw", format
-		cleaner.load "#{File.dirname(__FILE__)}/../../pdf-reader/in", "#{File.dirname(__FILE__)}/../../pdf-reader/dev/in", format
+		cleaner.load in_path, out_path, format
 		cleaner.execute
 	end
 end

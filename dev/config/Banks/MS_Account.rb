@@ -26,6 +26,7 @@ class AccountMS < Account
 
 	def add_pos pos
 		if pos
+			pos.reverse!
 			@positions += pos
 		end
 	end

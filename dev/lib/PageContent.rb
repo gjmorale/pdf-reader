@@ -326,7 +326,7 @@ class PageContent
 			#puts "RANGE LEFT: #{result} #{result.edges.xi}  to  #{result_n.left-1}"
 			#puts line[result.edges.xi .. result_n.left-1]
 			range.times do |i|
-				text = RegexHelper.strip_wildchar(line[result_n.left - 1 - i .. result_n.left - 1])
+				text = RegexHelper.strip_wildchar(line[result_n.left - 2 - i .. result_n.left - 1])
 				#puts text.strings if not text.empty?
 				if text != result.result and text.match result.regex
 					result.result = text

@@ -106,7 +106,7 @@ module Setup
 	end
 
 	# Sets up the specific bank format to be loaded
-	def self.set_enviroment(format)
+	def self.set_enviroment(format, in_path, out_path)
 		case format
 		when Format::TEST
 			puts "TEST selected"
@@ -139,6 +139,7 @@ module Setup
 			puts "Wrong input, try again or CTRL + C to exit"
 			return false
 		end
+		@@institution.set_paths(in_path, out_path)
 	end
 
 	def self.inst
@@ -169,19 +170,24 @@ class Institution
 		return Regexp.new(regex(type))
 	end
 
+	def set_paths in_path, out_path
+		@in_path = in_path
+		@out_path = out_path
+	end
+
 	# Method to be overriden and executed
 	def run 
-		files = Dir["#{File.dirname(__FILE__)}/../in/#{dir}/*"]
+		files = Dir["#{@in_path}/#{dir}/*"]
 		files.each do |file|
 			dir_path = File.dirname(file)
 			dir_name = dir_path[dir_path.rindex('/')+1..-1]
 			file_name = file[file.rindex('/')+1..-1]
 			puts "\n***************************************** - #{file_name}\n"
 			analyse_position file
-			unless File.exist? "out/#{dir_name}"
-				Dir.mkdir("out/#{dir_name}")
+			unless File.exist? "#{@out_path}/#{dir_name}"
+				Dir.mkdir("#{@out_path}/#{dir_name}")
 			end
-			out = File.open("out/#{dir_name}/#{file_name}.txt",'w:UTF-8')
+			out = File.open("#{@out_path}/#{dir_name}/#{file_name}.txt",'w:UTF-8')
 			print_results out
 		end
 		puts "\n*****************************************\n"

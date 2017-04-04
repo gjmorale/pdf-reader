@@ -105,7 +105,6 @@ MorganStanley.class_eval do
 			print "GRAND TOTAL: "
 			check acumulated, to_number(total.results[0].result)
 			@total_out = to_number(total.results[0].result)
-			puts "TOTAL! #{@total_out}"
 		end
 
 		def analyse_cash
