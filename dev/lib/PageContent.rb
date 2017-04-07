@@ -21,7 +21,7 @@ class PageContent
 		@content.each_line do |line|
 			line = RegexHelper.strip_wildchar(line)
 			line.match(text) do |m|
-				return line[m.offset(0)[0]..m.offset(0)[1]]
+				return line[m.offset(0)[0]..m.offset(0)[1]-1]
 			end
 		end
 		return false

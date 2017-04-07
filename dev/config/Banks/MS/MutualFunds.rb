@@ -101,39 +101,22 @@ MorganStanley.class_eval do
 		skips = ['.*(?:Asset Class:).*']
 		new_positions = []
 		quantity = price = value = "0.0"
-		title = new_title = share_price = false
-		total = false
-		title_dump = /\ *.?(Reinvestments|Total Purchases vs Market Value|Cumulative\ *Cash\ *Distributions|Net Value Increase\/\(Decrease\))+\ *.?/i
-		puts "\n"
+		title = share_price = false
+		title_dump = /(Purchases|Reinvestments|Total .* vs Market Value|Cumulative\ *Cash\ *Distributions|Net Value Increase\/\(Decrease\))+/i
 		present = get_table(headers, nil, table_end, nil, skips) do |table|
 			table.rows.each.with_index do |row, i|
 				results = table.headers.map {|h| h.results[-i-1].result}
-				if results[0].match /Total/
-					puts "TOTAL!!!!".green
-					total = true
-					#price = results[4]
-					#quantity = results[2] 
-					#value = results[6]
-					#raise StandardError, "CHECK Mutual funds alternative with totals"
+				if results[2] != Result::NOT_FOUND
+					title = results[0].inspect.gsub(title_dump, '')
+					share_price = to_number(results[2])
 				end
-				puts "RESULTS[0]: #{results[0]}"
-				title = "#{results[0]}".gsub(title_dump, "").strip
-				share_price = results[2] if results[2] != Result::NOT_FOUND
-				new_title = title unless (title.nil? or title.empty? or title == Result::NOT_FOUND or total)
 				if results[7] != Result::NOT_FOUND
-					if new_title and share_price
-						puts "#{new_title} #{to_number results[1]} #{to_number results[4]} #{to_number share_price}"
-						new_positions << Position.new(title, 
+					new_positions << Position.new(title, 
 							to_number(results[1]), 
-							to_number(results[2]), 
+							share_price, 
 							to_number(results[4]))
-						#TODO: IF share price -> Save title
-						#TODO: IF Yield sava all!
-					end
-					total = new_title = false
 				end
 			end
-			table.print_results
 		end
 		if title
 			new_positions << Position.new(title, 

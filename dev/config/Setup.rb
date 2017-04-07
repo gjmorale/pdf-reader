@@ -194,12 +194,20 @@ class Institution
 	end
 
 	def to_number str
-		str = str.inspect if str.is_a? Multiline
+		if str.is_a? Multiline
+			str.strings.each do |line| 
+				line.strip! unless line.empty?
+				unless line.nil? or line.empty?
+					str = line
+					break
+				end
+			end
+		end
 		return 0.0 if str.nil? or str.empty?
 		str = str.strip
 		str = str.delete('$')
 		str = str.delete(',')
-		negative = (str.include? '(' and str.include? ')')
+		negative = (str.match /\(\$?\d+([.,]\d+)?\)/)
 		str = str.delete('(')
 		str = str.delete(')')
 		str = str.delete('ST')

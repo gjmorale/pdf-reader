@@ -6,6 +6,7 @@ require_relative "pdf_ghost/ghost.rb"
  #in_path = "#{File.dirname(__FILE__)}/in" 			#DEBUG
  #out_path = "#{File.dirname(__FILE__)}/out" 		#DEBUG
  mid_path = "#{File.dirname(__FILE__)}/dev/in" 		#RELEASE
+ mid_path = 'C:/Users/Guillermo Morales/Desktop/Cartolas/temp'
 
  # Instituciones Financieras
 
@@ -13,7 +14,7 @@ require_relative "pdf_ghost/ghost.rb"
  # HSBC -> HSBC
 
  #in_path = 'C:/Users/windows7/Desktop/Cartolas'		#PC_1
- in_path = 'C:/Users/Windows7/Desktop/Cartolas'		#PC_2
+ in_path = 'C:/Users/Guillermo Morales/Desktop/Cartolas'#PC_2
  out_path = in_path 									#RELEASE
 
 

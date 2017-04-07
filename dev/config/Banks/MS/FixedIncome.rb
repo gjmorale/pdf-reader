@@ -86,7 +86,6 @@
 		end
 
 		def analyse_fixed_income_alternative
-			puts "READER #{@reader}"
 			unless @reader.move_to(Field.new("CORPORATE FIXED INCOME"), 2)
 				puts "No fixed income alternative for this account"
 				return false

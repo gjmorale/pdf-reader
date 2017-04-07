@@ -234,6 +234,7 @@ class Reader
 			first_page = File.new(file_path, 'r:UTF-8')
 			@page_content = PageContent.new(@page, first_page.read)
 			if result = @page_content.find_text(text)
+				puts result
 				break
 			else
 				@page += 1
