@@ -112,7 +112,7 @@ HSBC.class_eval do
 			bottom = Field.new("TOTAL PORTFOLIOS IN CREDIT")
 			table = Table.new(headers, bottom)
 			table.execute @reader
-			table.print_results
+			#table.print_results
 			new_accounts = []
 			portfolio.results.each.with_index do |result, i|
 				account_data = parse_account(result.result)
