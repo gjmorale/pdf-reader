@@ -1,6 +1,7 @@
 require_relative "Bank.rb"
 class HSBC < Bank
 	DIR = "HSBC"
+	LEGACY = "HSBC"
 end
 
 Dir[File.dirname(__FILE__) + '/HSBC/*.rb'].each {|file| require_relative file }
@@ -9,6 +10,10 @@ HSBC.class_eval do
 
 	def dir 
 		self.class::DIR
+	end
+
+	def legacy_code
+		self.class::LEGACY
 	end
 
 	module Custom
@@ -53,10 +58,25 @@ HSBC.class_eval do
 
 	private
 
+		def set_date value
+			month = -1
+			Bank::MONTHS.each do |m|
+				if value =~ m[1]
+					month = m[0]
+					break
+				end
+			end
+			day = value[0..value.index(' ')-1]
+			year = value[value.rindex(' ')+1..-1].strip
+			@date_out = "#{day}-#{month}-#{year}"
+		end
+
 		def analyse_position file
 			@reader = Reader.new(file)
+			set_date @reader.find_text(/^\d{1,2} [A-Z]{4,10} 20\d{2}/)
 			puts "\nSEARCHING ACCOUNTS"
 			@accounts, grand_total = recognize_accounts
+			@total_out = grand_total
 			@accounts.reverse_each do |account|
 				puts "\nSEARCHING LIQUIDITY FOR #{account}"
 				account.add_pos liquidity_for(account)
@@ -81,10 +101,6 @@ HSBC.class_eval do
 			check acumulated, grand_total
 		end
 
-		def get_grand_total
-			total = SingleField.new("")
-		end
-
 		def recognize_accounts
 			portfolios = SingleField.new("Portfolios consolidated for this account: ",[Setup::Type::INTEGER])
 			portfolios.execute @reader
@@ -96,7 +112,7 @@ HSBC.class_eval do
 			bottom = Field.new("TOTAL PORTFOLIOS IN CREDIT")
 			table = Table.new(headers, bottom)
 			table.execute @reader
-			#table.print_results
+			table.print_results
 			new_accounts = []
 			portfolio.results.each.with_index do |result, i|
 				account_data = parse_account(result.result)
@@ -113,7 +129,8 @@ HSBC.class_eval do
 			grand_total = to_number(net_assets.results[0].result)
 			check total.round(2), grand_total
 			unless Field.new("At a glance - Portfolio ").execute @reader
-				only_acc = AccountHSBC.new("",nil)
+				code = @reader.find_text(/^\d{1,2} [A-Z]{4,10} 20\d{2} Account: \d{3}[A-Z]\d{7} USD \(E\&OE\)/).split(' ')[4]
+				only_acc = AccountHSBC.new(code,nil)
 				only_acc.value = 0.0 
 				new_accounts.map{|a| only_acc.value += a.value}
 				new_accounts = [only_acc]
@@ -334,6 +351,17 @@ HSBC.class_eval do
 						return false
 					end
 				end
+				#table.print_results
+=begin  FROM MASTER
+				bottom = @reader.read_next_field(table_end) ? table_end : page_end
+				table = Table.new(headers, bottom, offset, skips)
+				if table.execute @reader
+					table.rows.each.with_index do |row, i|
+						results = table.headers.map {|h| h.results[-i-1].result}
+						yield results
+					end
+				end
+=end
 			end
 			if present
 				return true

@@ -3,6 +3,7 @@ HSBC.class_eval do
 	def liquidity_for account
 		new_positions = []
 		search = Field.new("Liquidity and Money Market#{account.title}")
+		puts "Liquidity and Money Market#{account.title}"
 		if search.execute @reader
 			pos = nil
 			new_positions += pos if(pos = get_current_account)

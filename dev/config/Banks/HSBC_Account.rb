@@ -21,12 +21,17 @@ class AccountHSBC < Institution
 		if @consolidated
 			return ""
 		else
-			return " - Portfolio #{@code} - #{@name}}"
+			return " - Portfolio #{@code} - #{@name}"
 		end
 	end
 
 	def to_s
 		"#{@code} - #{@name}"
+	end
+
+	def value_s
+		#@value.to_s.sub(".",",")
+		@value.to_s
 	end
 
 	def inspect

@@ -5,7 +5,7 @@ require_relative "pdf_ghost/ghost.rb"
 
  #in_path = "#{File.dirname(__FILE__)}/in" 			#DEBUG
  #out_path = "#{File.dirname(__FILE__)}/out" 		#DEBUG
- mid_path = "#{File.dirname(__FILE__)}/dev/in" 		#RELEASE
+ #mid_path = "#{File.dirname(__FILE__)}/dev/in" 	#DEBUG
  mid_path = 'C:/Users/Guillermo Morales/Desktop/Cartolas/temp'
 
  # Instituciones Financieras

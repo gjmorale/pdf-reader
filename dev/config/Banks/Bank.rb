@@ -19,19 +19,6 @@ MONTHS = [[1, /jan/i],
 		[11, /nov/i],
 		[12, /dec/i]]
 
-	def set_date value
-		month = -1
-		MONTHS.each do |m|
-			if value =~ m[1]
-				month = m[0]
-				break
-			end
-		end
-		day = value[value.index('-')+1..value.index(',')-1]
-		year = value[value.rindex(' ')+1..-1].strip
-		@date_out = "#{day}-#{month}-#{year}"
-	end
-
 	def total_s
 		@total_out.to_s.sub(".",",")
 	end
