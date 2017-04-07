@@ -16,13 +16,6 @@ module Setup
 	module Format
 		HSBC = "HSBC"
 		MS = "MS"
-		TEST = "TEST"
-		COLMENA = "COLMENA"
-		CONSALUD = "CONSALUD"
-		CRUZBLANCA = "CRUZBLANCA"
-		MASVIDA = "MASVIDA"
-		VIDATRES = "VIDA3"
-		BANMEDICA = "BANMEDICA"
 	end
 
 	# Field text alignment
@@ -108,33 +101,12 @@ module Setup
 	# Sets up the specific bank format to be loaded
 	def self.set_enviroment(format, in_path, out_path)
 		case format
-		when Format::TEST
-			puts "TEST selected"
-			@@institution = Test.new()
 		when Format::HSBC
 			puts "HSBC selected"
 			@@institution = HSBC.new()
 		when Format::MS
 			puts "Morgan Stanley selected"
 			@@institution = MorganStanley.new()
-		when Format::COLMENA
-			puts "Colmena selected"
-			@@institution = Colmena.new()
-		when Format::CONSALUD
-			puts "Consalud selected"
-			@@institution = Consalud.new
-		when Format::CRUZBLANCA
-			puts "Cruz Blanca selected"
-			@@institution = CruzBlanca.new
-		when Format::MASVIDA
-			puts "Más Vida selected"
-			@@institution = MasVida.new
-		when Format::VIDATRES
-			puts "Vida Tres selected"
-			@@institution = VidaTres.new
-		when Format::BANMEDICA
-			puts "Banmedica selected"
-			@@institution = Banmedica.new
 		else
 			puts "Wrong input, try again or CTRL + C to exit"
 			return false
