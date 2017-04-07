@@ -10,6 +10,9 @@ class Reader
 	# file: File to be read by page
 	# offset: y position of last read item
 	def initialize(file)
+		@stashed = 0
+		@last_page = []
+		@last_offset = []
 		@file = file
 		@page = 1
 		@offset = 0
@@ -22,13 +25,17 @@ class Reader
 	end
 
 	def stash
-		@last_page = @page
-		@last_offset = @offset
+		@stashed += 1 
+		@last_page[@stashed] = @page
+		@last_offset[@stashed] = @offset
+		return @stashed
 	end
 
-	def pop
-		@page = @last_page
-		@offset = @last_offset
+	def pop index, move = true
+		raise(StandardError, "Can't re-stash reader") unless @stashed >= index
+		@page = @last_page[@stashed] if move
+		@offset = @last_offset[@stashed] if move
+		@stashed = index -1
 	end
 
 	def to_s
@@ -225,7 +232,7 @@ class Reader
 	end
 
 	def find_text text
-		stash
+		original_pos = stash
 		result = nil
 		@page = 1
 		file_name = "#{@file[@file.rindex('/')+1..-1]}"
@@ -240,7 +247,7 @@ class Reader
 				@page += 1
 			end
 		end
-		pop
+		pop original_pos
 		return result
 	end
 end

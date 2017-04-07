@@ -151,8 +151,6 @@ class Table
 	def execute reader
 		set_headers_width
 		first_header = @headers.sort.first
-		#slidder = @headers.map{|h| h.width}.max - 1
-		#reader.slide_up slidder
 		@headers_row = reader.set_header_limits(@headers)
 		return false unless @headers_row
 		@offset = nil if @offset and not reader.move_to @offset 
@@ -171,6 +169,12 @@ class Table
 		@headers.each do |header|
 			header.print_borders
 		end
+	end
+
+	def compare_bottom possible
+		possible = false if possible.nil?
+		@bottom = false if @bottom.nil?
+		return (@bottom == possible)
 	end
 
 end

@@ -28,7 +28,7 @@ MorganStanley.class_eval do
 		title = false
 		total = false
 		title_dump = /(Long Term Reinvestments|Short Term Reinvestments|Cumulative\ *Cash\ *Distributions|Total Purchases vs Market Value|Net Value Increase\/\(Decrease\))/
-		present = get_table(headers, nil, table_end, nil, skips) do |table|
+		present = get_table("mutual funds", nil, headers, nil, table_end, skips) do |table|
 			table.rows.each.with_index do |row, i|
 				results = table.headers.map {|h| h.results[-i-1].result}
 				if results[1] == "Total"

@@ -25,7 +25,7 @@
 			face_value = price = value = ai = "0.0"
 			unfinished_title = title = false
 			total = false
-			present = get_table(headers, nil, table_end, nil, skips) do |table|
+			present = get_table("fixed income", nil, headers, nil, table_end, skips) do |table|
 				table.rows.each.with_index do |row, i|
 					results = table.headers.map {|h| h.results[-i-1].result}
 					if results[1] == "Total"

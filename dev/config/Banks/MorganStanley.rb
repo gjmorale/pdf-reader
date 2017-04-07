@@ -1,4 +1,5 @@
 require_relative "Bank.rb"
+
 class MorganStanley < Bank
 	DIR = "MS"
 	LEGACY = "MStanley"
@@ -85,15 +86,6 @@ MorganStanley.class_eval do
 			@accounts.reverse_each do |account|
 				Field.new("Account Summary").execute @reader
 				Field.new("Account Detail").execute @reader
-
-=begin
-				while code_s == last_acc
-					start = SingleField.new("Account Summary", [Custom::ACC_CODE], 4)
-					start.execute @reader
-					code_s = parse_account start.results[0].result
-				end
-				last_acc = code_s
-=end
 				puts "\nACC: #{account.code} - #{account.value}"
 				account.add_pos analyse_cash
 				account.add_pos analyse_stock
@@ -121,7 +113,6 @@ MorganStanley.class_eval do
 		end
 
 		def analyse_cash
-			print "Proccesing cash ... "
 			table_end = [Field.new(["Percentage","of Holdings"],4, Setup::Align::BOTTOM),
 				Field.new("BANK DEPOSITS")]
 			search = Field.new("CASH, BANK DEPOSIT PROGRAM AND MONEY MARKET FUNDS")
@@ -132,7 +123,7 @@ MorganStanley.class_eval do
 			headers << HeaderField.new("Est Ann Income", headers.size, Setup::Type::AMOUNT, false)
 			headers << HeaderField.new("APY %", headers.size, Setup::Type::FLOAT, false)
 			new_positions = []
-			present = get_table(headers, nil, table_end, search) do |table|
+			present = get_table("cash", search, headers, nil, table_end) do |table|
 				table.rows.each.with_index do |row, i|
 					new_positions << Position.new(table.headers[0].results[i].result, 
 						to_number(table.headers[1].results[i].result), 
@@ -151,7 +142,7 @@ MorganStanley.class_eval do
 						1.0, 
 						to_number(variant_cue.results[0].result))
 				end
-				total = SingleField.new("CASH, BDP, AND MMFs#{variant}",[Setup::Type::PERCENTAGE, Setup::Type::AMOUNT, Setup::Type::AMOUNT], 2)
+				total = SingleField.new("CASH, BDP, AND MMFs#{variant}",[Setup::Type::PERCENTAGE, Setup::Type::AMOUNT, Setup::Type::AMOUNT], 2, Setup::Align::BOTTOM)
 				total.execute @reader
 				acumulated = 0
 				new_positions.map{|p| acumulated += p.value}
@@ -163,148 +154,10 @@ MorganStanley.class_eval do
 		end
 
 		def analyse_stock
-			unless @reader.move_to(Field.new("STOCKS"),2)
-				puts "No stock for this account"
-				return false
+			if(positions = Stocks.new(@reader).analyze)
+				return positions
 			else
-				print "Proccesing stocks ... "
-			end
-
-			table_end = Field.new(["Percentage","of Holdings"],4, Setup::Align::BOTTOM)
-			headers = []
-			headers << HeaderField.new("Security Description", headers.size, Setup::Type::LABEL, false)
-			headers << HeaderField.new("Trade Date", headers.size, Custom::DATE_OR_TOTAL, false)
-			headers << HeaderField.new("Quantity", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new("Unit Cost", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new("Share Price", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new("Total Cost", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new("Market Value", headers.size, Setup::Type::AMOUNT, true)
-			headers << HeaderField.new(["Unrealized","Gain/(Loss)"], headers.size, Custom::AMOUNT_W_TERM, false,4)
-			headers << HeaderField.new("Est Ann Income", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new(["Current","Yield %"], headers.size, Setup::Type::FLOAT, false,4)
-			skips = ['.*(?:Asset Class:).*']
-			new_positions = []
-			quantity = price = value = "0.0"
-			title = false
-			total = false
-			present = get_table(headers, nil, table_end, nil, skips) do |table|
-				table.rows.each.with_index do |row, i|
-					results = table.headers.map {|h| h.results[-i-1].result}
-					if results[1] == "Total"
-						total = true
-						quantity = results[2]
-						value = results[6]
-					end
-					new_title = (results[0].nil? or results[0].empty? or results[0] == Result::NOT_FOUND) ? false : results[0]
-					if new_title
-						if title 
-							new_positions << Position.new(title, 
-								to_number(quantity), 
-								to_number(price), 
-								to_number(value))
-						end
-						title = new_title
-						price = results[4]
-						quantity = results[2]
-						value = results[6]
-						total = false
-					end
-				end
-			end
-			if title
-				new_positions << Position.new(title, 
-					to_number(quantity), 
-					to_number(price), 
-					to_number(value))
-			end
-			if present
-				total = SingleField.new("STOCKS",[Setup::Type::PERCENTAGE, 
-					Setup::Type::AMOUNT, 
-					Setup::Type::AMOUNT, 
-					Custom::AMOUNT_W_TERM, 
-					Setup::Type::AMOUNT, 
-					Setup::Type::PERCENTAGE], 
-					6, Setup::Align::LEFT)
-				total.execute @reader
-				acumulated = 0
-				new_positions.map{|p| acumulated += p.value}
-				check acumulated, to_number(total.results[2].result)
-				return new_positions
-			else 
-				puts "STOCKS table is missing."
-				return analyse_stock_alternative
-			end
-		end
-
-		def analyse_stock_alternative
-			@reader.go_to(@reader.page)
-			unless @reader.move_to(Field.new("STOCKS"),2)
-				puts "No stock alternative for this account"
-				return false
-			else
-				print "Proccesing stocks alternative ... "
-			end
-
-			table_end = Field.new(["Percentage","of Holdings"],4, Setup::Align::BOTTOM)
-			headers = []
-			headers << HeaderField.new("Security Description", headers.size, Setup::Type::LABEL, false)
-			headers << HeaderField.new("Quantity", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new("Share Price", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new("Total Cost", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new("Market Value", headers.size, Setup::Type::AMOUNT, true)
-			headers << HeaderField.new(["Unrealized","Gain/(Loss)"], headers.size, Custom::AMOUNT_W_TERM, false,4)
-			headers << HeaderField.new("Est Ann Income", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new(["Current","Yield %"], headers.size, Setup::Type::FLOAT, false,4)
-			skips = ['.*(?:Asset Class:).*']
-			new_positions = []
-			quantity = price = value = "0.0"
-			title = false
-			total = false
-			present = get_table(headers, nil, table_end, nil, skips) do |table|
-				table.rows.each.with_index do |row, i|
-					results = table.headers.map {|h| h.results[-i-1].result}
-					if results[1] == "Total"
-						total = true
-						quantity = results[1]
-						value = results[4]
-					end
-					new_title = (results[0].nil? or results[0].empty? or results[0] == Result::NOT_FOUND) ? false : results[0]
-					if new_title
-						if title 
-							new_positions << Position.new(title, 
-								to_number(quantity), 
-								to_number(price), 
-								to_number(value))
-						end
-						title = new_title
-						price = results[2]
-						quantity = results[1]
-						value = results[4]
-						total = false
-					end
-				end
-			end
-			if title
-				new_positions << Position.new(title, 
-					to_number(quantity), 
-					to_number(price), 
-					to_number(value))
-			end
-			if present
-				total = SingleField.new("STOCKS",[Setup::Type::PERCENTAGE, 
-					Setup::Type::AMOUNT, 
-					Setup::Type::AMOUNT, 
-					Setup::Type::AMOUNT,  
-					Setup::Type::AMOUNT, 
-					Setup::Type::PERCENTAGE], 
-					6, Setup::Align::LEFT)
-				total.execute @reader
-				acumulated = 0
-				new_positions.map{|p| acumulated += p.value}
-				check acumulated, to_number(total.results[2].result)
-				return new_positions
-			else 
-				puts "STOCKS alternative table is missing."
+				return StocksAlt.new(@reader).analyze
 			end
 		end
 
@@ -425,7 +278,7 @@ MorganStanley.class_eval do
 			skips = ['.*(?:Asset Class:).*']
 			new_positions = []
 			value = "0.0"
-			present = get_table(headers, nil, table_end, nil, skips) do |table|
+			present = get_table("hedge funds", nil, headers, nil, table_end, skips) do |table|
 				table.rows.each.with_index do |row, i|
 					results = table.headers.map {|h| h.results[-i-1].result}
 					title = results[0] 
@@ -473,7 +326,7 @@ MorganStanley.class_eval do
 			new_positions = []
 			price = quantity = value = "0.0"
 			Setup::Debug.overview = true
-			present = get_table(headers, nil, table_end, nil, skips) do |table|
+			present = get_table("hedge fund shares", nil, headers, nil, table_end, skips) do |table|
 				table.rows.each.with_index do |row, i|
 					results = table.headers.map {|h| h.results[-i-1].result}
 					title = results[0]
@@ -583,7 +436,7 @@ MorganStanley.class_eval do
 			skips = ['.*(?:Asset Class:).*']
 			new_positions = []
 			quantity = value = "0.0"
-			present = get_table(headers, nil, table_end, nil, skips) do |table|
+			present = get_table("private equity", nil, headers, nil, table_end, skips) do |table|
 				table.rows.each.with_index do |row, i|
 					results = table.headers.map {|h| h.results[-i-1].result}
 					title = results[0]
@@ -638,7 +491,7 @@ MorganStanley.class_eval do
 			skips = ['.*(?:Asset Class:).*']
 			new_positions = []
 			quantity = value = "0.0"
-			present = get_table(headers, nil, table_end, nil, skips) do |table|
+			present = get_table("real estate", nil, headers, nil, table_end, skips) do |table|
 				table.rows.each.with_index do |row, i|
 					results = table.headers.map {|h| h.results[-i-1].result}
 					title = results[0]
@@ -731,7 +584,7 @@ MorganStanley.class_eval do
 			headers << HeaderField.new(["Unrealized","Gain/(Loss)","(Total ST/LT)"], headers.size, [Setup::Type::INTEGER, Setup::Type::INTEGER], false, 6)
 			headers << HeaderField.new("Page", headers.size, Custom::PAGE, true, 4)
 			new_accounts = []
-			present = get_table(headers, offset, table_end, search) do |table|
+			present = get_table("accounts", search, headers, offset, table_end) do |table|
 				table.rows.each.with_index do |row, i|
 					new_accounts << AccountMS.new(parse_account(table.headers[0].results[i].result), 
 						to_number(table.headers[5].results[i].result))
@@ -760,43 +613,6 @@ MorganStanley.class_eval do
 			AccountMS.new(code_s, value_s)
 		end
 
-
-		def get_table(headers, offset, table_end, search, skips = nil, verbose = false)
-			original_page = @reader.page
-			bottom = nil
-			present = false
-			while bottom.nil?
-				if search and not search.execute @reader
-					present = false
-					break
-				end
-				cloned_table_end = clone_it table_end
-				cloned_headers = clone_it headers
-				cloned_offset = clone_it offset
-				bottom = @reader.read_next_field(cloned_table_end)
-				bottom = nil unless bottom
-				table = Table.new(cloned_headers, bottom, cloned_offset, skips)
-				original_offset = @reader.offset
-				original_page = @reader.page
-				if table.execute @reader and table.width > 1
-					present = true
-					yield table
-					puts "\n"  if verbose
-					table.print_results if verbose
-				else
-					@reader.go_to original_page, original_offset
-					return if bottom.nil?
-				end 
-				@reader.go_to(@reader.page + 1) if bottom.nil?
-			end
-			if present
-				return true
-			else
-				@reader.go_to original_page
-				return nil
-			end
-		end
-
 		def parse_account str
 			if str.is_a? Multiline
 				str.strings.each do |s|
@@ -808,6 +624,74 @@ MorganStanley.class_eval do
 		end
 
 end
+
+class Stocks < AssetTable
+	def load
+		@name = "stocks"
+		@title = Field.new("STOCKS")
+		@table_end = Field.new(["Percentage","of Holdings"],4, Setup::Align::BOTTOM)
+		@headers = []
+			headers << HeaderField.new("Security Description", headers.size, Setup::Type::LABEL, false)
+			headers << HeaderField.new("Trade Date", headers.size, Custom::DATE_OR_TOTAL, false)
+			headers << HeaderField.new("Quantity", headers.size, Setup::Type::AMOUNT, false)
+			headers << HeaderField.new("Unit Cost", headers.size, Setup::Type::AMOUNT, false)
+			headers << HeaderField.new("Share Price", headers.size, Setup::Type::AMOUNT, false)
+			headers << HeaderField.new("Total Cost", headers.size, Setup::Type::AMOUNT, false)
+			headers << HeaderField.new("Market Value", headers.size, Setup::Type::AMOUNT, true)
+			headers << HeaderField.new(["Unrealized","Gain/(Loss)"], headers.size, Custom::AMOUNT_W_TERM, false,4)
+			headers << HeaderField.new("Est Ann Income", headers.size, Setup::Type::AMOUNT, false)
+			headers << HeaderField.new(["Current","Yield %"], headers.size, Setup::Type::FLOAT, false,4)
+		@skips = ['.*(?:Asset Class:).*']
+		@total = SingleField.new("STOCKS",[Setup::Type::PERCENTAGE, 
+			Setup::Type::AMOUNT, 
+			Setup::Type::AMOUNT, 
+			Custom::AMOUNT_W_TERM, 
+			Setup::Type::AMOUNT, 
+			Setup::Type::PERCENTAGE], 
+			6, Setup::Align::LEFT)
+		@offset = nil
+		@page_end = nil
+		@price_index = 		4
+		@quantity_index = 	2
+		@value_index = 		6
+		@total_index = 		2
+		@total_column = 	1
+	end
+end
+
+class StocksAlt < AssetTable
+	def load
+		@name = "stock alternatives"
+		@title = Field.new("STOCKS")
+		@table_end = Field.new(["Percentage","of Holdings"],4, Setup::Align::BOTTOM)
+		@headers = []
+			headers << HeaderField.new("Security Description", headers.size, Setup::Type::LABEL, false)
+			headers << HeaderField.new("Quantity", headers.size, Setup::Type::AMOUNT, false)
+			headers << HeaderField.new("Share Price", headers.size, Setup::Type::AMOUNT, false)
+			headers << HeaderField.new("Total Cost", headers.size, Setup::Type::AMOUNT, false)
+			headers << HeaderField.new("Market Value", headers.size, Setup::Type::AMOUNT, true)
+			headers << HeaderField.new(["Unrealized","Gain/(Loss)"], headers.size, Custom::AMOUNT_W_TERM, false,4)
+			headers << HeaderField.new("Est Ann Income", headers.size, Setup::Type::AMOUNT, false)
+			headers << HeaderField.new(["Current","Yield %"], headers.size, Setup::Type::FLOAT, false,4)
+		@skips = ['.*(?:Asset Class:).*']
+		@total = SingleField.new("STOCKS",[Setup::Type::PERCENTAGE, 
+			Setup::Type::AMOUNT, 
+			Setup::Type::AMOUNT, 
+			Setup::Type::AMOUNT,  
+			Setup::Type::AMOUNT, 
+			Setup::Type::PERCENTAGE], 
+			6, Setup::Align::LEFT)
+		@offset = nil
+		@page_end = nil
+		@price_index = 		2
+		@quantity_index = 	1
+		@value_index =		4
+		@total_index = 		2
+		@total_column = 	1
+	end
+end
+			
+
 =begin
 
 TODO: Universal chart method with options for:

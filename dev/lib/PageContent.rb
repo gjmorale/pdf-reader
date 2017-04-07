@@ -102,6 +102,7 @@ class PageContent
 	# horizontal_search_range times. Then it takes the last match
 	# and assigns it with position to the result.
 	def horizontal_search(result, range, regex)
+		puts "#{range}"
 		counter = 0
 		tolerance = 0
 		last_match = ""
