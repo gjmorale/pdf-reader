@@ -303,8 +303,12 @@ HSBC.class_eval do
 				end
 				bottom = @reader.read_next_field(table_end) ? table_end : page_end
 				table = Table.new(headers, bottom, offset, skips)
-				table.execute @reader
-				yield table
+				if table.execute @reader
+					table.rows.each.with_index do |row, i|
+						results = table.headers.map {|h| h.results[-i-1].result}
+						yield results
+					end
+				end
 			end
 			if present
 				return true
