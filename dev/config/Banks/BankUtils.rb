@@ -59,4 +59,32 @@ module BankUtils
 			return field.clone
 		end
 	end
+
+	def self.to_ai result
+		return "0.0" if result.nil? or result.empty? or result.match(Regexp.new(Result::NOT_FOUND))
+		if result.is_a? Multiline
+			numbers = []
+			result.strings.map{|s| numbers << s if s and not s.empty?}
+			case numbers.size
+			when 0
+				return "0.0"
+			when 1
+				return "0.0"
+			when 2
+				return numbers[1]
+			end	
+		else
+			return result
+		end
+	end
+
+	def self.parse_position str
+		return [name, nil] unless str.is_a? Multiline
+		name = str.strings[0]
+		str.match /CUSIP/ do |m|
+			code = str.strings[m.offset[2]][m.offset[0]..-1]
+			return [code,name]
+		end
+		return [name,nil]
+	end
 end

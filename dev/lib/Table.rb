@@ -3,6 +3,7 @@ class Table
 	attr_reader :rows
 	attr_reader :width
 	attr_reader :headers
+	attr_reader :range
 
 	def initialize(headers, bottom = nil, offset = nil, skips = nil)
 		@bottom = bottom

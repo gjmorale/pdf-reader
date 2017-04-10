@@ -101,114 +101,130 @@ class AssetTable
 	attr_reader :offset
 	attr_reader :page_end
 	attr_reader :price_index
+	attr_reader :price_default
 	attr_reader :quantity_index
+	attr_reader :quantity_default
 	attr_reader :value_index
+	attr_reader :value_default
+	attr_reader :ai_index
+	attr_reader :ai_default
 	attr_reader :total_index
+	attr_reader :total_ai_index
 	attr_reader :total_column
+	attr_reader :unfinished_regex
+	attr_reader :title_dump
+	attr_accessor :verbose
 
-	def initialize reader
+	def initialize reader, v = false
 		@reader = reader
+		@verbose = v
 	end
 
 	def analyze 
 		checkpoint = @reader.stash
 		load
-		if go_to_title 
-			if(positions = self.get_results)
-				check_results positions
-				@reader.pop checkpoint, false
-				return positions
-			end
+		if(positions = self.get_results)
+			positions = check_results positions
+			@reader.pop checkpoint, false
+			return positions
 		end
 		@reader.pop checkpoint
 		return false
 	end
 
-	def go_to_title 
-		unless (found = @reader.move_to(title, 2))
-			puts "No #{name} for this account"
-		else
-			print "Proccesing #{name} ... "
-		end
-		return found
-	end
-
 	def get_results
 		new_positions = []
-		quantity = price = value = "0.0"
-		label = nil
+		accured_interests = quantity = price = value = "0.0"
+		unfinished_label = label = nil
 		present = get_table do |table|
 			table.rows.each.with_index do |row, i|
 				results = table.headers.map {|h| h.results[-i-1].result}
 				if total_column and results[total_column] == "Total"
-					quantity = results[quantity_index]
-					value = results[value_index]
+					quantity = (quantity_default || results[quantity_index])
+					value = (value_default || results[value_index])
+					accured_interests = (ai_index ? BankUtils.to_ai(results[ai_index]) : 0.0).to_s
 				end
-				new_title = (results[0].nil? or results[0].empty? or results[0] == Result::NOT_FOUND) ? false : results[0]
+				new_title = title_dump ? "#{results[0]}".gsub(title_dump, "") : results[0]
+				new_title = (new_title.nil? or new_title.empty? or new_title == Result::NOT_FOUND) ? nil : new_title
 				if new_title
+					if unfinished_regex
+						new_title = unfinished_label.append new_title if unfinished_label
+						unfinished_label = (new_title.match(unfinished_regex)) ? nil : new_title 
+					end
+					titles = BankUtils.parse_position(label)
 					if label 
-						new_positions << Position.new(label, 
+						new_positions << Position.new(titles[0], 
 							BankUtils.to_number(quantity), 
 							BankUtils.to_number(price), 
-							BankUtils.to_number(value))
+							BankUtils.to_number(value) + BankUtils.to_number(accured_interests),
+							titles[1])
 					end
-					label = new_title
-					price = results[price_index]
-					quantity = results[quantity_index]
-					value = results[value_index]
+					label = unfinished_label ? nil : new_title
+					price = (price_default || results[price_index]).to_s
+					quantity = (quantity_default || results[quantity_index]).to_s
+					value = (value_default || results[value_index]).to_s
+					accured_interests = (ai_index ? BankUtils.to_ai(results[ai_index]) : 0.0).to_s
+				else
+					unfinished_label = nil
 				end
 			end
 		end
 		if label
-			new_positions << Position.new(label, 
+			titles = BankUtils.parse_position(label)
+			new_positions << Position.new(titles[0], 
 				BankUtils.to_number(quantity), 
 				BankUtils.to_number(price), 
-				BankUtils.to_number(value))
+				BankUtils.to_number(value) + BankUtils.to_number(accured_interests),
+				titles[1])
 		end
 		if present
 			return new_positions
 		else
-			puts "#{name} table missing"
+			puts "#{name} table missing #{@reader}" if verbose
 			return nil
 		end
 	end
 
 	def check_results new_positions
-		total.execute @reader
+		table_total = (total and total.execute(@reader)) ? total.results[total_index].result : nil
+		ai_total = (table_total and total_ai_index) ? BankUtils.to_ai(total.results[total_ai_index].result) : nil
+		total.print_results if verbose and table_total
 		acumulated = 0
 		new_positions.map{|p| acumulated += p.value}
-		BankUtils.check acumulated, BankUtils.to_number(total.results[total_index].result)
+		BankUtils.check acumulated, BankUtils.to_number(table_total) + BankUtils.to_number(ai_total)
+		return new_positions
 	end
 
 
-	def get_table verbose = false, interative_title = false
-		present = false
-		exit = false
+	def get_table(iterative_title = false)
+		present = exit = false
 		while not exit
 			if title and (not present or iterative_title)
 				if @reader.move_to(title, 2)
-					puts "processing #{name}" unless present
+					puts "Processing #{name} ..." unless present
+					@reader.skip(title)
 				else
 					present = false
-					puts "no #{name} for this account"
 					break
 				end
 			end
-			cloned_table_end = BankUtils.clone_it table_end
+			cloned_table_end = BankUtils.clone_it(table_end)
 			cloned_headers = BankUtils.clone_it headers
 			cloned_offset = BankUtils.clone_it offset
 			table = Table.new(cloned_headers, cloned_table_end, cloned_offset, skips)
 			pre_table_reader = @reader.stash
-			if (present = table.execute(@reader)) and table.width > 1
+			if table.execute(@reader) and table.width > 1
+				present = true
 				yield table
 				table.print_results if verbose
 			else
+				@reader.pop pre_table_reader
 				break
 			end 
-			@reader.pop pre_table_reader, (not present)
 			if table.compare_bottom(page_end)
 				@reader.go_to(@reader.page + 1) 
 			else
+				@reader.pop pre_table_reader
 				break
 			end
 		end
