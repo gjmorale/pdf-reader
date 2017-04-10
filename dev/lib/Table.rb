@@ -154,7 +154,8 @@ class Table
 		first_header = @headers.sort.first
 		@headers_row = reader.set_header_limits(@headers)
 		return false unless @headers_row
-		@offset = nil if @offset and not reader.move_to @offset 
+		@offset = reader.move_to @offset if @offset
+		reader.skip @offset if @offset
 		@bottom = reader.read_next_field @bottom if @bottom
 		set_range reader.line_size, reader.line_height
 		set_borders

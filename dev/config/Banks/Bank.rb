@@ -123,11 +123,13 @@ class AssetTable
 	def analyze 
 		checkpoint = @reader.stash
 		load
+		puts "Pre-Run  reader #{@reader}" if verbose
 		if(positions = self.get_results)
 			positions = check_results positions
 			@reader.pop checkpoint, false
 			return positions
 		end
+		puts "Post-Run reader #{@reader}" if verbose
 		@reader.pop checkpoint
 		return false
 	end
@@ -186,9 +188,11 @@ class AssetTable
 	end
 
 	def check_results new_positions
+		puts "Pre-Check  reader #{@reader}" if verbose
 		table_total = (total and total.execute(@reader)) ? total.results[total_index].result : nil
 		ai_total = (table_total and total_ai_index) ? BankUtils.to_ai(total.results[total_ai_index].result) : nil
 		total.print_results if verbose and table_total
+		puts "Post-Check reader #{@reader}" if verbose
 		acumulated = 0
 		new_positions.map{|p| acumulated += p.value}
 		BankUtils.check acumulated, BankUtils.to_number(table_total) + BankUtils.to_number(ai_total)
@@ -224,7 +228,7 @@ class AssetTable
 			if table.compare_bottom(page_end)
 				@reader.go_to(@reader.page + 1) 
 			else
-				@reader.pop pre_table_reader
+				@reader.pop pre_table_reader, false
 				break
 			end
 		end

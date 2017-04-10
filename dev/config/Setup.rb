@@ -154,7 +154,7 @@ class Institution
 			dir_path = File.dirname(file)
 			dir_name = dir_path[dir_path.rindex('/')+1..-1]
 			file_name = file[file.rindex('/')+1..-1]
-			puts "\n***************************************** - #{file_name}\n"
+			puts "\n\n************************************ - #{file_name}"
 			analyse_position file
 			unless File.exist? "#{@out_path}/#{dir_name}"
 				Dir.mkdir("#{@out_path}/#{dir_name}")
@@ -162,7 +162,7 @@ class Institution
 			out = File.open("#{@out_path}/#{dir_name}/#{file_name}.txt",'w:UTF-8')
 			print_results out
 		end
-		puts "\n*****************************************\n"
+		puts "\n************************************\n"
 	end
 
 	def to_number str

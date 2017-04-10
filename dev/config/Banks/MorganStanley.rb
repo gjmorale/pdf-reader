@@ -76,7 +76,6 @@ MorganStanley.class_eval do
 		end
 
 		def analyse_position file
-			puts "ANALYSING #{file}"
 			@reader = Reader.new(file)
 			set_date @reader.find_text(/[A-Z][a-z]+\ \d{1,2}\-\d{1,2}\,\ 20\d{2}/i)
 			check_multiple_accounts
@@ -96,7 +95,7 @@ MorganStanley.class_eval do
 
 				puts "Account #{account.code} total "
 				check account.pos_value, account.value
-				puts "_________________________________/"
+				puts "___________________________________/"
 			end
 			get_grand_total
 		end
@@ -109,7 +108,7 @@ MorganStanley.class_eval do
 			accounts.map{|p| acumulated += p.pos_value}
 			puts "\nGRAND TOTAL: "
 			check acumulated, to_number(total.results[0].result)
-			puts "_________________________________/"
+			puts "___________________________________/"
 			@total_out = to_number(total.results[0].result)
 		end
 
@@ -211,7 +210,12 @@ MorganStanley.class_eval do
 		end
 
 		def accounts_table
-			return Accounts.new(@reader).analyze
+			accounts = []
+			ba = BussinessAccounts.new(@reader).analyze
+			pa = PersonalAccounts.new(@reader).analyze
+			accounts += ba if ba.is_a? Array
+			accounts += pa if pa.is_a? Array
+			return accounts
 		end
 
 		def single_account

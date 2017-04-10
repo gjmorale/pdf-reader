@@ -39,7 +39,7 @@ class Reader
 	end
 
 	def to_s
-		"[#{@page}:#{@offset}] => #{@file}"
+		"[Page: #{@page} , Offset: #{@offset}]"
 	end
 
 	# Allows banks execution to skip directly to a specific page
@@ -71,10 +71,13 @@ class Reader
 		original_page = @page
 		original_offset = @offset
 		counter = limit != 0 ? 1 : 0
-		while counter <= limit and not read_next_field(field) 
+		while counter <= limit
+			if match = read_next_field(field)
+				field = match
+				break
+			end
 			counter += 1 if limit != 0
 			@page += 1
-			match = read_next_field(field)
 		end
 		if field.is_a? Field and field.position?
 			@offset = field.position.y
