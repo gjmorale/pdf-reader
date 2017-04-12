@@ -236,6 +236,8 @@ HSBC.class_eval do
 		end
 
 		def equity_for account
+			return HSBCAssetTable::Equity.new(@reader).analyze
+=begin
 			table_end = Field.new("Total Equity")
 			page_end = Field.new(" Account: ")
 			search = Field.new("Equities#{account.title}")
@@ -276,6 +278,7 @@ HSBC.class_eval do
 			else
 				puts " - No Equity for this account"
 			end
+=end
 		end
 
 		def others_for account
@@ -318,14 +321,14 @@ HSBC.class_eval do
 		end
 
 		def get_table(headers, offset, table_end, page_end, search, skips = nil, verbose = false)
-			@reader.stash
+			original_reader = @reader.stash
 			bottom = nil
 			exit = false
 			present = true
 			while not exit
 				@reader.go_to(@reader.page + 1) unless bottom.nil?
 				if search
-				search.execute @reader
+					search.execute @reader
 					if search.position.nil?
 						present = false
 						break
@@ -347,7 +350,7 @@ HSBC.class_eval do
 					yield table
 				else
 					if not exit
-						@reader.pop
+						@reader.pop original_reader
 						return false
 					end
 				end
@@ -366,7 +369,7 @@ HSBC.class_eval do
 			if present
 				return true
 			else
-				@reader.pop
+				@reader.pop original_reader
 				return nil
 			end
 		end

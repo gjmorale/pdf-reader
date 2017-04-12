@@ -90,14 +90,16 @@ module BankUtils
 		end
 	end
 
-	def self.parse_position str
-		return [name, nil] unless str.is_a? Multiline
-		name = str.strings[0]
-		str.match /CUSIP/ do |m|
-			code = str.strings[m.offset[2]][m.offset[0]..-1]
-			return [code,name]
+	def self.to_type str, type
+		if str.is_a? Multiline and type
+			str.strings.each do |s|
+				if s.match(regex(type)) 
+					return s
+				end
+			end
+		else
+			return str
 		end
-		return [name,nil]
 	end
 
 	def self.parse_account str

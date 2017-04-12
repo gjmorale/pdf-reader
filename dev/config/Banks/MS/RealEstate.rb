@@ -1,4 +1,4 @@
-class RealEstate < AssetTable
+class RealEstate < MSAssetTable
 	def load
 		@name = "real estate"
 		@title = Field.new('REAL ESTATE')

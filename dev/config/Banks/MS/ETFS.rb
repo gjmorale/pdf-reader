@@ -1,4 +1,4 @@
-class ETFS < AssetTable
+class ETFS < MSAssetTable
 	def load
 		@name = "etfs"
 		@title = Field.new('EXCHANGE-TRADED & CLOSED-END FUNDS')

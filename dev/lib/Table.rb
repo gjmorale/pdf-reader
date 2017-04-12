@@ -154,9 +154,9 @@ class Table
 		first_header = @headers.sort.first
 		@headers_row = reader.set_header_limits(@headers)
 		return false unless @headers_row
-		@offset = reader.move_to @offset if @offset
+		@offset = reader.move_to(@offset) if @offset
 		reader.skip @offset if @offset
-		@bottom = reader.read_next_field @bottom if @bottom
+		@bottom = reader.read_next_field(@bottom) if @bottom
 		set_range reader.line_size, reader.line_height
 		set_borders
 		@rows = reader.get_rows(@range, get_guide, @skips)
@@ -174,9 +174,13 @@ class Table
 	end
 
 	def compare_bottom possible
-		possible = false if possible.nil?
-		@bottom = false if @bottom.nil?
-		return (@bottom == possible)
+		if not possible and not @bottom
+			return true
+		elsif not possible or not @bottom
+			return false
+		else
+			return posible.text == @bottom.text
+		end
 	end
 
 end

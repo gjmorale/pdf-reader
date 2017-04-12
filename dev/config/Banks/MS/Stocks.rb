@@ -1,5 +1,5 @@
 
-class Stocks < AssetTable
+class Stocks < MSAssetTable
 	def load
 		@name = "stocks"
 		@title = Field.new("STOCKS")
@@ -33,7 +33,7 @@ class Stocks < AssetTable
 	end
 end
 
-class StocksAlt < AssetTable
+class StocksAlt < MSAssetTable
 	def load
 		@name = "stock alternatives"
 		@title = Field.new("STOCKS")

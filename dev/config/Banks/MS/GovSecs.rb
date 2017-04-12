@@ -1,4 +1,4 @@
-class GovSecs < AssetTable
+class GovSecs < MSAssetTable
 	def load
 		@name = "gov. securities"
 		@title = Field.new("GOVERNMENT SECURITIES")
@@ -32,5 +32,6 @@ class GovSecs < AssetTable
 		@total_index = 		3
 		@total_ai_index = 	5
 		@total_column = 	1
+		@position_parser = 'CUSIP'
 	end
 end

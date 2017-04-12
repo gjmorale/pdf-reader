@@ -1,4 +1,4 @@
-class Cash < AssetTable
+class Cash < MSAssetTable
 	def load
 		@name = "cash"
 		@title = Field.new("CASH, BANK DEPOSIT PROGRAM AND MONEY MARKET FUNDS")

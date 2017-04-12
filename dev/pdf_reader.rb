@@ -6,6 +6,7 @@ module FileReader
 	Dir[File.dirname(__FILE__) + '/lib/*.rb'].each {|file| require file }
 	require File.dirname(__FILE__) + '/config/Setup.rb'
 	require File.dirname(__FILE__) + '/config/Banks/Bank.rb'
+	Dir[File.dirname(__FILE__)     + '/config/Banks/AssetTables/*.rb'].each {|file| require_relative file } 
 	require File.dirname(__FILE__) + '/config/Banks/HSBC.rb'
 	require File.dirname(__FILE__) + '/config/Banks/HSBC_Account.rb'
 	require File.dirname(__FILE__) + '/config/Banks/MorganStanley.rb'

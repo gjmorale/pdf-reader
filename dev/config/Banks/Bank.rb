@@ -95,6 +95,7 @@ class AssetTable
 	attr_reader :total
 	attr_reader :offset
 	attr_reader :page_end
+	attr_reader :label_index
 	attr_reader :price_index
 	attr_reader :price_default
 	attr_reader :quantity_index
@@ -107,12 +108,14 @@ class AssetTable
 	attr_reader :total_ai_index
 	attr_reader :total_column
 	attr_reader :unfinished_regex
+	attr_reader :position_parser
 	attr_reader :title_dump
 	attr_accessor :verbose
 
 	def initialize reader, v = false
 		@reader = reader
 		@verbose = v
+		@label_index = 0
 	end
 
 	def analyze 
@@ -141,20 +144,16 @@ class AssetTable
 					value = (value_default || results[value_index])
 					accured_interests = (ai_index ? BankUtils.to_ai(results[ai_index]) : 0.0).to_s
 				end
-				new_title = title_dump ? "#{results[0]}".gsub(title_dump, "") : results[0]
+				new_title = title_dump ? "#{results[label_index]}".gsub(title_dump, "") : results[label_index]
 				new_title = (new_title.nil? or new_title.empty? or new_title == Result::NOT_FOUND) ? nil : new_title
 				if new_title
 					if unfinished_regex
 						new_title = unfinished_label.append new_title if unfinished_label
 						unfinished_label = (new_title.match(unfinished_regex)) ? nil : new_title 
 					end
-					titles = BankUtils.parse_position(label)
 					if label 
-						new_positions << Position.new(titles[0], 
-							BankUtils.to_number(quantity), 
-							BankUtils.to_number(price), 
-							BankUtils.to_number(value) + BankUtils.to_number(accured_interests),
-							titles[1])
+						titles = parse_position(label, @position_parser)
+						new_positions << new_position(titles, quantity, price, value, accured_interests)
 					end
 					label = unfinished_label ? nil : new_title
 					price = (price_default || results[price_index]).to_s
@@ -167,12 +166,8 @@ class AssetTable
 			end
 		end
 		if label
-			titles = BankUtils.parse_position(label)
-			new_positions << Position.new(titles[0], 
-				BankUtils.to_number(quantity), 
-				BankUtils.to_number(price), 
-				BankUtils.to_number(value) + BankUtils.to_number(accured_interests),
-				titles[1])
+			titles = parse_position(label, @position_parser)
+			new_positions << new_position(titles, quantity, price, value, accured_interests)
 		end
 		if present
 			return new_positions
@@ -180,6 +175,14 @@ class AssetTable
 			puts "#{name} table missing #{@reader}" if verbose
 			return nil
 		end
+	end
+
+	def new_position titles, quantity, price, value, ai
+		Position.new(titles[0], 
+			BankUtils.to_number(quantity), 
+			BankUtils.to_number(price), 
+			BankUtils.to_number(value) + BankUtils.to_number(ai),
+			titles[1])
 	end
 
 	def check_results new_positions

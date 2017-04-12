@@ -1,11 +1,11 @@
-class AccountsTable < AssetTable
+class AccountsTable < MSAssetTable
 
 	def get_results
 		new_accounts = []
 		present = get_table do |table|
 			table.rows.each.with_index do |row, i|
 				results = table.headers.map {|h| h.results[-i-1].result}
-				new_accounts << AccountMS.new(BankUtils.parse_account(results[0]), 
+				new_accounts << AccountMS.new(parse_account(results[0]), 
 					BankUtils.to_number(results[5]))
 			end
 		end

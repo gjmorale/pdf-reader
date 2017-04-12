@@ -3,9 +3,9 @@ HSBC.class_eval do
 		new_positions = []
 		search = Field.new("Private Equity#{account.title}")
 		if search.execute @reader
-			@reader.stash
+			original_reader = @reader.stash
 			pos = get_private_funds
-			pos ? new_positions += pos : @reader.pop
+			pos ? new_positions += pos : @reader.pop(original_reader)
 			return new_positions
 		else
 			puts " - No Private Equity for this account"

@@ -1,4 +1,4 @@
-class MutualFunds < AssetTable
+class MutualFunds < MSAssetTable
 	def load
 		@name = "mutual funds"
 		@title = Field.new("MUTUAL FUNDS")
@@ -34,7 +34,7 @@ class MutualFunds < AssetTable
 	end
 end
 
-class MutualFundsAlt < AssetTable
+class MutualFundsAlt < MSAssetTable
 	def load
 		@name = "mutual funds alternative"
 		@title = Field.new("MUTUAL FUNDS")

@@ -1,4 +1,4 @@
-class ManagedFutures < AssetTable
+class ManagedFutures < MSAssetTable
 	def load
 		@name = "managed futures"
 		@title = Field.new('MANAGED FUTURES')

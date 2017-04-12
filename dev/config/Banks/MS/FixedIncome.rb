@@ -1,4 +1,4 @@
-class FixedIncome < AssetTable
+class FixedIncome < MSAssetTable
 	def load
 		@name = "fixed income"
 		@title = Field.new("CORPORATE FIXED INCOME")
@@ -33,10 +33,11 @@ class FixedIncome < AssetTable
 		@total_ai_index = 	5
 		@total_column = 	1
 		@unfinished_regex =	/CUSIP/
+		@position_parser = 	'CUSIP'
 	end
 end
 
-class FixedIncomeAlt < AssetTable
+class FixedIncomeAlt < MSAssetTable
 	def load
 		@name = "fixed income alternative"
 		@title = Field.new("CORPORATE FIXED INCOME")
@@ -69,5 +70,6 @@ class FixedIncomeAlt < AssetTable
 		@total_ai_index = 	5
 		@total_column = 	1
 		@unfinished_regex =	/CUSIP/
+		@position_parser = 	'CUSIP'
 	end
 end

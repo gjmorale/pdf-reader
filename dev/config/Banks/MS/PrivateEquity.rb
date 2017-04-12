@@ -1,4 +1,4 @@
-class PrivateEquity < AssetTable
+class PrivateEquity < MSAssetTable
 	def load
 		@name = "private equity"
 		@title = Field.new('PRIVATE EQUITY')

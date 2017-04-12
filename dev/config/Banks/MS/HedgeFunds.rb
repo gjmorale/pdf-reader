@@ -1,4 +1,4 @@
-class HedgeFunds < AssetTable
+class HedgeFunds < MSAssetTable
 	def load
 		@name = "hedge funds"
 		@title = Field.new('HEDGE FUNDS')
@@ -23,7 +23,7 @@ class HedgeFunds < AssetTable
 	end
 end
 
-class HedgeFundShares < AssetTable
+class HedgeFundShares < MSAssetTable
 	def load
 		@name = "hedge funds shares"
 		@title = Field.new('HEDGE FUNDS - SHARES')
