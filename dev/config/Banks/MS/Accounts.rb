@@ -1,7 +1,6 @@
 class AccountsTable < AssetTable
 
 	def get_results
-		#@verbose = true 
 		new_accounts = []
 		present = get_table do |table|
 			table.rows.each.with_index do |row, i|
@@ -46,14 +45,14 @@ class BussinessAccounts < AccountsTable
 			headers << HeaderField.new("Page", headers.size, Custom::PAGE, true, 4)
 		@offset = [Field.new("Business Accounts")]
 		@total = SingleField.new("Total Business Accounts",
-			[Setup::Type::AMOUNT,
-			Setup::Type::AMOUNT,
-			Setup::Type::AMOUNT,
-			Setup::Type::AMOUNT,
-			Setup::Type::AMOUNT,
-			Setup::Type::AMOUNT], 
-			6, Setup::Align::LEFT)
-		@total_index = 5
+			[Setup::Type::INTEGER,
+			Setup::Type::INTEGER,
+			Setup::Type::INTEGER,
+			Setup::Type::INTEGER,
+			Setup::Type::INTEGER,
+			Setup::Type::INTEGER], 
+			5, Setup::Align::LEFT)
+		@total_index = 4
 	end
 end
 
@@ -81,7 +80,7 @@ class PersonalAccounts < AccountsTable
 			Setup::Type::AMOUNT,
 			Setup::Type::AMOUNT,
 			Setup::Type::AMOUNT], 
-			4, Setup::Align::LEFT)
-		@total_index = 5
+			5, Setup::Align::LEFT)
+		@total_index = 4
 	end
 end

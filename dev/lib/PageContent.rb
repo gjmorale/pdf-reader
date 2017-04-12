@@ -49,11 +49,11 @@ class PageContent
 				if m.is_a? MultiMatchData
 					width = (field.is_a? SingleField and field.enforced_width) ? field.width : m.offset[3]-m.offset[2]+1
 					if field.orientation > 7 or field.orientation < 3
-						top_y = y + m.offset[2]
+						top_y = y + m.offset[2] - 1
 					elsif field.orientation < 7 and field.orientation > 3
 						top_y = y + m.offset[3] - (width)
 					else
-						top_y = y + m.offset[2]/2 + m.offset[3]/2 - width/2 + 1
+						top_y = y + (m.offset[2] + m.offset[3] - width)/2
 					end
 					field.position = TextNode.new(xi, xf-1, top_y+1) 
 					field.width = width 
@@ -131,6 +131,11 @@ class PageContent
 				end
 			end
 		end
+		if Setup::Debug.overview	#DEBUG ONLY
+			lines = (range[3] > 1 ? (range[2]..range[2]+range[3]-1) : range[2] )
+			text = (Multiline.generate @content.lines[lines])[range[1]..range[1]+counter] 
+			puts "#{RegexHelper.strip_wildchar(text).to_s}<<"			
+		end										
 		if not last_match.nil? and last_match.match regex
 			result.result = last_match
 		else

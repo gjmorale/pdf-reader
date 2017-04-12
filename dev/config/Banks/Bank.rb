@@ -37,11 +37,6 @@ MONTHS = [[1, /jan/i],
 			end
 		end
 		file.write(";;;Total;;;;#{total_s}\n")
-		#positions = []
-		#@accounts.map{|a| positions += a.positions}
-		#positions.each do |p|
-		#	file.write(p.print)
-		#end
 	end
 
 	def get_table(name, title, headers, offset, table_end, skips = nil, reader = nil, iterative_title = false, verbose = false)
@@ -189,8 +184,10 @@ class AssetTable
 
 	def check_results new_positions
 		puts "Pre-Check  reader #{@reader}" if verbose
+		Setup::Debug.overview = true if verbose
 		table_total = (total and total.execute(@reader)) ? total.results[total_index].result : nil
 		ai_total = (table_total and total_ai_index) ? BankUtils.to_ai(total.results[total_ai_index].result) : nil
+		Setup::Debug.overview = false if verbose
 		total.print_results if verbose and table_total
 		puts "Post-Check reader #{@reader}" if verbose
 		acumulated = 0

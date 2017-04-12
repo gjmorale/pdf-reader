@@ -36,7 +36,7 @@ MorganStanley.class_eval do
 		when Setup::Type::AMOUNT
 			'([$]?\(?[0-9]{1,3}(?:,?[0-9]{3})*\.[0-9]{1,3}\)?|(?:\342\200\224)){1}\s*'
 		when Setup::Type::INTEGER
-			'([$]?\(?[1-9]\d{0,2}(?:,+?[0-9]{1,3})*\)?|(?:\342\200\224)){1}\s*'
+			'([$]?\(?[1-9]\d{0,2}(?:,?[0-9]{3})*\)?|(?:\342\200\224)){1}\s*'
 		when Setup::Type::CURRENCY
 			'(EUR|USD|CAD|JPY|GBP){1}'
 		when Setup::Type::ASSET
