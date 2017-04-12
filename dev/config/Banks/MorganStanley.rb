@@ -1,6 +1,6 @@
 require_relative "Bank.rb"
 
-class MorganStanley < Bank
+class MS < Bank
 	DIR = "MS"
 	LEGACY = "MStanley"
 	TABLE_OFFSET = 10
@@ -8,7 +8,7 @@ end
 
 Dir[File.dirname(__FILE__) + '/MS/*.rb'].each {|file| require_relative file } 
 
-MorganStanley.class_eval do
+MS.class_eval do
 
 	def dir
 		self.class::DIR
@@ -95,7 +95,7 @@ MorganStanley.class_eval do
 
 				puts "Account #{account.code} total "
 				BankUtils.check account.pos_value, account.value
-				puts "___________________________________/"
+				puts "_____________________________________/"
 			end
 			get_grand_total
 		end
@@ -108,7 +108,7 @@ MorganStanley.class_eval do
 			accounts.map{|p| acumulated += p.pos_value}
 			puts "\nGRAND TOTAL: "
 			BankUtils.check acumulated, to_number(total.results[0].result)
-			puts "___________________________________/"
+			puts "_____________________________________/"
 			@total_out = to_number(total.results[0].result)
 		end
 
@@ -162,26 +162,26 @@ MorganStanley.class_eval do
 		end
 
 		def analyse_fixed_income
-			if(positions = FixedIncome.new(@reader).analyze)
+			if(positions = MS::FixedIncome.new(@reader).analyze)
 				return positions
 			else
-				return FixedIncomeAlt.new(@reader).analyze
+				return MS::FixedIncomeAlt.new(@reader).analyze
 			end
 		end
 
 		def analyse_mutual_funds
-			if(positions = MutualFunds.new(@reader).analyze)
+			if(positions = MS::MutualFunds.new(@reader).analyze)
 				return positions
 			else
-				return MutualFundsAlt.new(@reader).analyze
+				return MS::MutualFundsAlt.new(@reader).analyze
 			end
 		end
 
 		def analyse_etfs
-			if(positions = ETFS.new(@reader).analyze)
+			if(positions = MS::ETFS.new(@reader).analyze)
 				return positions
 			else
-				return ETFSAlt.new(@reader).analyze
+				return MS::ETFSAlt.new(@reader).analyze
 			end
 		end
 

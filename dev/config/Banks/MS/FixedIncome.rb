@@ -1,4 +1,4 @@
-class FixedIncome < MSAssetTable
+class MS::FixedIncome < MSAssetTable
 	def load
 		@name = "fixed income"
 		@title = Field.new("CORPORATE FIXED INCOME")
@@ -37,7 +37,7 @@ class FixedIncome < MSAssetTable
 	end
 end
 
-class FixedIncomeAlt < MSAssetTable
+class MS::FixedIncomeAlt < MSAssetTable
 	def load
 		@name = "fixed income alternative"
 		@title = Field.new("CORPORATE FIXED INCOME")

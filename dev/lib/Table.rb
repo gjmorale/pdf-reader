@@ -179,7 +179,7 @@ class Table
 		elsif not possible or not @bottom
 			return false
 		else
-			return posible.text == @bottom.text
+			return possible.text == @bottom.text
 		end
 	end
 

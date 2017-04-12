@@ -1,5 +1,10 @@
 class MSAssetTable < AssetTable
 
+	def pre_load *args
+		@label_index = 0
+		@title_limit = 2
+		@iterative_title = false
+	end
 
 	def parse_position str, type
 		return [name, nil] unless str.is_a? Multiline and type

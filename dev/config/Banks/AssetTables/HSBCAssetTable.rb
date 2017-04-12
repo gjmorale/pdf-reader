@@ -1,6 +1,22 @@
 class HSBCAssetTable < AssetTable
 
-	def self.parse_position str, type
+	attr_reader :account_title
+
+	def pre_load *args
+		@account_title = args[0][0] if args.any?
+		@label_index = 2
+		@title_limit = 0
+		@iterative_title = true
+	end
+
+	def post_load
+		unless account_title and not account_title.empty?
+			puts "LIMITED #{account_title}" if verbose
+			@title_limit = 2
+		end
+	end
+
+	def parse_position str, type
 		extra = ""
 		regex = '\('<< type <<'\)'
 		regex = Regexp.new(regex)
@@ -15,7 +31,7 @@ class HSBCAssetTable < AssetTable
 		return [extra,nil]
 	end
 
-	def self.parse_account str
+	def parse_account str
 		str = str.inspect
 		account_data = []
 		str.match(get_regex Custom::ACCOUNT_CODE, false) {|m|
@@ -32,6 +48,5 @@ class HSBCAssetTable < AssetTable
 			BankUtils.to_number(value) + BankUtils.to_number(ai),
 			titles[1])
 	end
-
 
 end

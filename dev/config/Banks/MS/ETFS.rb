@@ -1,4 +1,4 @@
-class ETFS < MSAssetTable
+class MS::ETFS < MSAssetTable
 	def load
 		@name = "etfs"
 		@title = Field.new('EXCHANGE-TRADED & CLOSED-END FUNDS')
@@ -33,7 +33,7 @@ class ETFS < MSAssetTable
 	end
 end
 
-class ETFSAlt < AssetTable
+class MS::ETFSAlt < MSAssetTable
 	def load
 		@name = "etfs alternative"
 		@title = Field.new('EXCHANGE-TRADED & CLOSED-END FUNDS')
