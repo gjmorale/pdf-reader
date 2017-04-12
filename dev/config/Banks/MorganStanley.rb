@@ -6,7 +6,7 @@ class MorganStanley < Bank
 	TABLE_OFFSET = 10
 end
 
-Dir[File.dirname(__FILE__) + '/MS/*.rb'].each {|file| require_relative file }
+Dir[File.dirname(__FILE__) + '/MS/*.rb'].each {|file| require_relative file } 
 
 MorganStanley.class_eval do
 
