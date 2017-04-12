@@ -1,4 +1,4 @@
-class AccountsTable < MSAssetTable
+class MS::AccountsTable < MSAssetTable
 
 	def get_results
 		new_accounts = []
@@ -17,7 +17,7 @@ class AccountsTable < MSAssetTable
 	end
 end
 
-class BussinessAccounts < AccountsTable
+class MS::BussinessAccounts < MS::AccountsTable
 	def load
 		@name = "bussiness accounts"
 		@title = Field.new("OVERVIEW OF YOUR ACCOUNT")
@@ -46,7 +46,7 @@ class BussinessAccounts < AccountsTable
 	end
 end
 
-class PersonalAccounts < AccountsTable
+class MS::PersonalAccounts < MS::AccountsTable
 	def load
 		@name = "personal accounts"
 		@title = Field.new("OVERVIEW OF YOUR ACCOUNT")

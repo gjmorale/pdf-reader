@@ -234,18 +234,19 @@ class Reader
 		@page_content.print range, @offset, start, show
 	end
 
-	def find_text text
+	def find_text text, limit = 0
 		original_pos = stash
 		result = nil
 		@page = 1
 		file_name = "#{@file[@file.rindex('/')+1..-1]}"
-
-		while File.exist?(file_path = "#{@file}/#{file_name}_#{@page}.page")
+		counter = limit != 0 ? 1 : 0
+		while File.exist?(file_path = "#{@file}/#{file_name}_#{@page}.page") and counter <= limit
 			first_page = File.new(file_path, 'r:UTF-8')
 			@page_content = PageContent.new(@page, first_page.read)
 			if result = @page_content.find_text(text)
 				break
 			else
+				counter += 1 if limit != 0
 				@page += 1
 			end
 		end

@@ -34,7 +34,7 @@ class HSBCAssetTable < AssetTable
 	def parse_account str
 		str = str.inspect
 		account_data = []
-		str.match(get_regex Custom::ACCOUNT_CODE, false) {|m|
+		str.match(/\d{3}[A-Z]\d{7}/) {|m|
 			account_data[0] = str[m.offset(0)[0]..m.offset(0)[1]-1]
 			account_data[1] = str[m.offset(0)[1]..-1]
 		}

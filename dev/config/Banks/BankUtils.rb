@@ -101,14 +101,4 @@ module BankUtils
 			return str
 		end
 	end
-
-	def self.parse_account str
-		if str.is_a? Multiline
-			str.strings.each do |s|
-				return s if s.match /[0-9]{3}\-[0-9]{6}\-[0-9]{3}\+?/
-			end
-		else
-			return str
-		end
-	end
 end

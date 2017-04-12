@@ -185,15 +185,6 @@ MS.class_eval do
 			end
 		end
 
-		def parse_position str
-			name = str.strings[0]
-			str.match /CUSIP/ do |m|
-				code = str.strings[m.offset[2]][m.offset[0]..-1]
-				return [code,name]
-			end
-			return [name,nil]
-		end
-
 		def check_multiple_accounts
 			consolidated = Field.new("Consolidated Summary")
 			if consolidated.execute @reader
@@ -211,8 +202,8 @@ MS.class_eval do
 
 		def accounts_table
 			accounts = []
-			ba = BussinessAccounts.new(@reader).analyze
-			pa = PersonalAccounts.new(@reader).analyze
+			ba = MS::BussinessAccounts.new(@reader).analyze
+			pa = MS::PersonalAccounts.new(@reader).analyze
 			accounts += ba if ba.is_a? Array
 			accounts += pa if pa.is_a? Array
 			return accounts
@@ -222,7 +213,12 @@ MS.class_eval do
 			@reader.go_to(3)
 			code = SingleField.new("Account Summary", [Custom::ACC_CODE], 4, Setup::Align::LEFT)
 			code.execute @reader
-			code_s = BankUtils.parse_account code.results[0].result
+			code_s = code.results[0].result
+			if code_s.is_a? Multiline
+				code_s.strings.each do |s|
+					code_s = s if s.match /[0-9]{3}\-[0-9]{6}\-[0-9]{3}\+?/
+				end
+			end
 			value = SingleField.new("TOTAL VALUE", [Setup::Type::AMOUNT])
 			value.execute @reader
 			value_s = to_number(value.results[0].result)
@@ -231,13 +227,3 @@ MS.class_eval do
 		end
 
 end
-			
-
-=begin
-
-TODO: Universal chart method with options for:
- - Total and non total
- - title_dump
- - Handle table precense	
-	
-=end

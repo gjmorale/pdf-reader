@@ -74,9 +74,8 @@ HSBC.class_eval do
 		def analyse_position file
 			@reader = Reader.new(file)
 			set_date @reader.find_text(/^\d{1,2} [A-Z]{4,10} 20\d{2}/)
-			@accounts, grand_total = recognize_accounts
-			@total_out = grand_total
-			@accounts.reverse_each do |account|
+			@accounts = recognize_accounts
+			@accounts.each do |account|
 				puts "\nACC: #{account.code} - $#{account.value}"
 				account.add_pos liquidity_for(account)
 				account.add_pos fixed_income_for(account)
@@ -89,63 +88,34 @@ HSBC.class_eval do
 				BankUtils.check account.pos_value, account.value
 				puts "_____________________________________/"
 			end
-			puts "\nCHECKING TOTAL NET ASSETS"
+			get_grand_total
+		end
+
+		def get_grand_total
+			@reader.go_to 2
+			total = SingleField.new("NET ASSETS",[Setup::Type::AMOUNT])
+			total.execute @reader
 			acumulated = 0
-			@accounts.map{|a| acumulated += a.pos_value}
+			accounts.map{|p| acumulated += p.pos_value}
 			puts "\nGRAND TOTAL: "
-			BankUtils.check acumulated, grand_total
+			BankUtils.check acumulated, to_number(total.results[0].result)
 			puts "_____________________________________/"
+			@total_out = to_number(total.results[0].result)
 		end
 
 		def recognize_accounts
-			portfolios = SingleField.new("Portfolios consolidated for this account: ",[Setup::Type::INTEGER])
-			portfolios.execute @reader
-			#portfolios.print_results
-			headers = []
-			headers << (portfolio = HeaderField.new("Portfolio", headers.size, Setup::Type::LABEL))
-			headers << HeaderField.new("Cur.", headers.size, Setup::Type::CURRENCY, true)
-			headers << (values = HeaderField.new("Market value in USD", headers.size, Setup::Type::AMOUNT, true))
-			bottom = Field.new("TOTAL PORTFOLIOS IN CREDIT")
-			table = Table.new(headers, bottom)
-			table.execute @reader
-			#table.print_results
-			new_accounts = []
-			portfolio.results.each.with_index do |result, i|
-				account_data = parse_account(result.result)
-				account = AccountHSBC.new(account_data[0], account_data[1])
-				account.value = values.results[i].result.to_s.delete(',').to_f
-				new_accounts << account
-			end
-			net_assets = SingleField.new("NET ASSETS",[Setup::Type::AMOUNT])
-			net_assets.execute @reader
-			total = 0
-			new_accounts.each do |account|
-				total += account.value
-			end
-			grand_total = to_number(net_assets.results[0].result)
-			check total.round(2), grand_total
-			unless Field.new("At a glance - Portfolio ").execute @reader
+			new_accounts = HSBC::Accounts.new(@reader).analyze
+			unless @reader.find_text(/PORTFOLIO\ \d{3}[A-Z]\d{7}\ /i)
 				code = @reader.find_text(/^\d{1,2} [A-Z]{4,10} 20\d{2} Account: \d{3}[A-Z]\d{7} USD \(E\&OE\)/).split(' ')[4]
 				only_acc = AccountHSBC.new(code,nil)
 				only_acc.value = 0.0 
 				new_accounts.map{|a| only_acc.value += a.value}
 				new_accounts = [only_acc]
-				puts only_acc.title
 				while Field.new("Top 5 performers since inception").execute @reader
 					#puts @reader.page
 				end
 			end
-			return new_accounts, grand_total
-		end
-
-		def parse_account str
-			str = str.inspect
-			account_data = []
-			str.match(get_regex Custom::ACCOUNT_CODE, false) {|m|
-				account_data[0] = str[m.offset(0)[0]..m.offset(0)[1]-1]
-				account_data[1] = str[m.offset(0)[1]..-1]
-			}
-			return account_data
+			return new_accounts
 		end
 
 		def liquidity_for account
@@ -178,32 +148,5 @@ HSBC.class_eval do
 
 		def private_equity_for account
 			return HSBC::PrivateEquity.new(@reader).analyze(account.title)
-		end
-
-		def parse_position str, type
-			extra = ""
-			regex = '\('<< type <<'\)'
-			regex = Regexp.new(regex)
-			str.strings.each do |s|
-				if s.match regex
-					code = "#{type} #{s[0..s.index(' ')-1]}"
-					return [code, extra]
-				else
-					extra << s
-				end
-			end
-			return [extra,nil]
-		end
-
-		def to_type str, type
-			if str.is_a? Multiline
-				str.strings.each do |s|
-					if s.match(regex(type)) 
-						return s
-					end
-				end
-			else
-				return str
-			end
 		end
 end
