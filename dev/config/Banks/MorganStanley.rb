@@ -94,7 +94,7 @@ MorganStanley.class_eval do
 				account.add_pos analyse_alternative_investments
 
 				puts "Account #{account.code} total "
-				check account.pos_value, account.value
+				BankUtils.check account.pos_value, account.value
 				puts "___________________________________/"
 			end
 			get_grand_total
@@ -107,7 +107,7 @@ MorganStanley.class_eval do
 			acumulated = 0
 			accounts.map{|p| acumulated += p.pos_value}
 			puts "\nGRAND TOTAL: "
-			check acumulated, to_number(total.results[0].result)
+			BankUtils.check acumulated, to_number(total.results[0].result)
 			puts "___________________________________/"
 			@total_out = to_number(total.results[0].result)
 		end
@@ -222,8 +222,7 @@ MorganStanley.class_eval do
 			@reader.go_to(3)
 			code = SingleField.new("Account Summary", [Custom::ACC_CODE], 4, Setup::Align::LEFT)
 			code.execute @reader
-			code.print_results
-			code_s = parse_account code.results[0].result
+			code_s = BankUtils.parse_account code.results[0].result
 			value = SingleField.new("TOTAL VALUE", [Setup::Type::AMOUNT])
 			value.execute @reader
 			value_s = to_number(value.results[0].result)

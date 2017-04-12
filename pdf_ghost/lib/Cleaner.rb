@@ -15,7 +15,7 @@ class Cleaner
 		puts " #{total} files: "
 		files.each.with_index do |file, i|
 			
-			print "[#{i+1}/#{total}]"
+			print "[%02d/#{total}]" % (i+1)
 			name = File.basename(file, '.pdf')
 			dir_name = File.dirname(file)
 			dir_name = dir_name[dir_name.rindex('/')+1..-1]

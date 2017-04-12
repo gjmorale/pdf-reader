@@ -28,9 +28,9 @@ class Cash < AssetTable
 			variant_cue.execute @reader
 			variant = " (PROJECTED SETTLED BALANCE)"
 			new_positions << Position.new("NET UNSETTLED PURCHASES/SALES", 
-				to_number(variant_cue.results[0].result), 
+				BankUtils.to_number(variant_cue.results[0].result), 
 				1.0, 
-				to_number(variant_cue.results[0].result))
+				BankUtils.to_number(variant_cue.results[0].result))
 		end
 		total = SingleField.new("CASH, BDP, AND MMFs#{variant}",[Setup::Type::PERCENTAGE, Setup::Type::AMOUNT, Setup::Type::AMOUNT], 2, Setup::Align::BOTTOM)
 		acumulated = 0

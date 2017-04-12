@@ -28,6 +28,18 @@ module BankUtils
 		end
 	end
 
+	def self.to_amount number
+		out = "$"
+		integer_s = number.to_i.to_s
+		integer_s.each_char.with_index do |d,i|
+			if (integer_s.length-i)%3 == 0 and i != 0
+				out << ','
+			end
+			out << d
+		end
+		out << ".#{(number%1*100).to_i.to_s}"
+	end
+
 	def self.to_arr(item, n)
 		r = []
 		n.times do |i|
@@ -38,16 +50,16 @@ module BankUtils
 
 	def self.check acumulated, stated
 		if stated == 0
-			puts "UNABLE TO CHECK #{acumulated}".yellow
+			puts "UNABLE TO CHECK #{to_amount(acumulated)}".yellow
 			return
 		end
 		delta = acumulated - stated
 		delta = delta * delta
 		if delta > 1
-			puts "CHECK #{acumulated.round(2)} - #{stated}".red
+			puts "CHECK #{to_amount(acumulated)} - #{to_amount(stated)}".red
 			#raise CustomError::NO_MATCH
 		else
-			puts "CHECK #{acumulated.round(2)} - #{stated}".green
+			puts "CHECK #{to_amount(acumulated)} - #{to_amount(stated)}".green
 		end
 	end
 
@@ -86,5 +98,15 @@ module BankUtils
 			return [code,name]
 		end
 		return [name,nil]
+	end
+
+	def self.parse_account str
+		if str.is_a? Multiline
+			str.strings.each do |s|
+				return s if s.match /[0-9]{3}\-[0-9]{6}\-[0-9]{3}\+?/
+			end
+		else
+			return str
+		end
 	end
 end

@@ -5,7 +5,7 @@ class AccountsTable < AssetTable
 		present = get_table do |table|
 			table.rows.each.with_index do |row, i|
 				results = table.headers.map {|h| h.results[-i-1].result}
-				new_accounts << AccountMS.new(parse_account(results[0]), 
+				new_accounts << AccountMS.new(BankUtils.parse_account(results[0]), 
 					BankUtils.to_number(results[5]))
 			end
 		end
@@ -13,16 +13,6 @@ class AccountsTable < AssetTable
 			return new_accounts
 		else 
 			puts "#{name} table is missing #{@reader}" if verbose
-		end
-	end
-
-	def parse_account str
-		if str.is_a? Multiline
-			str.strings.each do |s|
-				return s if s.match /[0-9]{3}\-[0-9]{6}\-[0-9]{3}\+?/
-			end
-		else
-			return str
 		end
 	end
 end
