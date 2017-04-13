@@ -48,6 +48,11 @@ class Reader
 		@offset = offset
 	end
 
+	def next_page
+		@page += 1
+		@offset = 0
+	end
+
 	def slide_up value
 		if @offset - value > 0
 			@offset -= value

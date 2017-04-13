@@ -24,6 +24,7 @@ class AssetTable
 	attr_reader :title_dump
 	attr_reader :title_limit
 	attr_reader :iterative_title
+	attr_reader :spanish
 	attr_accessor :verbose
 
 	def initialize reader, v = false
@@ -103,9 +104,9 @@ class AssetTable
 
 	def new_position titles, quantity, price, value, ai
 		Position.new(titles[0], 
-			BankUtils.to_number(quantity), 
-			BankUtils.to_number(price), 
-			BankUtils.to_number(value) + BankUtils.to_number(ai),
+			BankUtils.to_number(quantity, spanish), 
+			BankUtils.to_number(price, spanish), 
+			BankUtils.to_number(value, spanish) + BankUtils.to_number(ai, spanish),
 			titles[1])
 	end
 
@@ -119,7 +120,7 @@ class AssetTable
 		puts "Post-Check reader #{@reader}" if verbose
 		acumulated = 0
 		new_positions.map{|p| acumulated += p.value}
-		BankUtils.check acumulated, BankUtils.to_number(table_total) + BankUtils.to_number(ai_total)
+		BankUtils.check acumulated, BankUtils.to_number(table_total, spanish) + BankUtils.to_number(ai_total, spanish)
 		return new_positions
 	end
 

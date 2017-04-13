@@ -16,6 +16,7 @@ module Setup
 	module Format
 		HSBC = "HSBC"
 		MS = "MS"
+		SEC = "SEC"
 	end
 
 	# Field text alignment
@@ -107,6 +108,9 @@ module Setup
 		when Format::MS
 			puts "Morgan Stanley selected"
 			@@institution = MS.new()
+		when Format::SEC
+			puts "Security selected"
+			@@institution = SEC.new()
 		else
 			puts "Wrong input, try again or CTRL + C to exit"
 			return false

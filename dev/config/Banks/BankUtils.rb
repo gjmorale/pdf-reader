@@ -1,6 +1,6 @@
 module BankUtils
 
-	def self.to_number str
+	def self.to_number str, spanish = false
 		if str.is_a? Multiline
 			str.strings.each do |line| 
 				line.strip! unless line.empty?
@@ -11,6 +11,7 @@ module BankUtils
 			end
 		end
 		return 0.0 if str.nil? or str.empty?
+		str = str.gsub(',','!').gsub('.',',').gsub('!','.') if spanish
 		str = str.strip
 		str = str.delete('$')
 		str = str.delete(',')

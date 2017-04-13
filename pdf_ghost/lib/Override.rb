@@ -70,7 +70,7 @@ PDF::Reader::PageLayout.class_eval do
         x_pos = ((run.x - @x_offset) / col_multiplier).round
         y_pos = row_count - (run.y / row_multiplier).round
         if y_pos < row_count && y_pos >= 0 && x_pos < col_count && x_pos >= 0
-          local_string_insert(page[y_pos], run.text, x_pos)
+          local_string_insert(page[y_pos], run.text.gsub("\n",''), x_pos)
         end
       end
       interesting_rows(page).map(&:rstrip).join("\n")

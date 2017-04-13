@@ -79,8 +79,6 @@ MS.class_eval do
 			@reader = Reader.new(file)
 			set_date @reader.find_text(/[A-Z][a-z]+\ \d{1,2}\-\d{1,2}\,\ 20\d{2}/i)
 			check_multiple_accounts
-			last_acc = ""
-			code_s = ""
 			@accounts.each do |account|
 				Field.new("Account Summary").execute @reader
 				Field.new("Account Detail").execute @reader
