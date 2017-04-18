@@ -3,6 +3,7 @@ class Account
 	attr_reader :name
 	attr_reader :category
 	attr_accessor :elements
+	attr_reader :movements
 
 	def initialize name, category = nil
 		@name = name
@@ -22,4 +23,9 @@ class Account
 	def print
 		"\n[#{@category}] #{@name}:"
 	end
+
+	def add_mov mov
+		@movements += mov if mov
+	end
+
 end

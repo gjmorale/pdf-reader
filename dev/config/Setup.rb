@@ -163,15 +163,12 @@ class Institution
 			unless File.exist? "#{@out_path}/#{dir_name}"
 				Dir.mkdir("#{@out_path}/#{dir_name}")
 			end
-			out = File.open("#{@out_path}/#{dir_name}/#{file_name}_pos.txt",'w:UTF-8')
-			print_results out
-			post_run file_name: "#{@out_path}/#{dir_name}/#{file_name}_mov.txt"
+			out = "#{@out_path}/#{dir_name}/#{file_name}_pos.csv"
+			print_pos out
+			out = "#{@out_path}/#{dir_name}/#{file_name}_mov.csv"
+			print_mov out
 		end
 		puts "\n**************************************\n"
-	end
-
-	def post_run **args
-		#Override for post analises tasks
 	end
 
 	def to_number str

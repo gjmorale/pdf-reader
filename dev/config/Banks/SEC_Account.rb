@@ -7,6 +7,7 @@ class AccountSEC < Account
 	def initialize code, value
 		@value = value
 		@positions = []
+		@movements = []
 	end
 
 	def to_s

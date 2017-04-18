@@ -45,6 +45,7 @@ class PageContent
 			end
 			line[from..to].match(field.regex){|m|
 				xi = from + m.offset(0)[0]
+				#TODO: change field.text.length for the striped text found to make text_expand compatible with multiple-regex field.text E.j: Field.new("[GESTIONADO|MANDATO]")
 				xf = (from + m.offset(0)[1] + field.text.length*Setup::Read.text_expand).to_i
 				if m.is_a? MultiMatchData
 					width = (field.is_a? SingleField and field.enforced_width) ? field.width : m.offset[3]-m.offset[2]+1

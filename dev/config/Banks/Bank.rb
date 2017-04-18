@@ -25,7 +25,8 @@ MONTHS = [[1, /jan/i],
 		@total_out.to_s.sub(".",",")
 	end
 
-	def print_results  file
+	def print_pos  out
+		file = File.open(out,'w:UTF-8')
 		file.write("Id_sec1;Id_fi1;Fecha;Instrumento;Cantidad;Precio;Monto\n")
 		accounts.reverse_each do |acc|
 			file.write("#{acc.code};;;Total;;;;#{acc.value_s}\n")
@@ -34,6 +35,17 @@ MONTHS = [[1, /jan/i],
 			end
 		end
 		file.write(";;;Total;;;;#{total_s}\n")
+	end
+
+	def print_mov  out
+		return unless @accounts.any? {|acc| not acc.movements.nil? and not acc.movements.empty?}
+		file = File.open(out,'w:UTF-8')
+		file.write("fecha_movimiento;fecha_pago;concepto;id_sec1;factura;id_ti_valor1;cantidad1;id_ti_valor2;precio;cantidad2;detalle\n")
+		accounts.reverse_each do |acc|
+			acc.movements.each do |mov|
+				file.write(mov.print)
+			end
+		end
 	end
 
 end

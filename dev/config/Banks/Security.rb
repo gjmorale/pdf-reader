@@ -30,17 +30,17 @@ SEC.class_eval do
 		when Setup::Type::PERCENTAGE
 			'([+-]?\(?(100|[1-9]?\d)\.\d{2}\)?%|(?:\342\200\224)){1}\s*'
 		when Setup::Type::AMOUNT
-			'\(?[0-9]{1,3}(?:.?[0-9]{3})*(\,[0-9]{1,4})?\)?'
+			'-?\(?[0-9]{1,3}(?:.?[0-9]{3})*(\,[0-9]{1,4})?\)?'
 		when Setup::Type::INTEGER
 			'([$]?\(?[1-9]\d{0,2}(?:,?[0-9]{3})*\)?|(?:\342\200\224)){1}\s*'
 		when Setup::Type::CURRENCY
-			'(EUR|USD|CAD|JPY|GBP){1}'
+			'(CLP|EUR|USD|CAD|JPY|GBP){1}'
 		when Setup::Type::ASSET
 			'(Equities|Fixed Income|Liquidity and Money Market|Others){1}'
 		when Setup::Type::LABEL
 			'.+'
 		when Setup::Type::DATE
-			'\d{2}-\d{2}-\d{4}'
+			'\d{2}\/\d{2}\/\d{4}'
 		when Setup::Type::FLOAT
 			'(\(?(?:[1-9]{1}\d*|0)\.\d+\)?|(?:\342\200\224)){1}'
 		when Custom::GEST
@@ -91,16 +91,12 @@ SEC.class_eval do
 			account.add_pos analyse_investment_funds
 			account.add_pos analyse_stocks
 			account.add_pos analyse_cash
+			account.add_mov analyse_transactions
 			@accounts = [account]
 
 			puts "Account #{account.code} total "
 			BankUtils.check account.pos_value, account.value
 			puts "_____________________________________/"
-		end
-
-		def post_run **args
-			puts args[:file_name]
-
 		end
 
 		def analyse_mutual_funds
@@ -121,6 +117,10 @@ SEC.class_eval do
 
 		def analyse_stocks
 			SEC::Stocks.new(@reader).analyze usd_value
+		end
+
+		def analyse_transactions
+			SEC::Transactions.new(@reader).analyze(usd_value) || SEC::TransactionsAlt.new(@reader).analyze(usd_value)
 		end
 
 end
