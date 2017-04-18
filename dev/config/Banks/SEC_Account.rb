@@ -5,7 +5,6 @@ class AccountSEC < Account
 	attr_reader :code
 
 	def initialize code, value
-		@code = code.strip.sub('+','')
 		@value = value
 		@positions = []
 	end

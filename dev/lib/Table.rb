@@ -152,11 +152,15 @@ class Table
 	def execute reader
 		set_headers_width
 		first_header = @headers.sort.first
+		original_bottom = @bottom
+		@bottom = reader.read_next_field(@bottom) if @bottom
 		@headers_row = reader.set_header_limits(@headers)
+		#puts "RANGE: #{@range} #{reader} #{@bottom}" if Setup::Debug.overview
+		#reader.print(5) if Setup::Debug.overview
 		return false unless @headers_row
+		@bottom = reader.read_next_field(original_bottom) if bottom_in_headers(reader)
 		@offset = reader.move_to(@offset) if @offset
 		reader.skip @offset if @offset
-		@bottom = reader.read_next_field(@bottom) if @bottom
 		set_range reader.line_size, reader.line_height
 		set_borders
 		@rows = reader.get_rows(@range, get_guide, @skips)
@@ -165,6 +169,12 @@ class Table
 		reader.correct_results(@headers, @rows)
 		reader.skip self
 		return true
+	end
+
+	def bottom_in_headers reader
+		return false unless @bottom
+		#puts "IN: #{(@headers_row.yi <= @bottom.top and @headers_row.yf >= @bottom.bottom)} AT: #{reader} BOTTOM: /\\#{@bottom.top} \\/#{@bottom.bottom}" if Setup::Debug.overview
+		return !!(@headers_row.yi <= @bottom.top and @headers_row.yf >= @bottom.bottom)
 	end
 
 	def print_borders
@@ -177,6 +187,7 @@ class Table
 		if not possible and not @bottom
 			return true
 		elsif not possible or not @bottom
+			puts "BOTTOM #{@bottom}" if Setup::Debug.overview
 			return false
 		else
 			return possible.text == @bottom.text

@@ -50,7 +50,7 @@ module BankUtils
 	end
 
 	def self.check acumulated, stated
-		if stated == 0
+		if not stated or stated == 0
 			puts "UNABLE TO CHECK #{to_amount(acumulated)}".yellow
 			return
 		end

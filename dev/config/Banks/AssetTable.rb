@@ -25,11 +25,16 @@ class AssetTable
 	attr_reader :title_limit
 	attr_reader :iterative_title
 	attr_reader :spanish
+	attr_reader :alt_currency
 	attr_accessor :verbose
 
 	def initialize reader, v = false
 		@reader = reader
 		@verbose = v
+	end
+
+	def self.set_currs *args
+		@@alt_currs = args[0] if args.any?		
 	end
 
 	def pre_load *args
@@ -46,14 +51,17 @@ class AssetTable
 		pre_load args
 		load
 		post_load
+		Setup::Debug.overview = true if verbose
 		puts "Pre-Run  reader #{@reader}" if verbose
 		if(positions = self.get_results)
 			positions = check_results positions
 			@reader.pop checkpoint, false
+			Setup::Debug.overview = false if verbose
 			return positions
 		end
 		puts "Post-Run reader #{@reader}" if verbose
 		@reader.pop checkpoint
+		Setup::Debug.overview = false if verbose
 		return false
 	end
 
@@ -103,24 +111,33 @@ class AssetTable
 	end
 
 	def new_position titles, quantity, price, value, ai
+		quantity = BankUtils.to_number(quantity, spanish)
+		price = BankUtils.to_number(price, spanish)
+		value = BankUtils.to_number(value, spanish)
+		ai = BankUtils.to_number(ai, spanish)
+		price *= @@alt_currs[@alt_currency.to_sym] if @alt_currency
+		value *= @@alt_currs[@alt_currency.to_sym] if @alt_currency
+		titles[1] ||= ""
+		titles[1] << "[Obtenido con #{@alt_currency} a $#{@@alt_currs[@alt_currency.to_sym]}]" if @alt_currency
 		Position.new(titles[0], 
-			BankUtils.to_number(quantity, spanish), 
-			BankUtils.to_number(price, spanish), 
-			BankUtils.to_number(value, spanish) + BankUtils.to_number(ai, spanish),
+			quantity, 
+			price, 
+			value + ai,
 			titles[1])
 	end
 
 	def check_results new_positions
 		puts "Pre-Check  reader #{@reader}" if verbose
-		Setup::Debug.overview = true if verbose
-		table_total = (total and total.execute(@reader)) ? total.results[total_index].result : nil
-		ai_total = (table_total and total_ai_index) ? BankUtils.to_ai(total.results[total_ai_index].result) : nil
-		Setup::Debug.overview = false if verbose
+		table_total = (total and total.execute(@reader)) ? BankUtils.to_number(total.results[total_index].result, spanish) : nil
+		table_total *= @@alt_currs[@alt_currency.to_sym] if table_total and @alt_currency
+		ai_total = (table_total and total_ai_index) ? BankUtils.to_number(BankUtils.to_ai(total.results[total_ai_index].result), spanish) : nil
+		ai_total *= @@alt_currs[@alt_currency.to_sym] if ai_total and @alt_currency
+		table_total += ai_total if table_total and ai_total
 		total.print_results if verbose and table_total
 		puts "Post-Check reader #{@reader}" if verbose
 		acumulated = 0
 		new_positions.map{|p| acumulated += p.value}
-		BankUtils.check acumulated, BankUtils.to_number(table_total, spanish) + BankUtils.to_number(ai_total, spanish)
+		BankUtils.check acumulated, table_total
 		return new_positions
 	end
 
@@ -129,10 +146,10 @@ class AssetTable
 		present = exit = false
 		while not exit
 			if title and (not present or iterative_title)
-				if @reader.move_to(title, title_limit)
+				if(found_title = @reader.move_to(title, title_limit))
 					puts "Processing #{name}" unless present
 					puts "Title in #{@reader}" if verbose
-					@reader.skip(title)
+					@reader.skip(found_title)
 				else
 					puts "#{title} not found" if verbose
 					present = false
@@ -146,6 +163,7 @@ class AssetTable
 			table = Table.new(cloned_headers, cloned_table_end, cloned_offset, skips)
 			pre_table_reader = @reader.stash
 			puts "Processing #{name} in page #{@reader.page}" unless title or present
+			puts "Executing table at #{@reader}" if verbose
 			if table.execute(@reader) and table.width > 1
 				present = true
 				yield table
@@ -155,6 +173,7 @@ class AssetTable
 				@reader.pop pre_table_reader
 				break
 			end 
+			puts "Table read and ended at #{@reader}" if verbose
 			if table.compare_bottom(page_end)
 				@reader.go_to(@reader.page + 1) 
 			else

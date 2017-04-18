@@ -37,6 +37,11 @@ class RegexHelper
 		if term.is_a? Multiline
 			return term.strings.map{|s| regexify s}
 		end
+		if term =~ /^\[.+(\|.+)+\]$/
+			rgx = Regexp.union term[1..-2].split('|').map{|r| regexify r}
+			#puts rgx
+			return rgx
+		end
 		#term = term.to_s
 		raise if term.empty?
 		#puts "#{term}"

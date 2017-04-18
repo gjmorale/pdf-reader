@@ -32,18 +32,18 @@ class PageContent
 	# The field width must be at least as big as the field.
 	# Once the field is found, it sets it's position and
 	# width if it's multiline
-	def search_next(field, offset, from)
-		#puts "LOOKING FOR #{field}"
+	def search_next(field, offset, from = nil, to = nil)
+		#puts "LOOKING FOR #{field} as #{field.regex} #{from}" if Setup::Debug.overview
 		xi = 0
 		matched = false
+		from = from ? from : 0
+		to = to ? (from+to) : -1
 		@content.lines[offset..@content.lines.size-field.width].each.with_index do |line, y_full|
 			y = offset + y_full
 			if field.width > 1
 				line = Multiline.generate @content.lines[y, field.width]
 			end
-			#puts "#{RegexHelper.strip_wildchar(line[from..-1]).to_s}<"
-			line[from..-1].match(field.regex){|m|
-				#puts "match".green
+			line[from..to].match(field.regex){|m|
 				xi = from + m.offset(0)[0]
 				xf = (from + m.offset(0)[1] + field.text.length*Setup::Read.text_expand).to_i
 				if m.is_a? MultiMatchData
@@ -65,7 +65,6 @@ class PageContent
 			break if matched
 		end
 		if matched
-			#puts "CUAK: #{field.top}, #{field.width} [#{field.right}, #{field.left}]".yellow
 			scope = field.width > 1 ? @content.lines[field.top, field.width] : @content.lines[field.top]
 			text = Multiline.generate scope
 			index = field.right
@@ -132,9 +131,9 @@ class PageContent
 			end
 		end
 		if Setup::Debug.overview	#DEBUG ONLY
-			lines = (range[3] > 1 ? (range[2]..range[2]+range[3]-1) : range[2] )
-			text = (Multiline.generate @content.lines[lines])[range[1]..range[1]+counter] 
-			puts "#{RegexHelper.strip_wildchar(text).to_s}<<"			
+			#lines = (range[3] > 1 ? (range[2]..range[2]+range[3]-1) : range[2] )
+			#text = (Multiline.generate @content.lines[lines])[range[1]..range[1]+counter] 
+			#puts "#{RegexHelper.strip_wildchar(text).to_s}<<"		
 		end										
 		if not last_match.nil? and last_match.match regex
 			result.result = last_match

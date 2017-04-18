@@ -7,6 +7,7 @@ class Field
 	attr_reader :orientation
 	attr_reader :text
 	attr_accessor :width
+	attr_reader :max_length
 
 	def initialize(text, width = 1, orientation = Setup::Table.header_orientation, date = false)
 		if text.is_a? Array
@@ -136,15 +137,16 @@ class HeaderField < Field
 	attr_reader :order
 	attr_accessor :border
 
-	def initialize(text, order, type, guide = false, width = 1, orientation = Setup::Table.header_orientation, date = false)
+	def initialize(text, order, type, guide = false, width = 1, orientation = Setup::Table.header_orientation, max_l = nil, date = false)
 		super text, width, orientation, date
 		@order = order
 		@type = type
 		@guide = guide
+		@max_length = max_l
 	end
 
 	def clone 
-		HeaderField.new(@text, @order, @type, @guide, @width, @orientation, @date)
+		HeaderField.new(@text, @order, @type, @guide, @width, @orientation, @max_length, @date)
 	end
 
 	def guide?

@@ -101,7 +101,7 @@ class Reader
 	end
 
 	# Looks for the first occurrence of the field past the offset
-	def read_next_field(field, from = 0, verbose = false)
+	def read_next_field(field, from = nil, to = nil, verbose = false)
 		field = first_match(field) if field.is_a? Array
 		return false if field.nil?
 		if not @page_content or @page_content.number != @page
@@ -116,11 +116,11 @@ class Reader
 			@page_content = PageContent.new(@page, page.read)
 			@offset = 0
 		end
-		if @page_content.search_next(field, @offset, from)
+		if @page_content.search_next(field, @offset, from, to)
 			#puts "Found #{field} in page #{@page}"
 			return field
 		else
-			puts "Position for #{field} in page #{@page}: NOT FOUND" if verbose
+			puts "Position for #{field} in page #{@page} from line #{@offset}: NOT FOUND" if verbose
 			return false
 		end
 	end
@@ -144,7 +144,8 @@ class Reader
 			#puts "#{header.text}"
 			#print 10, 10
 			#print header.width, last, 100
-			found = read_next_field header, last
+			to = header.max_length
+			found = read_next_field header, last, to, Setup::Debug.overview
 			unless found
 				#puts "NOT FOUND: #{header.text} #{last}-#{@offset} : #{@page}".red
 				#print 7
@@ -155,6 +156,7 @@ class Reader
 			row.yf = row.yf ? [header.bottom, row.yf].max : header.bottom
 			last = header.right
 		end
+		@offset = row.yf+1
 		row
 	end
 

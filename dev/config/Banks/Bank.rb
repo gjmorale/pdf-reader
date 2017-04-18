@@ -6,6 +6,7 @@ class Bank < Institution
 	attr_accessor :accounts
 	attr_reader :date_out
 	attr_accessor :total_out
+	attr_reader :usd_value
 
 MONTHS = [[1, /jan/i],
 		[2, /feb/i],

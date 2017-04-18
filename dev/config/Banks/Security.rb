@@ -4,6 +4,7 @@ class SEC < Bank
 	DIR = "SEC"
 	LEGACY = "Security"
 	TEXT_EXPAND = 0.0
+	TABLE_OFFSET = 20
 end
 
 Dir[File.dirname(__FILE__) + '/SEC/*.rb'].each {|file| require_relative file } 
@@ -47,7 +48,7 @@ SEC.class_eval do
 		when Custom::SI_NO
 			'(NO|SI|SÍ){1}'
 		when Custom::N_CUENTA
-			'[1-9]\d?'
+			'\d{1,2}'
 		end
 	end
 
@@ -61,51 +62,65 @@ SEC.class_eval do
 		def analyse_position file
 			@reader = Reader.new(file)
 			set_date @reader.find_text(/ al \d{2}-\d{2}-\d{4}/i)
-			account = SingleField.new("Nombre : ", [Setup::Type::LABEL])
-			account.execute @reader
-			total = SingleField.new("TOTAL ACTIVOS",[Setup::Type::AMOUNT])
+			account_field = SingleField.new("Nombre : ", [Setup::Type::LABEL])
+			account_field.execute @reader
+
+			pershing = SingleField.new("Patrimonio en Custodia Pershing",[Setup::Type::AMOUNT,Setup::Type::AMOUNT])
+			pershing.execute @reader
+			total_pershing = pershing.results[0].result.gsub('.','').to_f
+
+			total = SingleField.new("TOTAL ACTIVOS",[Setup::Type::AMOUNT], 5, Setup::Align::LEFT)
 			total.execute @reader
-			@total_out = total.results[0].result.to_f
-			@accounts = [AccountSEC.new(account.results[0].result,@total_out)]
+			@total_out = total.results[0].result.gsub('.','').to_f
+			
+			account = AccountSEC.new(account_field.results[0].result,@total_out-total_pershing)
+
+			usd = SingleField.new("USD:",[Setup::Type::AMOUNT])
+			if usd.execute @reader
+				@usd_value = usd.results[0].result.gsub('.','').gsub(',','.').to_f
+				AssetTable.set_currs(usd: @usd_value)
+			end
+
 			while Field.new("SALDO TOTAL").execute @reader
 			end
 			@reader.next_page
-			@accounts.each do |account|
-				Field.new("DETALLE DE INVERSIONES POR CLASE DE ACTIVOS").execute @reader
-				puts "\nACC: #{account.code} - $#{account.value}"
-				account.add_pos analyse_mutual_funds
-				account.add_pos analyse_fixed_income
-				account.add_pos analyse_cash
-				account.add_pos analyse_stock
-				account.add_pos analyse_etfs
-				account.add_pos analyse_government_securities
-				account.add_pos analyse_alternative_investments
+			
+			Field.new("DETALLE DE INVERSIONES POR CLASE DE ACTIVOS").execute @reader
+			puts "\nACC: #{account.code} - $#{account.value}"
+			account.add_pos analyse_mutual_funds
+			account.add_pos analyse_investment_funds
+			account.add_pos analyse_stocks
+			account.add_pos analyse_cash
+			@accounts = [account]
 
-				puts "Account #{account.code} total "
-				BankUtils.check account.pos_value, account.value
-				puts "_____________________________________/"
-			end
-			get_grand_total
+			puts "Account #{account.code} total "
+			BankUtils.check account.pos_value, account.value
+			puts "_____________________________________/"
 		end
 
-		def get_grand_total
-			@reader.go_to 1
-			total = SingleField.new("$", [Setup::Type::AMOUNT])
-			total.execute @reader
-			acumulated = 0
-			accounts.map{|p| acumulated += p.pos_value}
-			puts "\nGRAND TOTAL: "
-			BankUtils.check acumulated, to_number(total.results[0].result)
-			puts "_____________________________________/"
-			@total_out = to_number(total.results[0].result)
+		def post_run **args
+			puts args[:file_name]
+
 		end
 
 		def analyse_mutual_funds
-			SEC::MutualFunds.new(@reader).analyze
+			new_positions = pos = []
+			new_positions += pos if(pos = SEC::MutualFundsCLP.new(@reader).analyze)
+			new_positions += pos if(pos = SEC::MutualFundsUSD.new(@reader).analyze)
+			new_positions += pos if(pos = SEC::MutualFundsOthers.new(@reader).analyze)
+			return new_positions
 		end
 
-		def analyse_fixed_income
-			SEC::FixedIncome.new(@reader).analyze
+		def analyse_investment_funds
+			SEC::InvFunds.new(@reader).analyze usd_value
+		end
+
+		def analyse_cash
+			SEC::Cash.new(@reader).analyze usd_value
+		end
+
+		def analyse_stocks
+			SEC::Stocks.new(@reader).analyze usd_value
 		end
 
 end
