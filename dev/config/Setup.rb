@@ -17,6 +17,7 @@ module Setup
 		HSBC = "HSBC"
 		MS = "MS"
 		SEC = "SEC"
+		BC = "BC"
 	end
 
 	# Field text alignment
@@ -111,6 +112,9 @@ module Setup
 		when Format::SEC
 			puts "Security selected"
 			@@institution = SEC.new()
+		when Format::BC
+			puts "Security selected"
+			@@institution = BC.new()
 		else
 			puts "Wrong input, try again or CTRL + C to exit"
 			return false

@@ -30,22 +30,11 @@ class AccountHSBC < Account
 	end
 
 	def value_s
-		#@value.to_s.sub(".",",")
 		@value.to_s
 	end
 
 	def inspect
 		to_s
-	end
-
-	def add_pos pos
-		@positions += pos if pos
-	end
-
-	def pos_value
-		acumulated = 0
-		@positions.map{|p| acumulated += p.value}
-		return acumulated
 	end
 
 	def unfail original
