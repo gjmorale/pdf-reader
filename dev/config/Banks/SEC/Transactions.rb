@@ -1,8 +1,8 @@
-class SEC::Transactions < SECAssetTable
+class SEC::Transactions < SECTransactionTable
 	def load
 		@name = "transacciones"
 		@title = Field.new("INFORME DE TRANSACCIONES")
-		@table_end = Field.new("Página ¶¶ de ¶¶")
+		@table_end = Field.new("MOVIMIENTOS DE CAJA")
 		@headers = []
 			headers << HeaderField.new(["FECHA","OPERACIÓN"], headers.size, Setup::Type::DATE, true, 4)#fecha_mov
 			headers << HeaderField.new(["FECHA","LIQUIDACIÓN"], headers.size, Setup::Type::DATE, false, 4)#fecha_pago o _mov
@@ -43,25 +43,9 @@ class SEC::Transactions < SECAssetTable
 		}
 		Movement.new(hash)
 	end
-
-	def get_results
-		movements = []
-		present = get_table do |table|
-			table.rows.each.with_index do |row, i|
-				results = table.headers.map {|h| h.results[-i-1].result}
-				movements << new_movement(results)
-			end
-		end
-		if present
-			return movements
-		else
-			puts "#{name} table missing #{@reader}" if verbose
-			return nil
-		end
-	end
 end
 
-class SEC::TransactionsAlt < SECAssetTable
+class SEC::TransactionsAlt < SECTransactionTable
 	def load
 		@name = "transacciones en formato alternativo"
 		@title = Field.new("INFORME DE TRANSACCIONES")
@@ -97,21 +81,5 @@ class SEC::TransactionsAlt < SECAssetTable
 			delta: 0
 		}
 		Movement.new(hash)
-	end
-
-	def get_results
-		movements = []
-		present = get_table do |table|
-			table.rows.each.with_index do |row, i|
-				results = table.headers.map {|h| h.results[-i-1].result}
-				movements << new_movement(results)
-			end
-		end
-		if present
-			return movements
-		else
-			puts "#{name} table missing #{@reader}" if verbose
-			return nil
-		end
 	end
 end

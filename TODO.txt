@@ -1,0 +1,11 @@
+TODO:
+
+Transactions
+ - Add conditions depending on concept
+ - Map missing concepts
+ - Letras -> 9005
+ - Coupons -> quantity = 0.0
+
+CashMovements
+ - From scratch
+ 

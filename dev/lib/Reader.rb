@@ -33,8 +33,10 @@ class Reader
 
 	def pop index, move = true
 		raise(StandardError, "Can't re-stash reader") unless @stashed >= index
-		@page = @last_page[@stashed] if move
-		@offset = @last_offset[@stashed] if move
+		if move
+			@page = @last_page[@stashed]
+			@offset = @last_offset[@stashed]
+		end
 		@stashed = index -1
 	end
 
@@ -49,8 +51,8 @@ class Reader
 	end
 
 	def next_page
-		@page += 1
-		@offset = 0
+		go_to @page + 1
+		
 	end
 
 	def slide_up value
@@ -73,8 +75,7 @@ class Reader
 
 	# Moves the offset to the beggining of the specified field
 	def move_to field, limit = 0
-		original_page = @page
-		original_offset = @offset
+		original_pos = stash
 		counter = limit != 0 ? 1 : 0
 		while counter <= limit
 			if match = read_next_field(field)
@@ -83,13 +84,13 @@ class Reader
 			end
 			counter += 1 if limit != 0
 			@page += 1
+			@offset = 0
 		end
 		if field.is_a? Field and field.position?
 			@offset = field.position.y
 			return field
 		else
-			@page = original_page
-			@offset = original_offset
+			pop original_pos
 			return false
 			#raise StopIteration, "Field #{field} is not present in the document"
 		end
@@ -114,10 +115,9 @@ class Reader
 				return field
 			end
 			@page_content = PageContent.new(@page, page.read)
-			@offset = 0
 		end
 		if @page_content.search_next(field, @offset, from, to)
-			#puts "Found #{field} in page #{@page}"
+			#puts "Found #{field} in page #{field.position} at #{@page}" if verbose
 			return field
 		else
 			puts "Position for #{field} in page #{@page} from line #{@offset}: NOT FOUND" if verbose
@@ -146,12 +146,11 @@ class Reader
 			#print header.width, last, 100
 			to = header.max_length
 			found = read_next_field header, last, to, Setup::Debug.overview
-			unless found
+			unless found and found.position
 				#puts "NOT FOUND: #{header.text} #{last}-#{@offset} : #{@page}".red
 				#print 7
+				return nil
 			end
-			return nil unless found
-			#raise unless read_next_field header, last
 			row.yi = row.yi ? [header.top, row.yi].min : header.top
 			row.yf = row.yf ? [header.bottom, row.yf].max : header.bottom
 			last = header.right
@@ -228,8 +227,9 @@ class Reader
 
 	def first_match posibilities
 		result = nil
+		posibilities.flatten!
 		posibilities.each do |p|
-			if read_next_field p
+			if read_next_field(p) and p.position
 				result = p if result.nil? or result.top > p.top
 			end
 		end
@@ -244,7 +244,7 @@ class Reader
 	def find_text text, limit = 0
 		original_pos = stash
 		result = nil
-		@page = 1
+		go_to 1
 		file_name = "#{@file[@file.rindex('/')+1..-1]}"
 		counter = limit != 0 ? 1 : 0
 		while File.exist?(file_path = "#{@file}/#{file_name}_#{@page}.page") and counter <= limit

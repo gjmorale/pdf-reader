@@ -2,7 +2,7 @@ class SEC::MutualFundsCLP < SECAssetTable
 	def load
 		@name = "fondos mutuos en clp"
 		@title = [Field.new("FONDOS MUTUOS NACIONALES - CLP"),Field.new("FONDOS SECURITY - CLP")]
-		@table_end = Field.new("TOTAL")
+		@table_end = [Field.new("TOTAL"), Field.new("FONDOS DE INVERSION")]
 		@headers = []
 			headers << HeaderField.new("NOMBRE FONDO", headers.size, Setup::Type::LABEL, true)
 			headers << HeaderField.new("[GESTIONADO|MANDATO]", headers.size, Custom::GEST, false)
@@ -31,7 +31,7 @@ class SEC::MutualFundsUSD < SECAssetTable
 	def load
 		@name = "fondos mutuos en usd"
 		@title = Field.new("FONDOS SECURITY - USD")
-		@table_end = Field.new("TOTAL")
+		@table_end = [Field.new("TOTAL"), Field.new("FONDOS DE INVERSION")]
 		@headers = []
 			headers << HeaderField.new("NOMBRE FONDO", headers.size, Setup::Type::LABEL, true)
 			headers << HeaderField.new("[GESTIONADO|MANDATO]", headers.size, Custom::GEST, false)

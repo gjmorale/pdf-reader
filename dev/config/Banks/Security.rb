@@ -23,6 +23,7 @@ SEC.class_eval do
 		GEST = 		-1
 		SI_NO = 	-2
 		N_CUENTA = 	-3
+		OP_CODE = 	-4
 	end
 
 	def regex(type)
@@ -30,7 +31,7 @@ SEC.class_eval do
 		when Setup::Type::PERCENTAGE
 			'([+-]?\(?(100|[1-9]?\d)\.\d{2}\)?%|(?:\342\200\224)){1}\s*'
 		when Setup::Type::AMOUNT
-			'-?\(?[0-9]{1,3}(?:.?[0-9]{3})*(\,[0-9]{1,4})?\)?'
+			'-?\(?([1-9]\d{0,2}(?:\.[0-9]{3})*|0)(\,[0-9]{1,4})?\)?'
 		when Setup::Type::INTEGER
 			'([$]?\(?[1-9]\d{0,2}(?:,?[0-9]{3})*\)?|(?:\342\200\224)){1}\s*'
 		when Setup::Type::CURRENCY
@@ -44,11 +45,13 @@ SEC.class_eval do
 		when Setup::Type::FLOAT
 			'(\(?(?:[1-9]{1}\d*|0)\.\d+\)?|(?:\342\200\224)){1}'
 		when Custom::GEST
-			'(N){1}'
+			'(N|S){1}'
 		when Custom::SI_NO
 			'(NO|SI|SÍ){1}'
 		when Custom::N_CUENTA
 			'\d{1,2}'
+		when Custom::OP_CODE
+			'[A-Z]{2}'
 		end
 	end
 
@@ -65,6 +68,13 @@ SEC.class_eval do
 			account_field = SingleField.new("Nombre : ", [Setup::Type::LABEL])
 			account_field.execute @reader
 
+			usd = SingleField.new("USD:",[Setup::Type::AMOUNT], 3, Setup::Align::LEFT)
+			if usd.execute @reader and usd.results[0].result != Result::NOT_FOUND
+				@usd_value = usd.results[0].result.gsub('.','').gsub(',','.').to_f
+				AssetTable.set_currs(usd: @usd_value)
+			else
+				puts "NO USD VALUE DETECTED".red
+			end
 			pershing = SingleField.new("Patrimonio en Custodia Pershing",[Setup::Type::AMOUNT,Setup::Type::AMOUNT])
 			pershing.execute @reader
 			total_pershing = pershing.results[0].result.gsub('.','').to_f
@@ -75,21 +85,19 @@ SEC.class_eval do
 			
 			account = AccountSEC.new(account_field.results[0].result,@total_out-total_pershing)
 
-			usd = SingleField.new("USD:",[Setup::Type::AMOUNT])
-			if usd.execute @reader
-				@usd_value = usd.results[0].result.gsub('.','').gsub(',','.').to_f
-				AssetTable.set_currs(usd: @usd_value)
-			end
-
 			while Field.new("SALDO TOTAL").execute @reader
+				#puts "READER BETWEEN SALDOS #@reader"
 			end
 			@reader.next_page
 			
-			Field.new("DETALLE DE INVERSIONES POR CLASE DE ACTIVOS").execute @reader
+			Field.new("[DETALLE DE INVERSIONES POR CLASE DE ACTIVOS|DETALLE DE INVERSIONES NO PREVISIONALES]").execute @reader
 			puts "\nACC: #{account.code} - $#{account.value}"
 			account.add_pos analyse_mutual_funds
+			puts "After READ: #{@reader}"
 			account.add_pos analyse_investment_funds
+			puts "After READ: #{@reader}"
 			account.add_pos analyse_stocks
+			account.add_pos analyse_bonds
 			account.add_pos analyse_cash
 			account.add_mov analyse_transactions
 			@accounts = [account]
@@ -108,19 +116,33 @@ SEC.class_eval do
 		end
 
 		def analyse_investment_funds
-			SEC::InvFunds.new(@reader).analyze usd_value
+			new_positions = pos = []
+			new_positions += pos if(pos = SEC::InvFundsCLP.new(@reader).analyze)
+			new_positions += pos if(pos = SEC::InvFundsUSD.new(@reader).analyze)
+			return new_positions
+			
 		end
 
 		def analyse_cash
-			SEC::Cash.new(@reader).analyze usd_value
+			SEC::Cash.new(@reader).analyze
 		end
 
 		def analyse_stocks
-			SEC::Stocks.new(@reader).analyze usd_value
+			SEC::Stocks.new(@reader).analyze
+		end
+
+		def analyse_bonds
+			new_positions = pos = []
+			new_positions += pos if(pos = SEC::BondsCLP.new(@reader).analyze)
+			return new_positions
 		end
 
 		def analyse_transactions
-			SEC::Transactions.new(@reader).analyze(usd_value) || SEC::TransactionsAlt.new(@reader).analyze(usd_value)
+			new_movements = SEC::Transactions.new(@reader).analyze(usd_value) || SEC::TransactionsAlt.new(@reader).analyze
+			while moves = SEC::CashTransactions.new(@reader).analyze
+				new_movements += moves
+			end
+			new_movements
 		end
 
 end

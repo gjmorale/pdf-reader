@@ -31,6 +31,10 @@ module BankUtils
 
 	def self.to_amount number
 		out = "$"
+		if number < 0
+			out << "-"
+			number *= -1
+		end
 		integer_s = number.to_i.to_s
 		integer_s.each_char.with_index do |d,i|
 			if (integer_s.length-i)%3 == 0 and i != 0
