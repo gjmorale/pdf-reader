@@ -1,4 +1,4 @@
-class AccountHSBC < Institution
+class AccountHSBC < Account
 
 	attr_accessor :value
 	attr_reader :code
