@@ -1,6 +1,5 @@
 class BC1::MutualFundsCLP < BC1AssetTable
 	def load
-		@verbose = true
 		@name = "fondos mutuos en clp"
 		@title = Field.new("Fondos Mutuos en Pesos Chilenos: Vigentes al")
 		@table_end = Field.new("Monto Total Vigente en Pesos Chilenos:")
@@ -26,7 +25,6 @@ end
 
 class BC1::MutualFundsUSD < BC1AssetTable
 	def load
-		@verbose = true
 		@name = "fondos mutuos en usd"
 		@title = Field.new("Fondos Mutuos en Dólares: Vigentes al")
 		@table_end = Field.new("Monto Total Vigente en Dólares:")
