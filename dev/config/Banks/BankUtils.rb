@@ -14,6 +14,7 @@ module BankUtils
 		str = str.gsub(',','!').gsub('.',',').gsub('!','.') if spanish
 		str = str.strip
 		str = str.delete('$')
+		str = str.delete('USD')
 		str = str.delete(',')
 		negative = (str.match /\(\$?\d+([.,]\d+)?\)/)
 		str = str.delete('(')

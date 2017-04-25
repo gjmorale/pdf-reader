@@ -58,6 +58,10 @@ module Setup
 			@@vertical_search_range ||= Setup.inst.class::VERTICAL_SEARCH_RANGE
 		end
 
+		def self.vertical_search_range= value
+			@@vertical_search_range = value
+		end
+
 		def self.center_mass_limit
 			@@center_mass_limit ||= Setup.inst.class::CENTER_MASS_LIMIT
 		end
@@ -113,7 +117,7 @@ module Setup
 			puts "Security selected"
 			@@institution = SEC.new()
 		when Format::BC
-			puts "Security selected"
+			puts "Banchile selected"
 			@@institution = BC.new()
 		else
 			puts "Wrong input, try again or CTRL + C to exit"

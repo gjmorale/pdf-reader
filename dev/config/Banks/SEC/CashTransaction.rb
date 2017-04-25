@@ -30,8 +30,23 @@ class SEC::CashTransactions < SECTransactionTable
 			id_ti_valor1: "CLP", #CLP
 			cantidad1: neto, 	# abono o cargo	valor absoluto	# O 1.0?
 			detalle: args[5],
+			value: neto
 		}
-		return CashMovement.new(hash)
+		return Movement.new(parse_movement hash)
+	end
+
+	def parse_movement hash
+		if hash[:cantidad1] > 0
+			hash[:concepto] = 9001
+			hash[:cantidad1] *= 1
+		elsif hash[:cantidad1] < 0
+			hash[:concepto] = 9002
+			hash[:cantidad1] *= -1
+		else
+			hash[:codigo] = 9000
+			hash[:cantidad1] *= 0
+		end
+		hash
 	end
 end
 

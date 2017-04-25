@@ -32,7 +32,8 @@ class Account
 	end
 
 	def add_pos pos
-		@positions += pos if pos
+		@positions += pos if pos if pos.is_a? Array
+		@positions << pos if pos if pos.is_a? Position
 	end
 
 	def pos_value

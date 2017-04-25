@@ -75,9 +75,13 @@ SEC.class_eval do
 			else
 				puts "NO USD VALUE DETECTED".red
 			end
+			
 			pershing = SingleField.new("Patrimonio en Custodia Pershing",[Setup::Type::AMOUNT,Setup::Type::AMOUNT])
-			pershing.execute @reader
-			total_pershing = pershing.results[0].result.gsub('.','').to_f
+			if pershing.execute @reader
+				total_pershing = pershing.results[0].result.gsub('.','').to_f
+			else
+				total_pershing = 0
+			end
 
 			total = SingleField.new("TOTAL ACTIVOS",[Setup::Type::AMOUNT], 5, Setup::Align::LEFT)
 			total.execute @reader

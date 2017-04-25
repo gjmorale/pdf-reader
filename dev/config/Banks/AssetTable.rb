@@ -118,7 +118,7 @@ class AssetTable
 		price *= @@alt_currs[@alt_currency.to_sym] if @alt_currency
 		value *= @@alt_currs[@alt_currency.to_sym] if @alt_currency
 		titles[1] ||= ""
-		titles[1] << "[Obtenido con #{@alt_currency} a $#{@@alt_currs[@alt_currency.to_sym]}]" if @alt_currency
+		titles[1] << "[Obtenido con #{@alt_currency} a $#{@@alt_currs[@alt_currency.to_sym].round(3)}]" if @alt_currency
 		Position.new(titles[0], 
 			quantity, 
 			price, 

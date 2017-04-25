@@ -9,7 +9,10 @@ module FileFilter
 	def self.filter_files format, in_path, out_path
 		cleaner = Cleaner.new
 		#cleaner.load "#{Dir.home}/pdf_reader/in", "#{Dir.home}/pdf_reader/raw", format
-		cleaner.load in_path, out_path, format
-		cleaner.execute
+		unless warning = cleaner.load(in_path, out_path, format)
+			cleaner.execute
+		else
+			puts warning.red
+		end
 	end
 end

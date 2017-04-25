@@ -15,7 +15,7 @@ class Cleaner
 		puts " #{total} files: "
 		files.each.with_index do |file, i|
 			
-			print "[%02d/#{total}]" % (i+1)
+			print "[%02d/%02d]" % [i+1, total]
 			name = File.basename(file, '.pdf')
 			dir_name = File.dirname(file)
 			dir_name = dir_name[dir_name.rindex('/')+1..-1]
@@ -62,6 +62,8 @@ class Cleaner
 
 
 	def load (input, output, format = "*", source = nil )
+		return "Not a DIR #{input}/#{format}" unless Dir.exist? "#{input}/#{format}"
+		return "Not a DIR #{output}/#{format}" unless Dir.exist? "#{output}/#{format}"
 		print "Loading......"
 		@output_path = output
 		@input_path = input
@@ -83,6 +85,7 @@ class Cleaner
 		@last_count = @matches = 0
 		FileUtils.rm_rf(Dir["#{@output_path}/#{@format}/*"])
 		puts "...[100%]"
+		return nil
 	end
 
 	def regexify term, raw = false

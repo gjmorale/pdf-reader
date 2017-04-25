@@ -41,7 +41,7 @@ class SEC::Transactions < SECTransactionTable
 			cantidad2: BankUtils.to_number(args[11], spanish),
 			delta: delta
 		}
-		Movement.new(hash)
+		Movement.new(parse_movement hash)
 	end
 end
 
@@ -80,6 +80,7 @@ class SEC::TransactionsAlt < SECTransactionTable
 			cantidad2: BankUtils.to_number(args[9], spanish),
 			delta: 0
 		}
-		Movement.new(hash)
+		hash[:value] = hash[:cantidad2]
+		Movement.new(parse_movement hash)
 	end
 end
