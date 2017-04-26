@@ -1,6 +1,5 @@
 class BC2::InvestmentFunds < BC2::AssetTable
 	def load
-		@verbose = true
 		@name = "fondos de inversion"
 		@title = Field.new("Fondo de Inversion")
 		@table_end = Field.new("Total Fondo de Inversion")

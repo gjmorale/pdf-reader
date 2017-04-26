@@ -42,4 +42,10 @@ class Account
 		return acumulated
 	end
 
+	def mov_value
+		acumulated = 0
+		@movements.map{|m| acumulated += m.value}
+		return acumulated
+	end
+
 end

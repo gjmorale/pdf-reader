@@ -1,5 +1,6 @@
 class BC::TransactionTable < BC::AssetTable
 	require File.dirname(__FILE__) + '/BC1/TransactionTable.rb'
+	require File.dirname(__FILE__) + '/BC2/TransactionTable.rb'
 
 	def pre_load *args
 		super

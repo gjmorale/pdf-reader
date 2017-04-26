@@ -1,6 +1,7 @@
 class Movement
 
 	attr_reader :value
+	attr_accessor :detalle
 	attr_accessor :id_sec1
 
 	def initialize **args
@@ -23,8 +24,13 @@ class Movement
 		fp.nil? or fp.inspect.strip.empty? or fp == Result::NOT_FOUND ? @fecha_movimiento :	fp
 	end
 
-	def clean value
-		value.nil? or value.inspect.strip.empty? or value == Result::NOT_FOUND ? "" : value
+	def clean v
+		v.nil? or v.inspect.strip.empty? or v == Result::NOT_FOUND ? "" : v
+	end
+
+	def add_value v
+		@value += v if v
+		@cantidad2 = @value
 	end
 
 	def print
@@ -43,7 +49,7 @@ class Movement
 	end
 
 	def to_s
-		"#{@fecha_movimiento} #{@concepto}:#{@id_ti_valor1}(#{@id_ti_valor2}) [#{@cantidad1};#{@precio};#{value}]"
+		"#{@fecha_movimiento} #{@concepto}:#{@id_ti_valor1}(#{@id_ti_valor2}) [#{@cantidad1};#{@precio};#{value}] ... #{detalle}"
 	end
 
 	def inspect
