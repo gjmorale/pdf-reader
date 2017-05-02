@@ -7,14 +7,14 @@ class MSAssetTable < AssetTable
 	end
 
 	def parse_position str, type
-		return [name, nil] unless str.is_a? Multiline and type
-		name = str.strings[0]
+		return [str, nil] unless str.is_a? Multiline and type
+		new_name = str.strings[0]
 		regex = Regexp.new type
 		str.match type do |m|
 			code = str.strings[m.offset[2]][m.offset[0]..-1]
-			return [code,name]
+			return [code,new_name]
 		end
-		return [name,nil]
+		return [new_name,nil]
 	end
 
 	def parse_account str
