@@ -8,8 +8,8 @@ class BC1::InvestmentFundsCLP < BC1::AssetTable
 			headers << HeaderField.new("Serie", headers.size, Setup::Type::LABEL, false)
 			headers << HeaderField.new("Características", headers.size, Setup::Type::LABEL, false)
 			headers << HeaderField.new("Cuenta", headers.size, Custom::FIN_RUT, false)
-			headers << HeaderField.new("Nº Cuotas", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new("Valor Cuota ($)", headers.size, Setup::Type::AMOUNT, false)
+			headers << HeaderField.new("Nº Cuotas", headers.size, Custom::FLOAT4, false)
+			headers << HeaderField.new("Valor Cuota ($)", headers.size, Custom::FLOAT4, false)
 			headers << HeaderField.new("Monto ($)", headers.size, Setup::Type::AMOUNT, true)
 		@total = SingleField.new("Monto Total Vigente en Pesos Chilenos:",
 			[Setup::Type::AMOUNT], 
@@ -32,8 +32,8 @@ class BC1::InvestmentFundsUSD < BC1::AssetTable
 			headers << HeaderField.new("Serie", headers.size, Setup::Type::LABEL, false)
 			headers << HeaderField.new("Características", headers.size, Setup::Type::LABEL, false)
 			headers << HeaderField.new("Cuenta", headers.size, Custom::FIN_RUT, false)
-			headers << HeaderField.new("Nº Cuotas", headers.size, Setup::Type::AMOUNT, false)
-			headers << HeaderField.new("Valor Cuota (US$)", headers.size, Setup::Type::AMOUNT, false)
+			headers << HeaderField.new("Nº Cuotas", headers.size, Custom::FLOAT4, false)
+			headers << HeaderField.new("Valor Cuota (US$)", headers.size, Custom::FLOAT4, false)
 			headers << HeaderField.new("Monto (US$)", headers.size, Setup::Type::AMOUNT, true)
 		@total = SingleField.new("Monto Total Vigente en Dólares:",
 			[Setup::Type::AMOUNT], 

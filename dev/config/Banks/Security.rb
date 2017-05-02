@@ -59,7 +59,8 @@ SEC.class_eval do
 
 		def set_date value
 			day, month, year = value[value.rindex(' ')..-1].split('-')
-			@date_out = "#{day}-#{month}-#{year}"
+			@date_out = "#{day}-#{month}-#{year}".strip
+			puts @date_out
 		end
 
 		def analyse_position file

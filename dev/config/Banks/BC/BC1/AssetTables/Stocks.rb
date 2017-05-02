@@ -11,7 +11,7 @@ class BC1::StocksCLP < BC1::AssetTable
 			headers << HeaderField.new(["Garantías","Simultánea (G)"],headers.size, Setup::Type::AMOUNT, false, 4)
 			headers << HeaderField.new(["Garantías","Venta Corta (H)"],headers.size, Setup::Type::AMOUNT, false, 4)
 			headers << HeaderField.new(["Garantías","Forward (I)"],headers.size, Setup::Type::AMOUNT, false, 4)
-			headers << HeaderField.new("Precio Mercado ($)",headers.size, Setup::Type::AMOUNT, false)
+			headers << HeaderField.new("Precio Mercado ($)",headers.size, Custom::FLOAT4, false)
 			headers << HeaderField.new(["Saldo","Valorizado ($) (3)"],headers.size, Setup::Type::AMOUNT, false, 4)
 			headers << HeaderField.new(["Acciones en","Simultánea"],headers.size, Setup::Type::AMOUNT, false, 4)
 			headers << HeaderField.new(["Acciones en","Venta Corta"],headers.size, Setup::Type::AMOUNT, false, 4)
