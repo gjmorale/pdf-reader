@@ -153,13 +153,13 @@ class Table
 		set_headers_width
 		first_header = @headers.sort.first
 		original_bottom = @bottom
-		@bottom = reader.read_next_field(@bottom) if @bottom
-		@headers_row = reader.set_header_limits(@headers)
+		@bottom = reader.read_next_field(@bottom, nil, nil) if @bottom
+		@headers_row = reader.set_header_limits(@headers, @bottom)
 		#puts "RANGE: #{@range} #{reader} #{@bottom}" if Setup::Debug.overview
 		#reader.print(5) if Setup::Debug.overview
 		return false unless @headers_row
 		@bottom = reader.read_next_field(original_bottom) if bottom_in_headers(reader)
-		@offset = reader.move_to(@offset) if @offset
+		@offset = reader.move_to(@offset, 1) if @offset
 		reader.skip @offset if @offset
 		set_range reader.line_size, reader.line_height
 		set_borders

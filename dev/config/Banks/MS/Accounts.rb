@@ -43,6 +43,7 @@ class MS::BussinessAccounts < MS::AccountsTable
 			Setup::Type::INTEGER], 
 			5, Setup::Align::LEFT)
 		@total_index = 4
+		@title_limit = 1
 	end
 end
 
@@ -72,5 +73,6 @@ class MS::PersonalAccounts < MS::AccountsTable
 			Setup::Type::AMOUNT], 
 			5, Setup::Align::LEFT)
 		@total_index = 4
+		@title_limit = 1
 	end
 end

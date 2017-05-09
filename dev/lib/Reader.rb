@@ -111,13 +111,14 @@ class Reader
 			if File.exist? file_path
 				page = File.new(file_path, 'r:UTF-8')
 			else
+				puts "EOF and #{field} not found" if verbose
 				field.position = nil
 				return field
 			end
 			@page_content = PageContent.new(@page, page.read)
 		end
 		if @page_content.search_next(field, @offset, from, to)
-			#puts "Found #{field} in page #{field.position} at #{@page}" if verbose
+			puts "Found #{field} in page #{field.position} at #{@page} #{verbose}" if verbose
 			return field
 		else
 			puts "Position for #{field} in page #{@page} from line #{@offset}: NOT FOUND" if verbose
@@ -137,7 +138,7 @@ class Reader
 	end
 
 	# Sets the table headers borders to touch the neighbours positions
-	def set_header_limits headers
+	def set_header_limits headers, bottom
 		row = Row.new
 		last = 0
 		headers.each do |header|
@@ -151,8 +152,11 @@ class Reader
 				#print 7
 				return nil
 			end
+			@offset = bottom.bottom if bottom and bottom.bottom < header.top
+			#puts "#{header} #{header.top} #{header.bottom} #{@offset}"
 			row.yi = row.yi ? [header.top, row.yi].min : header.top
 			row.yf = row.yf ? [header.bottom, row.yf].max : header.bottom
+			#@offset = row.yi-1
 			last = header.right
 		end
 		@offset = row.yf+1

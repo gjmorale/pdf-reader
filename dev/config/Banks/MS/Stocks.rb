@@ -3,7 +3,7 @@ class Stocks < MSAssetTable
 	def load
 		@name = "stocks"
 		@title = Field.new("STOCKS")
-		@table_end = Field.new(["Percentage","of Holdings"],4, Setup::Align::BOTTOM)
+		@table_end = Field.new(["Percentage","of Holdings"],4)
 		@headers = []
 			headers << HeaderField.new("Security Description", headers.size, Setup::Type::LABEL, false)
 			headers << HeaderField.new("Trade Date", headers.size, Custom::DATE_OR_TOTAL, false)
