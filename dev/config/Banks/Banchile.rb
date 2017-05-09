@@ -170,6 +170,7 @@ BC.class_eval do
 
 			account.add_pos analyse_mutual_funds_2 BC2
 			account.add_pos analyse_investment_funds_2 BC2
+			account.add_pos analyse_stocks_2 BC2
 			account.add_pos analyse_fixed_income_2 BC2
 			account.add_mov analyse_transactions_2 BC2
 
@@ -249,6 +250,10 @@ BC.class_eval do
 			new_pos += pos if pos = factory::FixedIncome.new(@reader).analyze
 			new_pos += pos if pos = factory::FixedIncomeAlt.new(@reader).analyze
 			return new_pos
+		end
+
+		def analyse_stocks_2 factory
+			factory::Stocks.new(@reader).analyze
 		end
 
 		def analyse_transactions_2 factory
