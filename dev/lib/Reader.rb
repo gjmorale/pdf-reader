@@ -103,8 +103,7 @@ class Reader
 
 	# Looks for the first occurrence of the field past the offset
 	def read_next_field(field, from = nil, to = nil, verbose = false)
-		field = first_match(field) if field.is_a? Array
-		return false if field.nil?
+		#puts "LOOP #{field}"
 		if not @page_content or @page_content.number != @page
 			file_name = "#{@file[@file.rindex('/')+1..-1]}"
 			file_path = "#{@file}/#{file_name}_#{@page}.page"
@@ -112,11 +111,12 @@ class Reader
 				page = File.new(file_path, 'r:UTF-8')
 			else
 				puts "EOF and #{field} not found" if verbose
-				field.position = nil
-				return field
+				return Field.new("EOF")
 			end
 			@page_content = PageContent.new(@page, page.read)
 		end
+		return first_match(field) if field.is_a? Array
+		return false if field.nil?
 		if @page_content.search_next(field, @offset, from, to)
 			puts "Found #{field} in page #{field.position} at #{@page} #{verbose}" if verbose
 			return field

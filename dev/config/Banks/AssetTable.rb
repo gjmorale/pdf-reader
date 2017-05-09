@@ -65,6 +65,9 @@ class AssetTable
 		return false
 	end
 
+	def each_result_do results
+	end
+
 	def get_results
 		new_positions = []
 		accured_interests = quantity = price = value = "0.0"
@@ -72,6 +75,7 @@ class AssetTable
 		present = get_table do |table|
 			table.rows.each.with_index do |row, i|
 				results = table.headers.map {|h| h.results[-i-1].result}
+				each_result_do results
 				if total_column and results[total_column] == "Total"
 					quantity = (quantity_default || results[quantity_index])
 					value = (value_default || results[value_index])
@@ -126,7 +130,11 @@ class AssetTable
 			titles[1])
 	end
 
+	def pre_check_do
+	end
+
 	def check_results new_positions
+		pre_check_do
 		puts "Pre-Check  reader #{@reader}" if verbose
 		table_total = (total and total.execute(@reader)) ? BankUtils.to_number(total.results[total_index].result, spanish) : nil
 		table_total *= @@alt_currs[@alt_currency.to_sym] if table_total and @alt_currency

@@ -26,7 +26,7 @@ module BankUtils
 		else
 			num = str.to_f
 			num = num*(-1) if negative
-			num
+			return num
 		end
 	end
 

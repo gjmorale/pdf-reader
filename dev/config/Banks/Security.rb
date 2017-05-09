@@ -35,7 +35,7 @@ SEC.class_eval do
 		when Setup::Type::INTEGER
 			'([$]?\(?[1-9]\d{0,2}(?:,?[0-9]{3})*\)?|(?:\342\200\224)){1}\s*'
 		when Setup::Type::CURRENCY
-			'(CLP|EUR|USD|CAD|JPY|GBP){1}'
+			'(CLP|EUR|USD|CAD|JPY|GBP|DO){1}'
 		when Setup::Type::ASSET
 			'(Equities|Fixed Income|Liquidity and Money Market|Others){1}'
 		when Setup::Type::LABEL
@@ -95,13 +95,14 @@ SEC.class_eval do
 			end
 			@reader.next_page
 			
-			Field.new("[DETALLE DE INVERSIONES POR CLASE DE ACTIVOS|DETALLE DE INVERSIONES NO PREVISIONALES]").execute @reader
+			#Field.new("[DETALLE DE INVERSIONES POR CLASE DE ACTIVOS|DETALLE DE INVERSIONES NO PREVISIONALES]").execute @reader
 			puts "\nACC: #{account.code} - $#{account.value}"
 			account.add_pos analyse_mutual_funds
 			account.add_pos analyse_investment_funds
 			account.add_pos analyse_stocks
 			account.add_pos analyse_bonds
 			account.add_pos analyse_cash
+			account.add_pos analyse_others
 			account.add_mov analyse_transactions
 			@accounts = [account]
 
@@ -138,6 +139,10 @@ SEC.class_eval do
 			new_positions = pos = []
 			new_positions += pos if(pos = SEC::BondsCLP.new(@reader).analyze)
 			return new_positions
+		end
+
+		def analyse_others
+			SEC::Others.new(@reader).analyze
 		end
 
 		def analyse_transactions
