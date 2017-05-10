@@ -78,7 +78,7 @@ class Reader
 		original_pos = stash
 		counter = limit != 0 ? 1 : 0
 		while counter <= limit
-			if match = read_next_field(field)
+			if match = read_next_field(field, nil, nil, Setup::Debug.overview)
 				field = match
 				break
 			end

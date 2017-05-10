@@ -27,6 +27,7 @@ MON.class_eval do
 
 	module Custom
 		ACC_RUT = -1
+		OP_ID = -2
 	end
 
 	def regex(type)
@@ -49,6 +50,8 @@ MON.class_eval do
 			'(\(?(?:[1-9]{1}\d*|0)\.\d+\)?|(?:\342\200\224)){1}'
 		when Custom::ACC_RUT
 			'\d{7,8}\/\d'
+		when Custom::OP_ID
+			'\d{6}-\d'
 		end
 	end
 
@@ -116,9 +119,14 @@ MON.class_eval do
 				account.add_pos analyse_others_variable
 			end
 
+			if Field.new("INFORMACIÓN GENERAL")
+				account.add_mov analyse_transactions
+			end
+
 			if Field.new("CUENTAS CORRIENTES").execute @reader
 				account.add_pos analyse_cash
 			end
+
 			
 
 			puts "Account #{account.code} total "
@@ -168,6 +176,14 @@ MON.class_eval do
 
 		def analyse_others_variable
 			MON::OthersVariable.new(@reader).analyze
+		end
+
+		def analyse_transactions
+			new_mov = mov = []
+			new_mov += mov if (mov = MON::Factured.new(@reader).analyze)
+			new_mov += mov if (mov = MON::UnFactured.new(@reader).analyze)
+			new_mov += mov if (mov = MON::Custody.new(@reader).analyze)
+			new_mov
 		end
 
 		def analyse_cash

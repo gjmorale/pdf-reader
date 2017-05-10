@@ -66,6 +66,7 @@ class AssetTable
 	end
 
 	def each_result_do results
+		#Override for custom result handling
 	end
 
 	def get_results
@@ -138,7 +139,10 @@ class AssetTable
 	end
 
 	def check_results new_positions
-		return [] if new_positions.empty?
+		if new_positions.empty?
+			puts "EMPTY TABLE".yellow
+			return []
+		end 
 		pre_check_do
 		puts "Pre-Check  reader #{@reader}" if verbose
 		table_total = (total and total.execute(@reader)) ? BankUtils.to_number(total.results[total_index].result, spanish) : nil
