@@ -130,10 +130,15 @@ class AssetTable
 			titles[1])
 	end
 
+	def parse_position str, type
+		[str, nil]
+	end
+
 	def pre_check_do
 	end
 
 	def check_results new_positions
+		return [] if new_positions.empty?
 		pre_check_do
 		puts "Pre-Check  reader #{@reader}" if verbose
 		table_total = (total and total.execute(@reader)) ? BankUtils.to_number(total.results[total_index].result, spanish) : nil

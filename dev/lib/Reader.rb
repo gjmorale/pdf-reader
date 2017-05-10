@@ -118,7 +118,7 @@ class Reader
 		return first_match(field) if field.is_a? Array
 		return false if field.nil?
 		if @page_content.search_next(field, @offset, from, to)
-			puts "Found #{field} in page #{field.position} at #{@page} #{verbose}" if verbose
+			puts "Found #{field} in page #{field.position} at page #{@page}" if verbose
 			return field
 		else
 			puts "Position for #{field} in page #{@page} from line #{@offset}: NOT FOUND" if verbose

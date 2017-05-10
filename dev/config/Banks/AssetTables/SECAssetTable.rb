@@ -6,10 +6,6 @@ class SECAssetTable < AssetTable
 		@spanish = true
 	end
 
-	def parse_position str, type
-		[str, nil]
-	end
-
 	def parse_account str
 		raise
 	end

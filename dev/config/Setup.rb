@@ -18,6 +18,7 @@ module Setup
 		MS = "MS"
 		SEC = "SEC"
 		BC = "BC"
+		MON = "MON"
 	end
 
 	# Field text alignment
@@ -119,6 +120,9 @@ module Setup
 		when Format::BC
 			puts "Banchile selected"
 			@@institution = BC.new()
+		when Format::MON
+			puts "Moneda selected"
+			@@institution = MON.new()
 		else
 			puts "Wrong input, try again or CTRL + C to exit"
 			return false
