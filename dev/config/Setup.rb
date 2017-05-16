@@ -19,6 +19,7 @@ module Setup
 		SEC = "SEC"
 		BC = "BC"
 		MON = "MON"
+		CREDICORP = "CREDICORP"
 	end
 
 	# Field text alignment
@@ -123,6 +124,9 @@ module Setup
 		when Format::MON
 			puts "Moneda selected"
 			@@institution = MON.new()
+		when Format::CREDICORP
+			puts "CrediCorp selected"
+			@@institution = CrediCorp.new()
 		else
 			puts "Wrong input, try again or CTRL + C to exit"
 			return false

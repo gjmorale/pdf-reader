@@ -26,18 +26,22 @@ class Reader
 
 	def stash
 		@stashed += 1 
-		@last_page[@stashed] = @page
-		@last_offset[@stashed] = @offset
+		@last_page << [@stashed, @page]
+		@last_offset << [@stashed, @offset]
 		return @stashed
 	end
 
 	def pop index, move = true
-		raise(StandardError, "Can't re-stash reader") unless @stashed >= index
-		if move
-			@page = @last_page[@stashed]
-			@offset = @last_offset[@stashed]
+		i = nil
+		while index != i
+			last_page = @last_page.pop
+			last_offset = @last_offset.pop
+			i = last_offset[0]
 		end
-		@stashed = index -1
+		if move
+			@page = last_page[1]
+			@offset = last_offset[1]
+		end
 	end
 
 	def to_s
@@ -74,11 +78,11 @@ class Reader
 	end
 
 	# Moves the offset to the beggining of the specified field
-	def move_to field, limit = 0
+	def move_to field, limit = 0, inverted = false
 		original_pos = stash
 		counter = limit != 0 ? 1 : 0
 		while counter <= limit
-			if match = read_next_field(field, nil, nil, Setup::Debug.overview)
+			if match = read_next_field(field, nil, nil, Setup::Debug.overview, inverted)
 				field = match
 				break
 			end
@@ -102,7 +106,7 @@ class Reader
 	end
 
 	# Looks for the first occurrence of the field past the offset
-	def read_next_field(field, from = nil, to = nil, verbose = false)
+	def read_next_field(field, from = nil, to = nil, verbose = false, inverted = false)
 		#puts "LOOP #{field}"
 		if not @page_content or @page_content.number != @page
 			file_name = "#{@file[@file.rindex('/')+1..-1]}"
@@ -115,7 +119,7 @@ class Reader
 			end
 			@page_content = PageContent.new(@page, page.read)
 		end
-		return first_match(field) if field.is_a? Array
+		return first_match(field, inverted) if field.is_a? Array
 		return false if field.nil?
 		if @page_content.search_next(field, @offset, from, to)
 			puts "Found #{field} in page #{field.position} at page #{@page}" if verbose
@@ -229,12 +233,16 @@ class Reader
 		end
 	end
 
-	def first_match posibilities
+	def first_match posibilities, inverted = false
 		result = nil
 		posibilities.flatten!
 		posibilities.each do |p|
 			if read_next_field(p) and p.position
-				result = p if result.nil? or result.top > p.top
+				if inverted
+					result = p if result.nil? or result.top < p.top
+				else
+					result = p if result.nil? or result.top > p.top
+				end
 			end
 		end
 		result

@@ -15,6 +15,7 @@ class Cleaner
 		puts " #{total} files: "
 		files.each.with_index do |file, i|
 			
+			puts file
 			print "[%02d/%02d]" % [i+1, total]
 			name = File.basename(file, '.pdf')
 			dir_name = File.dirname(file)
@@ -26,15 +27,15 @@ class Cleaner
 			sub_file_name = "#{@output_path}/" << dir_name << "/" << name
 			unless File.exist? "#{sub_file_name}"
 				Dir.mkdir(sub_file_name) 
-				Dir.mkdir("#{sub_file_name}/raw")
+				#Dir.mkdir("#{sub_file_name}/raw")
 			end
 			f_input = File.open(file, 'rb')
 			@reader = PDF::Reader.new(f_input)
 			n = @reader.pages.size
 			step = 0
 			@reader.pages.each.with_index do |page, j|
-				raw_output = File.open("#{sub_file_name}/raw/#{name}_#{page.number}.raw", "w:UTF-8")
-				write(page.raw_content, raw_output, 1)
+				#raw_output = File.open("#{sub_file_name}/raw/#{name}_#{page.number}.raw", "w:UTF-8")
+				#write(page.raw_content, raw_output, 1)
 				receiver = PDF::Reader::PageTextReceiver.new
 				page.walk(receiver)
 				content = receiver.content

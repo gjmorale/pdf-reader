@@ -26,6 +26,9 @@ class AssetTable
 	attr_reader :iterative_title
 	attr_reader :spanish
 	attr_reader :alt_currency
+	attr_reader :dont_move
+	attr_reader :require_rows
+	attr_reader :require_offset
 	attr_accessor :verbose
 
 	def initialize reader, v = false
@@ -55,7 +58,7 @@ class AssetTable
 		puts "Pre-Run  reader #{@reader}" if verbose
 		if(positions = self.get_results)
 			positions = check_results positions
-			@reader.pop checkpoint, false
+			@reader.pop checkpoint, @dont_move
 			Setup::Debug.overview = false if verbose
 			return positions
 		end
@@ -177,11 +180,12 @@ class AssetTable
 			cloned_table_end = [cloned_table_end, BankUtils.clone_it(page_end)] if page_end
 			cloned_headers = BankUtils.clone_it headers
 			cloned_offset = BankUtils.clone_it offset
-			table = Table.new(cloned_headers, cloned_table_end, cloned_offset, skips)
+			table = Table.new(cloned_headers, cloned_table_end, cloned_offset, skips, @require_offset)
 			pre_table_reader = @reader.stash
 			puts "Processing #{name} in page #{@reader.page}" unless title or present
 			puts "Executing table at #{@reader}" if verbose
-			if table.execute(@reader) and table.width > 1
+			if(table.execute(@reader) and table.width > 1 and 
+				(not @require_rows or table.rows.any?))
 				present = true
 				yield table
 				table.print_results if verbose

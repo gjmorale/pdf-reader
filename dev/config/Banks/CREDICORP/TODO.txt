@@ -1,0 +1,16 @@
+TODO:
+
+Son mas de una cuenta
+	Buscar por RESUMEN DE CUENTA
+	Buscar montos por cuenta
+	Buscar arreglo de nros de cuenta separados por coma e pagina 1
+
+Sacar Posiciones:
+	Acciones
+	Caja del resumen
+
+Sacar Transacciones:
+	Movimientos generales
+	De caja
+	Sacar diferencia entre caja y total con mismo numero y repartir equitativo
+	Listo

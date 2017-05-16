@@ -4,12 +4,14 @@ class Table
 	attr_reader :width
 	attr_reader :headers
 	attr_reader :range
+	attr_reader :offset
 
-	def initialize(headers, bottom = nil, offset = nil, skips = nil)
+	def initialize(headers, bottom = nil, offset = nil, skips = nil, require_offset = false)
 		@bottom = bottom
 		@offset = offset
 		@headers = headers
 		@skips = skips
+		@require_offset = require_offset
 	end
 
 	def set_headers_width
@@ -159,7 +161,8 @@ class Table
 		#reader.print(5) if Setup::Debug.overview
 		return false unless @headers_row
 		@bottom = reader.read_next_field(original_bottom) if bottom_in_headers(reader)
-		@offset = reader.move_to(@offset, 1) if @offset
+		@offset = reader.move_to(@offset, 1, true) if @offset
+		return false if @require_offset and not @offset
 		reader.skip @offset if @offset
 		set_range reader.line_size, reader.line_height
 		set_borders
