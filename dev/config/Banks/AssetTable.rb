@@ -180,17 +180,18 @@ class AssetTable
 			cloned_table_end = [cloned_table_end, BankUtils.clone_it(page_end)] if page_end
 			cloned_headers = BankUtils.clone_it headers
 			cloned_offset = BankUtils.clone_it offset
-			table = Table.new(cloned_headers, cloned_table_end, cloned_offset, skips, @require_offset)
+			table = Table.new(cloned_headers, cloned_table_end, cloned_offset, skips, @row_limit, @require_offset)
 			pre_table_reader = @reader.stash
-			puts "Processing #{name} in page #{@reader.page}" unless title or present
+			puts "Processing #{name} in page #{@reader.page}" unless title or present or @require_offset
 			puts "Executing table at #{@reader}" if verbose
 			if(table.execute(@reader) and table.width > 1 and 
 				(not @require_rows or table.rows.any?))
+				puts "Processing #{name} in page #{@reader.page}" if not(title or present) and @require_offset
 				present = true
 				yield table
 				table.print_results if verbose
 			else
-				puts "NOT PRESENT".yellow unless present
+				puts "NOT PRESENT".yellow unless present or @require_offset
 				@reader.pop pre_table_reader
 				break
 			end 

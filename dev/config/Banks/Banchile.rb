@@ -91,7 +91,6 @@ BC.class_eval do
 				Setup::Read.vertical_search_range = 100
 				account = BC::Account.new(account_field.results[0].result)
 				@accounts = [account]
-				puts "\nACC: #{account.code} - $#{account.value}"
 				analyse_position_1 @accounts.first
 			else
 				puts "format 2".light_blue
@@ -101,7 +100,6 @@ BC.class_eval do
 					account_field_2 = SingleField.new("Subcuenta:", [Setup::Type::INTEGER], 3, Setup::Align::LEFT)
 					account_field_2.execute @reader
 					account = BC::Account.new(account_field_2.results[0].result)
-					puts "\nACC: #{account.code} - $#{account.value}"
 					analyse_position_2 account
 					@accounts << account
 				end
@@ -137,6 +135,7 @@ BC.class_eval do
 			total.execute @reader
 			@total_out = BankUtils.to_number total.results[3].result, true
 			account.value = @total_out
+			puts "\nACC: #{account.code} - $#{account.value}"
 
 			account.add_pos analyse_mutual_funds BC1
 			account.add_mov analyse_mutual_funds_mov BC1
@@ -164,6 +163,8 @@ BC.class_eval do
 			#@total_out = total_activos - total_pasivos		#TODO: SI
 			@total_out = total_activos - total_pasivos		#TODO: NO
 			account.value = @total_out
+			puts "\nACC: #{account.code} - $#{account.value}"
+			
 			account.add_pos Position.new("Total Pasivos", 1.0, -total_pasivos, -total_pasivos)
 
 			@reader.next_page

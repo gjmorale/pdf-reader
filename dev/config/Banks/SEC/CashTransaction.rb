@@ -13,7 +13,6 @@ class SEC::CashTransactions < SECTransactionTable
 			headers << HeaderField.new("CARGO", headers.size, Setup::Type::AMOUNT, false) 
 			headers << HeaderField.new("ABONO", headers.size, Setup::Type::AMOUNT, false) 
 			headers << HeaderField.new("SALDO", headers.size, Setup::Type::AMOUNT, false) 
-			#puts headers
 		@page_end = 		Field.new("Página ")
 	end
 

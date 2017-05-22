@@ -55,8 +55,8 @@ class Field
 		to_s
 	end
 
-	def execute(reader)
-		if reader.move_to(self)
+	def execute reader, limit = 0
+		if reader.move_to(self, limit)
 			reader.skip self
 		else
 			return false

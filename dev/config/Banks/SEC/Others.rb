@@ -1,6 +1,5 @@
 class SEC::Others < SECAssetTable
 	def load
-		@verbose = true
 		@name = "fondos pendientes y otros"
 		@title = Field.new("SALDO TRANSITORIO AGF")
 		@table_end = Field.new("TOTAL EN PESOS")

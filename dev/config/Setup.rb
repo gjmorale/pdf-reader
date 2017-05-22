@@ -99,6 +99,7 @@ module Setup
 		ASSET = 		6
 		LABEL = 		7
 		DATE = 			8
+		BLANK = 		9
 	end
 
 	module AccType

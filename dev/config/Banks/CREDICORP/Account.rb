@@ -6,6 +6,7 @@ class CrediCorp::Account < Account
 
 	def initialize code, value
 		@value = value
+		@code = code
 		@positions = []
 		@movements = []
 	end

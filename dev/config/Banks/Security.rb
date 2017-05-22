@@ -146,7 +146,8 @@ SEC.class_eval do
 		end
 
 		def analyse_transactions
-			new_movements = SEC::Transactions.new(@reader).analyze(usd_value) || SEC::TransactionsAlt.new(@reader).analyze
+			new_movements = SEC::Transactions.new(@reader).analyze(usd_value) || 
+				SEC::TransactionsAlt.new(@reader).analyze
 			while moves = SEC::CashTransactions.new(@reader).analyze
 				new_movements += moves
 			end

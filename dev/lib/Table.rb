@@ -6,11 +6,12 @@ class Table
 	attr_reader :range
 	attr_reader :offset
 
-	def initialize(headers, bottom = nil, offset = nil, skips = nil, require_offset = false)
+	def initialize(headers, bottom = nil, offset = nil, skips = nil, row_limit = nil, require_offset = false)
 		@bottom = bottom
 		@offset = offset
 		@headers = headers
 		@skips = skips
+		@row_limit = row_limit
 		@require_offset = require_offset
 	end
 
@@ -167,6 +168,7 @@ class Table
 		set_range reader.line_size, reader.line_height
 		set_borders
 		@rows = reader.get_rows(@range, get_guide, @skips)
+		trim_rows if @rows and @row_limit
 		set_results
 		reader.get_columns(@headers, @rows)
 		reader.correct_results(@headers, @rows)
@@ -194,6 +196,12 @@ class Table
 			return false
 		else
 			return possible.text == @bottom.text
+		end
+	end
+
+	def trim_rows
+		@rows.each do |row|
+			row.yf = row.yi + @row_limit if row.yf - row.yi > @row_limit
 		end
 	end
 

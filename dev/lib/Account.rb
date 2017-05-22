@@ -31,6 +31,10 @@ class Account
 		@movements += mov if mov
 	end
 
+	def set_movs
+		movements.map {|m| m.sec_1 = come}
+	end
+
 	def add_pos pos
 		@positions += pos if pos if pos.is_a? Array
 		@positions << pos if pos if pos.is_a? Position

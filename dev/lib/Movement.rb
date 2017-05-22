@@ -1,22 +1,22 @@
 class Movement
 
-	attr_reader :value
+	attr_accessor :value
 	attr_accessor :detalle
 	attr_accessor :id_sec1
 
 	def initialize **args
-		@fecha_movimiento = clean args[:fecha_movimiento] 
-		@fecha_pago = fecha_pago args[:fecha_pago] 
-		@concepto = args[:concepto] 
-		@id_sec1 = clean args[:id_sec1] 
-		@factura = clean args[:factura] 
-		@id_ti_valor1 = clean args[:id_ti_valor1] 
-		@cantidad1 = args[:cantidad1]
-		@id_ti_valor2 = clean args[:id_ti_valor2] 
-		@precio = args[:precio]
-		@cantidad2 = args[:cantidad2]
-		@delta = args[:delta] 
-		@detalle = clean args[:detalle]
+		@fecha_movimiento = clean args[:fecha_movimiento] || ""
+		@fecha_pago = fecha_pago args[:fecha_pago] || @fecha_movimiento
+		@concepto = args[:concepto] || "9000"
+		@id_sec1 = clean args[:id_sec1] || ""
+		@factura = clean args[:factura] || ""
+		@id_ti_valor1 = clean args[:id_ti_valor1] || ""
+		@cantidad1 = args[:cantidad1] || ""
+		@id_ti_valor2 = clean args[:id_ti_valor2] || ""
+		@precio = args[:precio] || ""
+		@cantidad2 = args[:cantidad2] || ""
+		@delta = args[:delta] || ""
+		@detalle = clean args[:detalle] || ""
 		@value = args[:value] || 0.0
 	end
 
