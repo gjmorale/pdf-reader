@@ -160,11 +160,10 @@ BC.class_eval do
 			total.execute @reader
 			#total.print_results
 			total_pasivos = BankUtils.to_number total.results[1].result.inspect, true
-			#@total_out = total_activos - total_pasivos		#TODO: SI
-			@total_out = total_activos - total_pasivos		#TODO: NO
+			@total_out = total_activos - total_pasivos
 			account.value = @total_out
 			puts "\nACC: #{account.code} - $#{account.value}"
-			
+
 			account.add_pos Position.new("Total Pasivos", 1.0, -total_pasivos, -total_pasivos)
 
 			@reader.next_page

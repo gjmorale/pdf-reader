@@ -2,6 +2,8 @@ class Row
 
 	attr_accessor :yi
 	attr_accessor :yf 
+	attr_accessor :text 
+	attr_accessor :upper_text
 
 	def initialize
 	end

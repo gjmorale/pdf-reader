@@ -68,45 +68,48 @@ class AssetTable
 		return false
 	end
 
-	def each_result_do results
+	def each_result_do results, row = nil
 		#Override for custom result handling
 	end
 
 	def get_results
-		new_positions = []
-		accured_interests = quantity = price = value = "0.0"
-		unfinished_label = label = nil
-		present = get_table do |table|
-			table.rows.each.with_index do |row, i|
-				results = table.headers.map {|h| h.results[-i-1].result}
-				each_result_do results
-				if total_column and results[total_column] == "Total"
-					quantity = (quantity_default || results[quantity_index])
+		new_positions = []										#To store new positions
+		accured_interests = quantity = price = value = "0.0"	#To store position values
+		unfinished_label = label = nil  						#Multiline titles
+		present = get_table do |table|							#Iteration over each table until bottom
+			table.rows.reverse_each.with_index do |row, i|		#Iteration over each table row
+				results = table.headers.map {|h| h.results[-i-1].result} 		#Row results
+				each_result_do results, row										#Personalized result formatting for sub-classes
+				if total_column and results[total_column] == "Total"			#When a row is the total of its predecesors
+					quantity = (quantity_default || results[quantity_index])	
 					value = (value_default || results[value_index])
 					accured_interests = (ai_index ? BankUtils.to_ai(results[ai_index]) : 0.0).to_s
 				end
-				new_title = title_dump ? "#{results[label_index]}".gsub(title_dump, "") : results[label_index]
-				new_title = (new_title.nil? or new_title.empty? or new_title == Result::NOT_FOUND) ? nil : new_title
-				if new_title
-					if unfinished_regex
-						new_title = unfinished_label.append new_title if unfinished_label
-						unfinished_label = (new_title.match(unfinished_regex)) ? nil : new_title 
+				new_title = results[label_index]
+				new_title = "#{new_title}".gsub(title_dump, "") if title_dump 	#Clean label from unwanted strings if any
+				new_title = (new_title.nil? or new_title.empty? or new_title == Result::NOT_FOUND) ?
+				 nil : new_title			#Set title if any
+				if new_title				#If there is a new title
+					if unfinished_regex		#If title matches there is a pattern for the end line of the title
+						new_title = unfinished_label.append new_title if unfinished_label			#Add next part of title
+						unfinished_label = (new_title.match(unfinished_regex)) ? nil : new_title 	#Close the title search if the pattern is matched
 					end
-					if label 
+					if label 				#If a label is ready, set the new position 
 						titles = parse_position(label, @position_parser)
 						new_positions << new_position(titles, quantity, price, value, accured_interests)
 					end
-					label = unfinished_label ? nil : new_title
-					price = (price_default || results[price_index]).to_s
+					label = unfinished_label ? nil : new_title						#Set label unless it's unfinished
+					price = (price_default || results[price_index]).to_s 			
 					quantity = (quantity_default || results[quantity_index]).to_s
+					#puts "#{new_title} #{quantity}".yellow
 					value = (value_default || results[value_index]).to_s
 					accured_interests = (ai_index ? BankUtils.to_ai(results[ai_index]) : 0.0).to_s
 				else
-					unfinished_label = nil
+					unfinished_label = nil 	#Close the title search if there is no more titles
 				end
 			end
 		end
-		if label
+		if label 		#Save last found position
 			titles = parse_position(label, @position_parser)
 			new_positions << new_position(titles, quantity, price, value, accured_interests)
 		end
@@ -127,6 +130,7 @@ class AssetTable
 		value *= @@alt_currs[@alt_currency.to_sym] if @alt_currency
 		titles[1] ||= ""
 		titles[1] << "[Obtenido con #{@alt_currency} a $#{@@alt_currs[@alt_currency.to_sym].round(3)}]" if @alt_currency
+		#puts "#{titles[1]} : #{value} + #{ai}".red
 		Position.new(titles[0], 
 			quantity, 
 			price, 

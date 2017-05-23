@@ -182,6 +182,11 @@ class PageContent
 		end
 		return nil
 	end
+
+	def get_chunk xi,xf,yi,yf
+		lines = (Multiline.generate @content.lines[yi..yf])
+		text = lines[xi..xf]
+	end
 	
 	# Search Results Left
 	# header: column to be evaluated

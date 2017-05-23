@@ -20,6 +20,7 @@ module Setup
 		BC = "BC"
 		MON = "MON"
 		CREDICORP = "CREDICORP"
+		PER = "PER"
 	end
 
 	# Field text alignment
@@ -128,6 +129,9 @@ module Setup
 		when Format::CREDICORP
 			puts "CrediCorp selected"
 			@@institution = CrediCorp.new()
+		when Format::PER
+			puts "Pershing selected"
+			@@institution = PER.new()
 		else
 			puts "Wrong input, try again or CTRL + C to exit"
 			return false

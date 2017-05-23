@@ -154,6 +154,7 @@ class Table
 
 	def execute reader
 		set_headers_width
+		puts headers.inspect
 		first_header = @headers.sort.first
 		original_bottom = @bottom
 		@bottom = reader.read_next_field(@bottom, nil, nil) if @bottom

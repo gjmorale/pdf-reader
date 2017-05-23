@@ -195,6 +195,7 @@ class Reader
 	def get_rows range, guide, skips
 		rows = []
 		row = Row.new
+		prev_row = nil
 		row.yf = range[3]
 		if skips
 			regex = RegexHelper.regexify_skips(skips) 
@@ -202,11 +203,14 @@ class Reader
 		end
 		while (row_y = @page_content.get_row(range, guide))
 			row.yi = row_y 
+			prev_row.upper_text = @page_content.get_chunk(range[0],range[1],row.yi,row.yf) if prev_row
+			prev_row = row
 			rows << row
 			row = Row.new
 			row.yf = row_y - 1
 			range[3] = row_y - 1
 		end
+		prev_row.upper_text = @page_content.get_chunk(range[0],range[1],range[2],prev_row.yi-1) if prev_row
 		rows
 	end
 
