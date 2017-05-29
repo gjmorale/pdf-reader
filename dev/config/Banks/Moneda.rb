@@ -95,7 +95,7 @@ MON.class_eval do
 			account = MON::Account.new(account_field.results[0].result,@total_out)
 			@accounts = [account]
 			
-			puts "\nACC: #{account.code} - $#{account.value}"
+			puts "\nACC: #{account.code} - #{BankUtils.to_amount account.value}"
 			
 			@reader.next_page
 			start_page = @reader.page

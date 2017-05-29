@@ -60,8 +60,8 @@ class CashTransactionTable < TransactionTable
 
 	def new_movement args
 		args = args.map{|arg| "#{arg}".strip}
-		abono = BankUtils.to_number(args[@mov_map[:abono]], spanish)
-		cargo = BankUtils.to_number(args[@mov_map[:cargo]], spanish)
+		abono = @mov_map[:abono].nil? ? 0.0 : BankUtils.to_number(args[@mov_map[:abono]], spanish)
+		cargo = @mov_map[:cargo].nil? ? 0.0 : BankUtils.to_number(args[@mov_map[:cargo]], spanish)
 		hash = {
 			fecha_movimiento: args[@mov_map[:fecha_movimiento]],
 			fecha_pago: args[@mov_map[:fecha_pago]],

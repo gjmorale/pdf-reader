@@ -120,7 +120,7 @@ CrediCorp.class_eval do
 				account = CrediCorp::Account.new(code,clp_total)
 				@accounts << account
 				account.add_pos Position.new("CAJA", cash_total, 1.0, cash_total)
-				puts "\nACC: #{account.code} - $#{account.value}"
+				puts "\nACC: #{account.code} - #{BankUtils.to_amount account.value}"
 
 				if Field.new("DETALLE CARTERA RENTA VARIABLE").execute @reader, 5
 					puts "RENTA VARIABLE:"

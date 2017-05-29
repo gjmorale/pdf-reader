@@ -36,8 +36,8 @@ class AssetTable
 		@verbose = v
 	end
 
-	def self.set_currs *args
-		@@alt_currs = args[0] if args.any?		
+	def self.set_currs **args
+		@@alt_currs = args if args.any?		
 	end
 
 	def pre_load *args
@@ -130,7 +130,7 @@ class AssetTable
 		value *= @@alt_currs[@alt_currency.to_sym] if @alt_currency
 		titles[1] ||= ""
 		titles[1] << "[Obtenido con #{@alt_currency} a $#{@@alt_currs[@alt_currency.to_sym].round(3)}]" if @alt_currency
-		#puts "#{titles[1]} : #{value} + #{ai}".red
+		puts "POS: #{titles[0]} : #{value} + #{ai}".yellow if verbose
 		Position.new(titles[0], 
 			quantity, 
 			price, 
@@ -142,7 +142,7 @@ class AssetTable
 		[str, nil]
 	end
 
-	def pre_check_do
+	def pre_check_do new_positions = nil
 	end
 
 	def check_results new_positions
@@ -150,7 +150,7 @@ class AssetTable
 			puts "EMPTY TABLE".yellow
 			return []
 		end 
-		pre_check_do
+		pre_check_do new_positions
 		puts "Pre-Check  reader #{@reader}" if verbose
 		table_total = (total and total.execute(@reader)) ? BankUtils.to_number(total.results[total_index].result, spanish) : nil
 		table_total *= @@alt_currs[@alt_currency.to_sym] if table_total and @alt_currency

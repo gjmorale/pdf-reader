@@ -96,7 +96,7 @@ SEC.class_eval do
 			@reader.next_page
 			
 			#Field.new("[DETALLE DE INVERSIONES POR CLASE DE ACTIVOS|DETALLE DE INVERSIONES NO PREVISIONALES]").execute @reader
-			puts "\nACC: #{account.code} - $#{account.value}"
+			puts "\nACC: #{account.code} - #{BankUtils.to_amount account.value}"
 			account.add_pos analyse_mutual_funds
 			account.add_pos analyse_investment_funds
 			account.add_pos analyse_stocks

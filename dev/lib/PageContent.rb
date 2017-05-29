@@ -17,8 +17,9 @@ class PageContent
 		@content
 	end
 
-	def find_text text
-		@content.each_line do |line|
+	def find_text text, offset = nil
+		offset ||= 0
+		@content.lines[offset..-1].each do |line|
 			line = RegexHelper.strip_wildchar(line)
 			line.match(text) do |m|
 				return line[m.offset(0)[0]..m.offset(0)[1]-1]
@@ -201,7 +202,7 @@ class PageContent
 	# ¶1¶¶2.3%¶ => 12.3%
 	def search_results_left(range, row, result)
 		#puts "Searching"
-		return true if range[2] >= range[3]
+		return true if range[2] > range[3]
 		# Content line to be evaluated
 		line = Multiline.generate(@content.lines[row.yi..row.yf])
 		# Acceptable field to be recognized (E.j: +1,234,567.89)
@@ -250,7 +251,7 @@ class PageContent
 			result.result = last_match
 			result.left = min
 			result.edges.xi = max
-			result.right = RegexHelper.rindex(line[0..start])
+			result.right = counter + RegexHelper.rindex(line[counter..start])
 			result.edges.xf = start
 			result.position.y = row.yi
 			result.edges.y = row.yf
@@ -266,9 +267,9 @@ class PageContent
 	# Calculates the mass center for the given string using 
 	# weighted indexes as 1 => /¶/ ; 0 => /[^¶]/. The result
 	# is a float between [0..1] inclusive with:
-	# 1 => 1¶¶¶
-	# 0.5 => ¶23¶
-	# 0 => ¶¶¶4
+	# 1 	=> 1¶¶¶
+	# 0.5 	=> ¶23¶
+	# 0 	=> ¶¶¶4
 	def center_mass str
 		if str.is_a? Multiline
 			mean = 0.0

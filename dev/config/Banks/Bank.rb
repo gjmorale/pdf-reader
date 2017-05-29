@@ -21,6 +21,19 @@ MONTHS = [[1, /jan/i],
 		[11, /nov/i],
 		[12, /dec/i]]
 
+MESES = [[1, /ene/i],
+		[2, /feb/i],
+		[3, /mar/i],
+		[4, /abr/i],
+		[5, /may/i],
+		[6, /jun/i],
+		[7, /jul/i],
+		[8, /ago/i],
+		[9, /sep/i],
+		[10, /oct/i],
+		[11, /nov/i],
+		[12, /dic/i]]
+
 	def total_s
 		@total_out.to_s.sub(".",",")
 	end

@@ -122,10 +122,10 @@ class Reader
 		return first_match(field, inverted) if field.is_a? Array
 		return false if field.nil?
 		if @page_content.search_next(field, @offset, from, to)
-			puts "Found #{field} in page #{field.position} at page #{@page}" if verbose
+			#puts "Found #{field} in page #{field.position} at page #{@page}" if verbose
 			return field
 		else
-			puts "Position for #{field} in page #{@page} from line #{@offset}: NOT FOUND" if verbose
+			puts "Position for '#{field}' in page #{@page} from line #{@offset}: NOT FOUND" if verbose
 			return false
 		end
 	end
@@ -203,7 +203,11 @@ class Reader
 		end
 		while (row_y = @page_content.get_row(range, guide))
 			row.yi = row_y 
-			prev_row.upper_text = @page_content.get_chunk(range[0],range[1],row.yi,row.yf) if prev_row
+			if prev_row
+				prev_row.upper_text = @page_content.get_chunk(range[0],range[1],row.yi+1,row.yf) 
+			else
+				row.lower_text = @page_content.get_chunk(range[0],range[1],row.yi+1,row.yf)
+			end
 			prev_row = row
 			rows << row
 			row = Row.new
@@ -257,20 +261,22 @@ class Reader
 		@page_content.print range, @offset, start, show
 	end
 
-	def find_text text, limit = 0
+	def find_text text, limit = 0, with_offset = false
 		original_pos = stash
 		result = nil
+		temp_offset = with_offset ? @offset : nil
 		go_to 1
 		file_name = "#{@file[@file.rindex('/')+1..-1]}"
 		counter = limit != 0 ? 1 : 0
 		while File.exist?(file_path = "#{@file}/#{file_name}_#{@page}.page") and counter <= limit
 			first_page = File.new(file_path, 'r:UTF-8')
 			@page_content = PageContent.new(@page, first_page.read)
-			if result = @page_content.find_text(text)
+			if result = @page_content.find_text(text, temp_offset)
 				break
 			else
 				counter += 1 if limit != 0
 				@page += 1
+				temp_offset = nil
 			end
 		end
 		pop original_pos

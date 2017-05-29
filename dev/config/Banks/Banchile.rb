@@ -135,7 +135,7 @@ BC.class_eval do
 			total.execute @reader
 			@total_out = BankUtils.to_number total.results[3].result, true
 			account.value = @total_out
-			puts "\nACC: #{account.code} - $#{account.value}"
+			puts "\nACC: #{account.code} - #{BankUtils.to_amount account.value}"
 
 			account.add_pos analyse_mutual_funds BC1
 			account.add_mov analyse_mutual_funds_mov BC1
@@ -162,7 +162,7 @@ BC.class_eval do
 			total_pasivos = BankUtils.to_number total.results[1].result.inspect, true
 			@total_out = total_activos - total_pasivos
 			account.value = @total_out
-			puts "\nACC: #{account.code} - $#{account.value}"
+			puts "\nACC: #{account.code} - #{BankUtils.to_amount account.value}"
 
 			account.add_pos Position.new("Total Pasivos", 1.0, -total_pasivos, -total_pasivos)
 

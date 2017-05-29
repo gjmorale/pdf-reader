@@ -46,9 +46,9 @@ class Field
 	end
 
 	def to_s
-		text = @text
-		text << "[DATE]" if @date
-		text
+		out_text = @text
+		out_text << "[DATE]" if @date
+		out_text
 	end
 
 	def inspect 
@@ -107,7 +107,7 @@ class SingleField < Field
 	end
 
 	def clone
-		SingleField.new(@text, @types, @width, @orientation, @date)
+		SingleField.new(@text.dup, @types, @width, @orientation, @date)
 	end
 
 	def print_results
@@ -120,8 +120,8 @@ class SingleField < Field
 		puts ("+"<<"-"*(line.length-3)<<"+").green
 	end
 
-	def execute(reader)
-		if reader.move_to(self)
+	def execute(reader, limit = 0)
+		if reader.move_to(self, limit)
 			reader.find_results_for(self)
 			reader.skip self
 			return true
@@ -137,8 +137,8 @@ class HeaderField < Field
 	attr_reader :order
 	attr_accessor :border
 
-	def initialize(text, order, type, guide = false, width = 1, orientation = Setup::Table.header_orientation, max_l = nil, date = false)
-		super text, width, orientation, date
+	def initialize(text, order, type, guide = false, width = 1, orientation = Setup::Table.header_orientation, max_l = nil)
+		super text, width, orientation, false
 		@order = order
 		@type = type
 		@guide = guide
@@ -146,7 +146,7 @@ class HeaderField < Field
 	end
 
 	def clone 
-		HeaderField.new(@text, @order, @type, @guide, @width, @orientation, @max_length, @date)
+		HeaderField.new(@text.dup, @order, @type, @guide, @width, @orientation, @max_length)
 	end
 
 	def guide?
