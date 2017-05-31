@@ -62,8 +62,18 @@ class Cleaner
 
 
 	def load (input, output, format = "*", source = nil )
-		return "Not a DIR #{input}/#{format}" unless Dir.exist? "#{input}/#{format}"
-		return "Not a DIR #{output}/#{format}" unless Dir.exist? "#{output}/#{format}"
+		return "No se encontró la carpeta #{input}" unless Dir.exist? "#{input}"
+		Dir.mkdir("#{input}/#{format}") unless Dir.exist? "#{input}/#{format}"
+		unless Dir.exist? "#{output}"
+			puts "No se encontró la carpeta temporal"
+			puts "#{output}"
+			puts "¿Quiere crear la carpeta? (Y/N)"
+			if (STDIN.gets.chomp) =~ /^(Y|y|yes|Yes|YES|s|S|si|sí|Si|Sí|SI|SÍ)$/
+				Dir.mkdir("#{output}") 
+			else
+				return "Not a DIR #{output}"
+			end
+		end 
 		print "Loading......"
 		@output_path = output
 		@input_path = input

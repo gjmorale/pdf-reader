@@ -138,7 +138,9 @@ PER.class_eval do
 			end
 
 			#Transactions
-			account.add_mov analyse_transactions factory
+			if Field.new("Transactions by Type of Activity").execute @reader
+				account.add_mov analyse_transactions_eng factory
+			end
 			
 			#CashMovs
 			account.add_mov analyse_cash_transactions factory
@@ -233,6 +235,17 @@ PER.class_eval do
 			pos ||= factory::Transactions.new(@reader).analyze
 			pos ||= factory::TransactionsAlt.new(@reader).analyze
 			return pos
+		end
+
+		def analyse_transactions_eng factory
+			pos = new_pos = []
+			new_pos += pos if(pos = factory::Dividends.new(@reader).analyze)
+			unless(pos = factory::Taxes.new(@reader).analyze)
+				@reader.next_page
+				pos = factory::Taxes.new(@reader).analyze
+			end
+			new_pos += pos if pos
+			return new_pos
 		end
 
 		def analyse_cash_transactions factory

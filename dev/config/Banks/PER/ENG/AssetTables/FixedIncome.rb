@@ -1,27 +1,24 @@
 class PER::ENG::Bonds < PER::AssetTable
 	def load
 		@name = "corporative bonds"
-		@offset = Field.new("Bonos Corporativos")
-		@table_end = Field.new("Total de Bonos Corporativos")
+		@offset = Field.new("Corporative Bonds")
+		@table_end = Field.new("Total Corporative Bonds")
 		@headers = []
-			headers << HeaderField.new("Fecha de Adquisición", headers.size, Setup::Type::DATE)
-			headers << HeaderField.new("Cantidad", headers.size, Custom::NUM3, true)
-			headers << HeaderField.new("Costo por Unidad", headers.size, Custom::NUM4)
-			headers << HeaderField.new(["Base de Costo","Ajustada"], headers.size, Custom::NUM2)
-			headers << HeaderField.new("Precio de Mercado", headers.size, Custom::NUM4)
-			headers << HeaderField.new("Valor de Mercado", headers.size, Custom::NUM2)
-			headers << HeaderField.new(["Ganancia o Pérdida","No Realizada"], headers.size, Custom::NUM2, false, 5)
-			headers << HeaderField.new(["Intereses","Devengados"], headers.size, Custom::NUM2, false, 4)
-			headers << HeaderField.new(["Ingresos Anuales","Estimados"], headers.size, Custom::NUM2, false, 4)
-			headers << HeaderField.new(["Rédito","Estimado"], headers.size, Setup::Type::PERCENTAGE, false, 4)
-		@skips = ['Base de Costo Original: \$[0-9,.\s]+']
-		@total = SingleField.new("Total de Bonos Corporativos",
-			BankUtils.to_arr(Setup::Type::AMOUNT,4))
-		@page_end = 		Field.new("Página ¶¶ de ")
-		@price_index = 		4
+			headers << HeaderField.new("Description", headers.size, Setup::Type::LABEL)
+			headers << HeaderField.new("Quantity", headers.size, Custom::NUM3)
+			headers << HeaderField.new("Market Price", headers.size, Custom::NUM4, true)
+			headers << HeaderField.new("Market Value", headers.size, Custom::NUM2)
+			headers << HeaderField.new(["Accured","Interests"], headers.size, Custom::NUM2, false, 4)
+			headers << HeaderField.new(["Estimated","Annual Income"], headers.size, Custom::NUM2, false, 4)
+			headers << HeaderField.new(["Estimated","Yield"], headers.size, Setup::Type::PERCENTAGE, false, 4)
+		@skips = ['Original Costa Base: \$[0-9,.\s]+']
+		@total = SingleField.new("Total Corporative Bonds",
+			BankUtils.to_arr(Setup::Type::AMOUNT,2))
+		@page_end = 		Field.new("Page ¶¶ of ")
+		@price_index = 		2
 		@quantity_index = 	1
-		@value_index = 		5
-		@total_index = 		1
+		@value_index = 		3
+		@total_index = 		0
 		@require_rows = 	true
 		@require_offset = 	true
 		@row_limit = 		2

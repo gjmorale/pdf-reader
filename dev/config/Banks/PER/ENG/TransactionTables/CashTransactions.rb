@@ -1,16 +1,16 @@
 class PER::ENG::CashTransactions < PER::CashTransactionTable
 	def load
 		@name = "cash transactions"
-		@title = Field.new("Detalles del Fondo de Money Market")
-		@table_end = Field.new("Saldo al Cierre")
+		@title = Field.new("Money Market Fund Detail")
+		@table_end = Field.new("Closing Balance")
 		@headers = []
-			headers << HeaderField.new("Fecha", headers.size, Setup::Type::DATE)
-			headers << HeaderField.new("Tipo de Actividad", headers.size, Setup::Type::LABEL)
-			headers << HeaderField.new("Descripción", headers.size, Setup::Type::LABEL)
-			headers << HeaderField.new("Monto", headers.size, Custom::NUM2, true)
-			headers << HeaderField.new("Saldo", headers.size, Custom::NUM2)
-		@page_end = 		Field.new("Página ¶¶ de ")
-		@total = SingleField.new("Total de Todos los Fondos de Money Market",
+			headers << HeaderField.new("Date", headers.size, Setup::Type::DATE)
+			headers << HeaderField.new("Activity Type", headers.size, Setup::Type::LABEL, true)
+			headers << HeaderField.new("Description", headers.size, Setup::Type::LABEL)
+			headers << HeaderField.new("Amount", headers.size, Custom::NUM2)
+			headers << HeaderField.new("Balance", headers.size, Custom::NUM2)
+		@page_end = 		Field.new("Page ¶¶ of ")
+		@total = SingleField.new("Total All Money Market Funds",
 			[Setup::Type::AMOUNT], 3, Setup::Align::LEFT)
 		@total_index = 		0
 		@mov_map = {

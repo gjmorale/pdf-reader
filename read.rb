@@ -23,6 +23,7 @@ require_relative "pdf_ghost/ghost.rb"
 
 if ARGV.size > 1
 	skip = true if ARGV[1] == "--skip-raw"
+	skip = true if ARGV[1] == "-s"
 end
 
 puts " === LOADING FILES FOR #{ARGV[0]} === "

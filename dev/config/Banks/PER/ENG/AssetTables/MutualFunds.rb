@@ -1,6 +1,5 @@
 class PER::ENG::MutualFunds < PER::ENG::AssetTable
 	def load
-		@verbose = true
 		@name = "mutual funds"
 		@offset = Field.new("MUTUAL FUNDS")
 		@table_end = Field.new("TOTAL MUTUAL FUNDS")

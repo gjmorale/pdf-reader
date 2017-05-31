@@ -253,6 +253,7 @@ class Reader
 				end
 			end
 		end
+		puts "FOUND #{result} first in #{posibilities}" if Setup::Debug.overview
 		result
 	end
 

@@ -251,7 +251,8 @@ class PageContent
 			result.result = last_match
 			result.left = min
 			result.edges.xi = max
-			result.right = counter + RegexHelper.rindex(line[counter..start])
+			right_limit = RegexHelper.rindex(line[counter..start]) || 0
+			result.right = counter + right_limit
 			result.edges.xf = start
 			result.position.y = row.yi
 			result.edges.y = row.yf
