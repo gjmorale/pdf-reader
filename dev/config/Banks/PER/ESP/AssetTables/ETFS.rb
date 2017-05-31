@@ -27,7 +27,21 @@ class PER::ESP::ETFS < PER::AssetTable
 	end
 
 	def parse_position str, type
-		str.split(';')
+		str.split(';').reverse
+	end
+
+	def filter_text options
+		#puts options.join(';').red
+		text = options.select{|o| 
+			not o.empty? and
+			o =~ /.*[A-Z]{2}.*/ and
+			not (o =~ /(Total|CUSIP|ISIN|Opción|Efectivo|^\s*$)/)
+		}.each{|o| o.strip!}.join(';')
+		code = text.match /(?<=ulos: )[A-Z0-9]+/
+		text = text.gsub(/;\s?Código[^;]+($|;)/,' ')
+		text << ";#{code}" if code
+		#puts text
+		text
 	end
 end
 

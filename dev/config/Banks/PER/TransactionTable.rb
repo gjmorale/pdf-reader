@@ -31,7 +31,7 @@ class PER::CashTransactionTable < CashTransactionTable
 		@label_index = 		5
 		@title_limit = 		3
 		@row_limit = 		1
-		@cash_curr = 		"CLP"
+		@cash_curr = 		"USD"
 	end
 
 	def get_results

@@ -57,15 +57,16 @@ class PER::ESP::TransactionsAlt < PER::TransactionTable
 		@total_index = 		1
 		@mov_map = {
 			fecha_movimiento: 	0,
-			fecha_pago: 		1,
-			concepto: 			2,
+			fecha_pago: 		0,
+			concepto: 			1,
 			id_ti_valor1: 		5, #TickerBB??
-			cantidad1: 			4,
-			id_ti_valor2: 		8,
-			precio: 			5,
+			cantidad1: 			3,
+			id_ti_valor2: 		7,
+			precio: 			4,
 			cantidad2: 			6,
-			detalle: 			3,
+			detalle: 			2,
 			delta: [
+				5
 			]
 		}
 	end

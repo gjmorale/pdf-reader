@@ -24,16 +24,21 @@ class PER::AssetTable < AssetTable
 		if options.select{|o| o =~ /\(continuación\)/}.any? or options.empty?
 			return Result::NOT_FOUND 
 		else
-			text = options.select{|o| 
-				not o.empty? and
-				o =~ /.*[A-Z]{2}.*/ and
-				not (o =~ /(Total|Código|Opción|Efectivo|Fondo de Inv|Precio estimado|DTD|MATURITY|^\s*$)/)
-			}.each{|o| o.strip!}.join(';')
-			text = text.gsub(/;(?!CUSIP)/,' ')
-			text = text.gsub(/\s?ISIN/, ';ISIN')
-			text = text.gsub(/ISIN;/,'ISIN ')
-			text = text.gsub(/(?<=ISIN#.{12})\s.+$/,'').gsub(/ISIN#/,'ISIN ')
+			text = filter_text options
 			return text.empty? ? Result::NOT_FOUND : text
 		end
+	end
+
+	def filter_text options
+		text = options.select{|o| 
+			not o.empty? and
+			o =~ /.*[A-Z]{2}.*/ and
+			not (o =~ /(Total|Código|Opción|Efectivo|Fondo de Inv|Precio estimado|DTD|MATURITY|^\s*$)/)
+		}.each{|o| o.strip!}.join(';')
+		text = text.gsub(/;(?!CUSIP)/,' ')
+		text = text.gsub(/\s?ISIN/, ';ISIN')
+		text = text.gsub(/ISIN;/,'ISIN ')
+		text = text.gsub(/(?<=ISIN#.{12})\s.+$/,'').gsub(/ISIN#/,'ISIN ')
+		text
 	end
 end

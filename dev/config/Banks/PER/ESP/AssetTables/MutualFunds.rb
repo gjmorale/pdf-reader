@@ -27,11 +27,23 @@ class PER::ESP::MutualFunds < PER::AssetTable
 	end
 
 	def parse_position str, type
-		if str =~ /ISIN .{5}.+/
-			str.split(';').reverse
-		else
-			[str,nil]
-		end
+		str.split(';').reverse
+	end
+
+	def filter_text options
+		#puts options.join(';').red
+		text = options.select{|o| 
+			not o.empty? and
+			o =~ /(.*[A-Z]{2}.*|ulos: [A-Z][0-9A-Z]{8}$)/ and
+			not (o =~ /(Total|CUSIP|Fondo de|Reinversi.n|Opción|^\s*$)/)
+		}.each{|o| o.strip!}.join(';')
+		code = text.match /(?<=ulos: )[A-Z0-9]+/
+		text = text.gsub(/;\s?Código[^;]+($|;)/,' ')
+		text = text.gsub(/ISIN.*/,'')
+		text = text.gsub(/;/,' ')
+		text << ";#{code}" if code
+		#puts text
+		text
 	end
 end
 

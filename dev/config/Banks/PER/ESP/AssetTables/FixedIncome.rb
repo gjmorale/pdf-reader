@@ -1,5 +1,6 @@
 class PER::ESP::Bonds < PER::AssetTable
 	def load
+		#@verbose = true
 		@name = "corporative bonds"
 		@offset = Field.new("Bonos Corporativos")
 		@table_end = Field.new("Total de Bonos Corporativos")
@@ -29,10 +30,22 @@ class PER::ESP::Bonds < PER::AssetTable
 	end
 
 	def parse_position str, type
-		if str =~ /ISIN [A-Z0-9]{12}/
-			str.split(';').reverse
-		else
-			[str,nil]
-		end
+		str.split(';').reverse
+	end
+
+	def filter_text options
+		puts options.join(';').red
+		text = options.select{|o| 
+			not o.empty? and
+			o =~ /(.*[A-Z]{2}.*|ulos: [0-9A-Z]{9}$)/ and
+			not (o =~ /(Total|CUSIP|Fondo de|Reinversi.n|Opción|^\s*$)/)
+		}.each{|o| o.strip!}.join(';')
+		code = text.match /(?<=ulos: )[A-Z0-9]{9}/
+		text = text.gsub(/;\s?Código[^;]+($|;)/,' ')
+		text = text.gsub(/ISIN.*/,'')
+		text = text.gsub(/;/,' ')
+		text << ";#{code}" if code
+		puts text
+		text
 	end
 end
