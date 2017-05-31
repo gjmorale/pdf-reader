@@ -88,6 +88,10 @@ module Setup
 		def self.header_orientation
 			@@orientation ||= Setup.inst.class::HEADER_ORIENTATION
 		end
+
+		def self.safe_zone
+			@@safe_zone ||= Setup.inst.class::SAFE_ZONE
+		end
 	end
 
 	# General data types in documents
@@ -157,6 +161,7 @@ class Institution
 	HORIZONTAL_SEARCH_RANGE = 15
 	CENTER_MASS_LIMIT = 0.40
 	TEXT_EXPAND = 0.5
+	SAFE_ZONE = 0
 	WILDCHAR = '¶'
 	DATE_FORMAT = '\d\d\/\d\d\/\d\d\d\d'
 

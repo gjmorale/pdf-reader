@@ -3,7 +3,7 @@ class PER::TransactionTable < TransactionTable
 	def pre_load *args
 		super
 		@label_index = 		5
-		@title_limit = 		3
+		@title_limit = 		4
 	end
 
 	def parse_movement hash

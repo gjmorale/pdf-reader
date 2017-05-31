@@ -6,7 +6,8 @@ class PER < Bank
 	LEGACY = "Pershing"
 	TABLE_OFFSET = 30
 	TEXT_EXPAND = 0.0
-	VERTICAL_SEARCH_RANGE = 10
+	VERTICAL_SEARCH_RANGE = 13
+	SAFE_ZONE = 7
 end
 
 module PER::ESP end

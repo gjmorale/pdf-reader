@@ -214,7 +214,7 @@ class PageContent
 		# The left-most index where the field could be
 		max = range[0] 
 		# The index of the search
-		counter = min
+		counter = min - Setup::Table.safe_zone
 		# Amount of invalid iterations before giving up
 		tolerance = 0
 		# The last valid result recognized
