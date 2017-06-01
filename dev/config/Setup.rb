@@ -193,9 +193,9 @@ class Institution
 		@out_path = out_path
 	end
 
-	# Method to be overriden and executed
-	def run 
-		files = Dir["#{@in_path}/#{dir}/*"]
+	# Main method be executed
+	def run files
+		files = files.map{|f| "#{@in_path}/#{dir}/#{f}"}
 		files.each do |file|
 			dir_path = File.dirname(file)
 			dir_name = dir_path[dir_path.rindex('/')+1..-1]
@@ -213,6 +213,23 @@ class Institution
 			print_pos out
 			out = "#{@out_path}/#{dir_name}/#{file_name}_mov.csv"
 			print_mov out
+		end
+		puts "\n**************************************\n"
+	end
+
+	# Method to index files instead of full reading
+	def index files
+		files = files.map{|f| "#{@in_path}/#{dir}/#{f}"}
+		files.each do |file|
+			dir_path = File.dirname(file)
+			dir_name = dir_path[dir_path.rindex('/')+1..-1]
+			file_name = file[file.rindex('/')+1..-1]
+			puts "\n\n************************************** - #{file_name}"
+			begin
+				analyse_index file
+			rescue StandardError => e
+				puts e.to_s.red
+			end
 		end
 		puts "\n**************************************\n"
 	end

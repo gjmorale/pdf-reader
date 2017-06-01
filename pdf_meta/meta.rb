@@ -36,6 +36,8 @@ module FileMeta
 	def self.clean_date str
 		str = "#{str.match /(?<=D:)\d{8}/}"
 		str = str[6..7] << '-' << str[4..5] << '-' << str[0..3]
+		date = Date.strptime(str, "%d-%m-%Y")
+		return date
 	end
 
 	def self.match str, collection
@@ -52,10 +54,10 @@ module FileMeta
 		files_out = []
 
 		files.each do |filename|
-			producer = creator = ""
+			producer = creator = date = ""
 			PDF::Reader.open(filename) do |reader|
 				#puts "\n===> #{filename[filename.rindex('/')..-5]}"
-				#puts "CREATED: #{clean_date read_field("CreationDate", reader)}"
+				date = clean_date read_field("CreationDate", reader)
 				producer = read_field "Producer", reader
 				creator = read_field "Creator", reader
 				#puts reader.info.inspect
@@ -63,7 +65,7 @@ module FileMeta
 			bank = 
 				FileMeta.match(producer, FileMeta::Map::PRODUCERS) || 
 				FileMeta.match(creator, FileMeta::Map::CREATORS)
-			files_out << [bank, filename] if bank
+			files_out << [bank, filename, date] if bank
 		end
 		files_out
 	end
