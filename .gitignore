@@ -8,4 +8,6 @@ in/*
 out/*
 !out/.gitkeep
 pdf_ghost/source.private
+read.rb
+
 
