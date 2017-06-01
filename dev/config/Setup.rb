@@ -202,8 +202,8 @@ class Institution
 			dir_name = dir_path[dir_path.rindex('/')+1..-1]
 			file_name = file[file.rindex('/')+1..-1]
 			puts "\n\n************************************** - #{file_name}"
-				analyse_position file
 			begin
+				analyse_position file
 			rescue StandardError => e
 				puts e.to_s.red
 			end
