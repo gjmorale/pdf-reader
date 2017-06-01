@@ -32,7 +32,7 @@ end
 class MON::CashCLP < MON::Cash
 	def load
 		@name = "caja en clp"
-		@title = Field.new("INFORME DE CAJA-MONEDA : PESO")
+		@title = [Field.new("INFORME DE CAJA-MONEDA : PESO"),Field.new("INFORME DE CAJA (CAJA PESO) - MONEDA : PESO")]
 		@table_end = Field.new("Información Adicional")
 		@headers = []
 			headers << HeaderField.new("Folio", headers.size, Setup::Type::INTEGER)
@@ -52,7 +52,7 @@ end
 class MON::CashUSD < MON::Cash
 	def load
 		@name = "caja en usd"
-		@title = Field.new("INFORME DE CAJA-MONEDA : DÓLAR")
+		@title = [Field.new("INFORME DE CAJA-MONEDA : DÓLAR"),Field.new("INFORME DE CAJA (CAJA DÓLAR) - MONEDA : DÓLAR")]
 		@table_end = Field.new("Información Adicional")
 		@headers = []
 			headers << HeaderField.new("Folio", headers.size, Setup::Type::INTEGER)

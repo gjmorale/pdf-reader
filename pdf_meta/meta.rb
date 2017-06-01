@@ -46,7 +46,7 @@ module FileMeta
 	end
 
 	def self.classify_files in_path
-		return "No se encontró la carpeta #{in_path}" unless Dir.exist? "#{in_path}"
+		raise IOError, "No se encontró la carpeta #{in_path}" unless Dir.exist? "#{in_path}"
 
 		files = Dir["#{in_path}/*.pdf"].sort
 		files_out = []
@@ -54,8 +54,8 @@ module FileMeta
 		files.each do |filename|
 			producer = creator = ""
 			PDF::Reader.open(filename) do |reader|
-				puts "\n===> #{filename[filename.rindex('/')..-5]}"
-				puts "CREATED: #{clean_date read_field("CreationDate", reader)}"
+				#puts "\n===> #{filename[filename.rindex('/')..-5]}"
+				#puts "CREATED: #{clean_date read_field("CreationDate", reader)}"
 				producer = read_field "Producer", reader
 				creator = read_field "Creator", reader
 				#puts reader.info.inspect

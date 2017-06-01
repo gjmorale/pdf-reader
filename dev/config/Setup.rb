@@ -124,35 +124,25 @@ module Setup
 	end
 
 	# Sets up the specific bank format to be loaded
-	def self.set_manual_enviroment(format, in_path, out_path)
-		reset
+	def self.set_manual_enviroment(format)
 		case format
 		when Format::HSBC
-			puts "HSBC selected"
-			@@institution = HSBC.new()
+			return HSBC
 		when Format::MS
-			puts "Morgan Stanley selected"
-			@@institution = MS.new()
+			return MS
 		when Format::SEC
-			puts "Security selected"
-			@@institution = SEC.new()
+			return SEC
 		when Format::BC
-			puts "Banchile selected"
-			@@institution = BC.new()
+			return BC
 		when Format::MON
-			puts "Moneda selected"
-			@@institution = MON.new()
+			return MON
 		when Format::CREDICORP
-			puts "CrediCorp selected"
-			@@institution = CrediCorp.new()
+			return CrediCorp
 		when Format::PER
-			puts "Pershing selected"
-			@@institution = PER.new()
+			return PER
 		else
-			puts "Wrong input, try again or CTRL + C to exit"
-			return false
+			return nil
 		end
-		@@institution.set_paths(in_path, out_path)
 	end
 
 	# Sets up the specific bank format to be loaded
