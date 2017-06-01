@@ -45,6 +45,15 @@ module Setup
 	# constants.
 	module Read
 
+		def self.reset
+			@@wildchar = nil
+			@@date_format = nil
+			@@horizontal_search_range = nil
+			@@vertical_search_range = nil
+			@@center_mass_limit = nil
+			@@text_expand = nil
+		end
+
 		def self.wildchar
 			@@wildchar ||= Setup.inst.class::WILDCHAR
 		end
@@ -77,6 +86,13 @@ module Setup
 	# Table specific constants
 	module Table
 
+		def self.reset
+			@@global_offset = nil
+			@@offset = nil
+			@@orientation = nil
+			@@safe_zone = nil
+		end
+
 		def self.global_offset
 			@@global_offset ||= Setup.inst.class::GLOBAL_OFFSET
 		end
@@ -107,13 +123,9 @@ module Setup
 		BLANK = 		9
 	end
 
-	module AccType
-		FIXED_INCOME = 			1
-		EQUITY_MUTUAL_FUND = 	2
-	end
-
 	# Sets up the specific bank format to be loaded
 	def self.set_enviroment(format, in_path, out_path)
+		reset
 		case format
 		when Format::HSBC
 			puts "HSBC selected"
@@ -145,6 +157,11 @@ module Setup
 
 	def self.inst
 		@@institution
+	end
+
+	def self.reset
+		Read.reset
+		Table.reset
 	end
 
 end
