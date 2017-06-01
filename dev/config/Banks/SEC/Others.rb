@@ -24,21 +24,21 @@ class SEC::Others < SECAssetTable
 		@total_index = 		0
 	end
 
-	def each_result_do results
+	def each_result_do results, row = nil
 		case results[8]
-		when "CLP"
+		when /CLP/i
 			@alt_currency =	:clp
-		when "USD"
+		when /USD/i
 			@alt_currency =	:usd
-		when "DO"
+		when /DO/i
 			@alt_currency =	:usd
 		else
 			@alt_currency = nil
 		end
-		puts "#{results}"
+		#puts "#{results}"
 	end
 
-	def pre_check_do
+	def pre_check_do positions = nil
 		@alt_currency = nil
 	end
 end

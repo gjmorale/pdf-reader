@@ -38,6 +38,7 @@ class AssetTable
 
 	def self.set_currs **args
 		@@alt_currs = args if args.any?		
+		@@alt_currs[:clp] = 1.0
 	end
 
 	def pre_load *args
