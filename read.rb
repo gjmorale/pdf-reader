@@ -2,6 +2,7 @@
 # encoding: utf-8
 require_relative "dev/pdf_reader.rb"
 require_relative "pdf_ghost/ghost.rb"
+require_relative "pdf_meta/meta.rb"
 
  #in_path = "#{File.dirname(__FILE__)}/in" 			#DEBUG
  #out_path = "#{File.dirname(__FILE__)}/out" 		#DEBUG
@@ -15,19 +16,24 @@ require_relative "pdf_ghost/ghost.rb"
  #in_path = 'C:/Users/windows7/Desktop/Cartolas'		#PC_1
  #in_path = 'C:/Users/Guillermo Morales/Desktop/Cartolas'#PC_2
  #in_path = Dir.home + '/gmo/Cartolas'					#VAIO
- in_path = Dir.home + '/gmo/Cartolas'		#VAIO_CONFLICTO
+ in_path = Dir.home + '/gmo/Sandbox/Prueba'		#VAIO_CONFLICTO
  out_path = in_path 									#RELEASE
  mid_path = in_path + '/temp'
 
  skip = false
 
-if ARGV.size > 1
-	skip = true if ARGV[1] == "--skip-raw"
-	skip = true if ARGV[1] == "-s"
+if ARGV.size > 0
+	skip = true if ARGV[0] == "--skip-raw"
+	skip = true if ARGV[0] == "-s"
 end
 
-puts " === LOADING FILES FOR #{ARGV[0]} === "
-FileFilter.filter_files ARGV[0], in_path, mid_path unless skip
+puts " === DETECTING FILES === "
+files = FileMeta.classify_files in_path
+
+puts " === LOADING FILES === "
+FileFilter.filter_files files, mid_path unless skip
+
+banks = files.uniq{|b| b[0]}
 
 puts " === PROCESSING FILES === "
-FileReader.read_files ARGV[0], mid_path, out_path
+FileReader.read_files banks, mid_path, out_path

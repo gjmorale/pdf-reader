@@ -26,10 +26,11 @@ module FileReader
 	#Dir[File.dirname(__FILE__) + '/config/MedCares/*.rb'].sort.each {|file| require file }
 
 
-	def self.read_files format, in_path, out_path
-		format = format
-		Setup.set_enviroment(format, in_path, out_path)
-		puts '------------------------------------'
-		Setup.inst.run
+	def self.read_files formats, in_path, out_path
+		formats.each do |format|
+			Setup.set_enviroment(format, in_path, out_path)
+			puts '------------------------------------'
+			Setup.inst.run
+		end
 	end
 end

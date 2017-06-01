@@ -124,7 +124,7 @@ module Setup
 	end
 
 	# Sets up the specific bank format to be loaded
-	def self.set_enviroment(format, in_path, out_path)
+	def self.set_manual_enviroment(format, in_path, out_path)
 		reset
 		case format
 		when Format::HSBC
@@ -155,11 +155,20 @@ module Setup
 		@@institution.set_paths(in_path, out_path)
 	end
 
+	# Sets up the specific bank format to be loaded
+	def self.set_enviroment(format, in_path, out_path)
+		reset
+		puts "#{format::LEGACY} selected"
+		@@institution = format.new()
+		@@institution.set_paths(in_path, out_path)
+	end
+
 	def self.inst
 		@@institution
 	end
 
 	def self.reset
+		@@institution = nil
 		Read.reset
 		Table.reset
 	end
