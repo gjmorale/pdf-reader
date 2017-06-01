@@ -11,8 +11,10 @@ class Movement
 		@id_sec1 = clean args[:id_sec1] || ""
 		@factura = clean args[:factura] || ""
 		@id_ti_valor1 = clean args[:id_ti_valor1] || ""
+		@id_fi1 = args[:id_ti1] || ""
 		@cantidad1 = args[:cantidad1] || ""
 		@id_ti_valor2 = clean args[:id_ti_valor2] || ""
+		@id_ti2 = args[:id_ti2]
 		@precio = args[:precio] || ""
 		@cantidad2 = args[:cantidad2] || ""
 		@delta = args[:delta] || ""
