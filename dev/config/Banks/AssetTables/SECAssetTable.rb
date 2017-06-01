@@ -32,6 +32,8 @@ class SECTransactionTable < SECAssetTable
 	end
 
 	def parse_movement hash
+		hash[:id_fi1] = "Security"
+		hash[:id_ti2] = "Currency"
 		case hash[:id_sec1]
 		when /N/i
 			hash[:id_sec1] = "NOADM"

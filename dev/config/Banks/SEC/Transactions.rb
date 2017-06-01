@@ -35,10 +35,10 @@ class SEC::Transactions < SECTransactionTable
 			id_sec1: args[2],
 			factura: args[6],
 			id_ti_valor1: args[7],
-			id_fi1: "Security",
+			#id_fi1: "Security",
 			cantidad1: BankUtils.to_number(args[8], spanish),
 			id_ti_valor2: args[9],
-			id_ti2: "Currency",
+			#id_ti2: "Currency",
 			precio: BankUtils.to_number(args[10], spanish),
 			cantidad2: BankUtils.to_number(args[11], spanish),
 			delta: delta

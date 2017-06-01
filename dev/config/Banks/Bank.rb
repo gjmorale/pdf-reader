@@ -53,24 +53,7 @@ MESES = [[1, /ene/i],
 	def print_mov  out
 		return unless @accounts.any? {|acc| not acc.movements.nil? and not acc.movements.empty?}
 		file = File.open(out,'w:UTF-8')
-		file.write("concepto;
-			fecha_movimiento;
-			fecha_pago;
-			Monto Comision;
-			Moneda Comision;
-			factura;
-			precio;
-			id_ti_valor1;
-			id_ti1;
-			id_sec1;
-			id_fi1;
-			cantidad1;
-			id_ti_valor2;
-			id_ti2;
-			id_sec2;
-			id_fi2;
-			cantidad2;
-			detalle\n")
+		file.write("concepto;fecha_movimiento;fecha_pago;Monto Comision;Moneda Comision;factura;precio;id_ti_valor1;id_ti1;id_sec1;id_fi1;cantidad1;id_ti_valor2;id_ti2;id_sec2;id_fi2;cantidad2;detalle\n")
 		accounts.reverse_each do |acc|
 			acc.movements.each do |mov|
 				file.write(mov.print)
