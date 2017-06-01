@@ -32,19 +32,26 @@ class SECTransactionTable < SECAssetTable
 	end
 
 	def parse_movement hash
+		case hash[:id_sec1]
+		when /N/i
+			hash[:id_sec1] = "NOADM"
+		when /S/i
+			hash[:id_sec1] = "ADM"
+		end
+			
 		c = hash[:concepto]
-		hash[:concepto] = c
 		if c =~ /(Venta|Rescate|Sorteo)/i
-			hash[:codigo] = 9005
+			hash[:concepto] = 9005
 			hash[:cantidad2] -= hash[:delta]
 		elsif c =~ /(Compra|Inversi.n)/i
-			hash[:codigo] = 9004
+			hash[:concepto] = 9004
 			hash[:cantidad2] += hash[:delta]
 		elsif c =~ /(Dividendo)/i
-			hash[:codigo] = 9006
+			hash[:concepto] = 9006
 			hash[:cantidad2] += hash[:delta]
+			hash[:cantidad1] = 0.0
 		elsif c =~ /(Corte Cup[oóOÓ]n)/i
-			hash[:codigo] = 9007
+			hash[:concepto] = 9007
 			hash[:cantidad2] -= hash[:delta]
 			hash[:cantidad1] = 0.0
 		else

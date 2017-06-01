@@ -34,15 +34,22 @@ class Movement
 	end
 
 	def print
-		out = "#{@fecha_movimiento}"
+		out = "#{@concepto}"
+		out << ";#{@fecha_movimiento}"
 		out << ";#{@fecha_pago}"
-		out << ";#{@concepto}"
-		out << ";#{@id_sec1}"
+		out << ";" #Monto Comision
+		out << ";" #Moneda Comision
 		out << ";#{@factura}"
+		out << ";#{@precio.to_s.gsub('.',',')}"
 		out << ";#{@id_ti_valor1}"
+		out << ";" #id_ti1
+		out << ";#{@id_sec1}"
+		out << ";#{@id_fi1}" #IF
 		out << ";#{@cantidad1.to_s.gsub('.',',')}"
 		out << ";#{@id_ti_valor2}"
-		out << ";#{@precio.to_s.gsub('.',',')}"
+		out << ";#{@id_ti2}"
+		out << ";" #{@id_sec2}"
+		out << ";" #{@id_fi2}"
 		out << ";#{@cantidad2.to_s.gsub('.',',')}"
 		out << ";#{@detalle};\n"
 		out
