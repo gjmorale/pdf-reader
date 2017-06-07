@@ -75,6 +75,25 @@ MS.class_eval do
 			@date_out = "#{day}-#{month}-#{year}"
 		end
 
+		def analyse_index file
+			@reader = Reader.new(file)
+			owner = nil
+			set_date @reader.find_text(/[A-Z][a-z]+\ \d{1,2}\-\d{1,2}\,\ 20\d{2}/i)
+			header = HeaderField.new("[STATEMENT PACKAGE FOR:|STATEMENT FOR:]",1,Setup::Type::LABEL)
+			if header.execute @reader
+				xi = header.left < Setup::Table.offset ? 0 : header.left + Setup::Table.offset
+				xf = header.right + Setup::Table.offset
+				y = header.top
+				header.border = TextNode.new(xi, xf, y)
+				row = Row.new(y+1, y+12)
+				header.set_results(1)
+				@reader.get_columns([header],[row])
+				owner = header.results[0].result.inspect.strip
+				owner = nil if owner.empty?
+			end
+			return [owner, @date_out]
+		end
+
 		def analyse_position file
 			@reader = Reader.new(file)
 			set_date @reader.find_text(/[A-Z][a-z]+\ \d{1,2}\-\d{1,2}\,\ 20\d{2}/i)

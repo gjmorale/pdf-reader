@@ -71,6 +71,25 @@ HSBC.class_eval do
 			@date_out = "#{day}-#{month}-#{year}"
 		end
 
+		def analyse_index file
+			@reader = Reader.new(file)
+			owner = nil
+			set_date @reader.find_text(/^\d{1,2} [A-Z]{4,10} 20\d{2}/)
+			header = HeaderField.new("HSBC Private Bank(Suisse)",1,Setup::Type::LABEL)
+			if header.execute @reader
+				xi = header.left < Setup::Table.offset ? 0 : header.left + Setup::Table.offset
+				xf = header.right + 150
+				y = header.top
+				header.border = TextNode.new(xi, xf, y)
+				row = Row.new(y-40, y-1)
+				header.set_results(1)
+				@reader.get_columns([header],[row])
+				owner = header.results[0].result.inspect.strip
+				owner = nil if owner.empty?
+			end
+			return [owner, @date_out]
+		end
+
 		def analyse_position file
 			@reader = Reader.new(file)
 			set_date @reader.find_text(/^\d{1,2} [A-Z]{4,10} 20\d{2}/)

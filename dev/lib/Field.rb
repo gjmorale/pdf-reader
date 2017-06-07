@@ -158,7 +158,7 @@ class HeaderField < Field
 	end
 
 	def execute(reader)
-		reader.find(self)
+		reader.read_next_field(self)
 	end
 
 	def recalculate_position(o_l = true, i_l = true, i_r = true, o_r = true)

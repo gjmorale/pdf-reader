@@ -64,6 +64,20 @@ MON.class_eval do
 			puts @date_out
 		end
 
+		def analyse_index file
+			@reader = Reader.new(file)
+			owner = nil
+			field = SingleField.new("Cliente:",[Setup::Type::LABEL],3,Setup::Align::LEFT)
+			if field.execute @reader
+				owner = field.results[0].result.inspect.strip
+				owner = nil if owner.empty?
+			end
+			date_field = SingleField.new("Fecha:",[Setup::Type::DATE])
+			date_field.execute @reader
+			set_date date_field.results[0].result
+			return [owner, @date_out]
+		end
+
 		def analyse_position file
 			@reader = Reader.new(file)
 			account_field = SingleField.new("Id.Cuenta:",[Custom::ACC_RUT])

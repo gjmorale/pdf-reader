@@ -80,6 +80,28 @@ BC.class_eval do
 			puts @date_out
 		end
 
+		def analyse_index file
+			@reader = Reader.new(file)
+			owner = nil
+			set_date @reader.find_text(/Período.*: .*\d{2}\/\d{2}\/\d{4} (al|-) \d{2}\/\d{2}\/\d{4}/i)
+			field = SingleField.new("[Señor:|Señores:]",[Setup::Type::LABEL],3,Setup::Align::LEFT)
+			if field.execute @reader
+				owner = field.results[0].result.inspect.strip
+				owner = nil if owner.empty?
+			else
+				(header = HeaderField.new("ancla:",1,Setup::Type::LABEL)).execute @reader
+				xi = header.left < Setup::Table.offset ? 0 : header.left + Setup::Table.offset
+				xf = header.right + 90
+				y = header.top
+				header.border = TextNode.new(xi, xf, y)
+				row = Row.new(y+10, y+35)
+				header.set_results(1)
+				@reader.get_columns([header],[row])
+				owner = header.results[0].result.strings.select{|s| not s.empty?}.first.strip
+				owner = nil if owner.empty?
+			end
+			return [owner, @date_out]
+		end
 
 		def analyse_position file
 			@reader = Reader.new(file)

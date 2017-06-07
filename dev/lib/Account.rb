@@ -3,15 +3,12 @@ class Account
 	attr_reader :name
 	attr_reader :code
 	attr_accessor :value
-	attr_reader :category
-	attr_accessor :elements
 	attr_reader :movements
 	attr_reader :positions
 
 	def initialize name, category = nil
 		@name = name
 		@category = category
-		@elements = []
 	end
 
 	def to_s

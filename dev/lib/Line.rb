@@ -223,7 +223,19 @@ class String
     colorize(36)
   end
 
-  def green_bg
-    colorize(1,1)
+  def bold
+    colorize(1)
+  end
+
+  def faint
+    colorize(2)
+  end
+
+  def underlined
+    colorize(4)
+  end
+
+  def crossed
+    colorize(9)
   end
 end

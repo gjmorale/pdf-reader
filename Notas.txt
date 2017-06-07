@@ -1,0 +1,30 @@
+https://hashrocket.com/blog/posts/recursive-sql-in-activerecord
+Busqueda de nodos en O(1) para Active Records
+
+https://sqlite.org/lang_with.html
+Ejemplos de recursion en SQL
+
+	CTRL+F: Optimization note: In the discussion above, 
+	Explica por qué es mejor usar UNION que UNION ALL
+
+	CTRL+F: Controlling Depth-First Versus Breadth-First Search Of a Tree Using ORDER BY
+	Explica como cambiar entre depth-first o breath-first
+
+https://www.dropbox.com/developers/reference/webhooks
+HTTP Requests de dropbox en archivos subidos
+
+https://stackoverflow.com/questions/9461500/how-to-determine-dimension-of-pdf-pages-with-ruby
+Tamaño de hoja en pdf-reader para ruby
+
+https://6ftdan.com/allyourdev/2015/02/10/rails-polymorphic-models/
+Implementación polimórfica para errores
+
+https://stackoverflow.com/questions/13879700/rails-model-valid-flushing-custom-errors-and-falsely-returning-true
+Errores personalizados para AR
+
+	validate :check_status
+
+	def check_status
+	  errors.add(:status, "must be YES or NO") unless ['YES', 'NO'].include?(status)
+	end
+

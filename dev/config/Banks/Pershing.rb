@@ -83,6 +83,25 @@ PER.class_eval do
 			puts (month == -1 ? @date_out.red : @date_out)
 		end
 
+		def analyse_index file
+			@reader = Reader.new(file)
+			owner = nil
+			set_date Bank::M_ALL, @reader.find_text(/[A-Z][a-z]{3,9}\s\d\d?,\s20\d\d - [A-Z][a-z]{3,9}\s\d\d?,\s20\d\d/)
+			header = HeaderField.new("[Monto de la Comisi|Commission Amount:]",1,Setup::Type::LABEL)
+			if header.execute @reader
+				xi = header.left < Setup::Table.offset ? 0 : header.left + Setup::Table.offset
+				xf = header.right + 70
+				y = header.top
+				header.border = TextNode.new(xi, xf, y)
+				row = Row.new(0, y-15)
+				header.set_results(1)
+				@reader.get_columns([header],[row])
+				owner = header.results[0].result.strings.select{|s| not s.empty?}.first.strip
+				owner = nil if owner.empty?
+			end
+			return [owner, @date_out]
+		end
+
 		def analyse_position file
 			@reader = Reader.new(file)
 

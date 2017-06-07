@@ -26,18 +26,16 @@ module FileReader
 	#Dir[File.dirname(__FILE__) + '/config/MedCares/*.rb'].sort.each {|file| require file }
 
 	def self.set_files files
-		files = files.map{|f| [f[0],f[1][f[1].rindex('/')+1..-5]]}
-		puts files 
-		files
+		files.map{|f| [f[0],f[1][f[1].rindex('/')+1..-5]]}
 	end
 
 	def self.index_files formats, in_path, out_path
 		files = []
+		@bank = nil
 		set_files(formats).each do |format|
 			@bank ||= format[0]
 			if @bank != format[0]
 				Setup.set_enviroment(@bank, in_path, out_path)
-				puts '------------------------------------'
 				Setup.inst.index files
 				files = []
 				@bank = format[0] 
@@ -46,19 +44,17 @@ module FileReader
 		end
 		if @bank
 			Setup.set_enviroment(@bank, in_path, out_path)
-			puts '------------------------------------'
 			Setup.inst.index files
-			@bank = format[0] 
 		end
 	end
 
 	def self.read_files formats, in_path, out_path
 		files = []
+		@bank = nil
 		set_files(formats).each do |format|
 			@bank ||= format[0]
 			if @bank != format[0]
 				Setup.set_enviroment(@bank, in_path, out_path)
-				puts '------------------------------------'
 				Setup.inst.run files
 				files = []
 				@bank = format[0] 
@@ -67,8 +63,8 @@ module FileReader
 		end
 		if @bank
 			Setup.set_enviroment(@bank, in_path, out_path)
-			puts '------------------------------------'
 			Setup.inst.run files
 		end
+		puts ""
 	end
 end

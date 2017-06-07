@@ -2,13 +2,13 @@ require_relative "Bank.rb"
 require 'date'
 
 class CrediCorp < Bank
-	DIR = "CREDICORP"
+	DIR = "CORP"
 	LEGACY = "CrediCorp"
 	TEXT_EXPAND = 0.0
 	TABLE_OFFSET = 30
 end
 
-Dir[File.dirname(__FILE__) + '/CREDICORP/*.rb'].each {|file| require_relative file } 
+Dir[File.dirname(__FILE__) + '/CORP/*.rb'].each {|file| require_relative file } 
 
 CrediCorp.class_eval do
 
@@ -76,11 +76,26 @@ CrediCorp.class_eval do
 			puts @date_out
 		end
 
+		def analyse_index file
+			@reader = Reader.new(file)
+			owner = nil
+			field = SingleField.new("RUT",[Setup::Type::LABEL],3,Setup::Align::LEFT)
+			if field.execute @reader
+				owner = field.results[0].result.inspect.strip
+				owner = nil if owner.empty?
+			end
+			f_desde = SingleField.new("Desde",[Setup::Type::DATE])
+			f_desde.execute @reader
+			f_hasta = SingleField.new("Hasta",[Setup::Type::DATE])
+			f_hasta.execute @reader
+			set_date f_desde.results[0].result, f_hasta.results[0].result
+			return [owner, @date_out]
+		end
+
 		def analyse_position file
 			@reader = Reader.new(file)
 			acc_num = SingleField.new("Cuenta(s)",[Custom::ACC_CODES])
 			acc_num.execute @reader
-			acc_num.print_results
 			acc_nums = acc_num.results[0].result.split(',')
 			f_desde = SingleField.new("Desde",[Setup::Type::DATE])
 			f_desde.execute @reader
@@ -99,7 +114,6 @@ CrediCorp.class_eval do
 			if total_consolidated.execute @reader
 				total = SingleField.new("TOTALES",[Setup::Type::AMOUNT,Custom::AMOUNT_USD,Setup::Type::PERCENTAGE],3,Setup::Align::LEFT)
 				total.execute @reader
-				total.print_results
 				@total_out = BankUtils.to_number(total.results[0].result, true)
 			else
 				@total_out = nil
@@ -109,7 +123,6 @@ CrediCorp.class_eval do
 				Field.new("RESUMEN DE CUENTA").execute @reader
 				cash = SingleField.new("Caja",[Setup::Type::AMOUNT,Custom::AMOUNT_USD,Setup::Type::PERCENTAGE],3,Setup::Align::LEFT)
 				cash.execute @reader
-				cash.print_results
 				cash_total = BankUtils.to_number(cash.results[0].result, true)
 
 				total = SingleField.new("TOTALES",[Setup::Type::AMOUNT,Custom::AMOUNT_USD,Setup::Type::PERCENTAGE],3,Setup::Align::LEFT)

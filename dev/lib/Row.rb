@@ -5,7 +5,9 @@ class Row
 	attr_accessor :lower_text 
 	attr_accessor :upper_text
 
-	def initialize
+	def initialize i=nil, f=nil
+		@yi = i if i
+		@yf = f if f
 	end
 
 	def to_s

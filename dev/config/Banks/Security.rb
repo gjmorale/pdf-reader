@@ -63,6 +63,18 @@ SEC.class_eval do
 			puts @date_out
 		end
 
+		def analyse_index file
+			@reader = Reader.new(file)
+			owner = nil
+			set_date @reader.find_text(/ al \d{2}-\d{2}-\d{4}/i)
+			field = SingleField.new("Nombre :",[Setup::Type::LABEL],3,Setup::Align::LEFT)
+			if field.execute @reader
+				owner = field.results[0].result.inspect.strip
+				owner = nil if owner.empty?
+			end
+			return [owner, @date_out]
+		end
+
 		def analyse_position file
 			@reader = Reader.new(file)
 			set_date @reader.find_text(/ al \d{2}-\d{2}-\d{4}/i)

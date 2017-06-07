@@ -19,7 +19,7 @@ module Setup
 		SEC = "SEC"
 		BC = "BC"
 		MON = "MON"
-		CREDICORP = "CREDICORP"
+		CORP = "CORP"
 		PER = "PER"
 	end
 
@@ -136,7 +136,7 @@ module Setup
 			return BC
 		when Format::MON
 			return MON
-		when Format::CREDICORP
+		when Format::CORP
 			return CrediCorp
 		when Format::PER
 			return PER
@@ -148,7 +148,16 @@ module Setup
 	# Sets up the specific bank format to be loaded
 	def self.set_enviroment(format, in_path, out_path)
 		reset
-		puts "#{format::LEGACY} selected"
+		n = 24 - format::LEGACY.length
+		trail = ""
+		n.times do |i|
+			char = i%2 == 0 ? "¨" : "-"
+			trail << char
+		end
+		puts "\n                                      ".underlined
+		puts "¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-"
+		puts "¨-¨-¨-¨-¨-¨-¨-#{format::LEGACY}#{trail}".faint	
+		puts "¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-".underlined
 		@@institution = format.new()
 		@@institution.set_paths(in_path, out_path)
 	end
@@ -200,7 +209,9 @@ class Institution
 			dir_path = File.dirname(file)
 			dir_name = dir_path[dir_path.rindex('/')+1..-1]
 			file_name = file[file.rindex('/')+1..-1]
-			puts "\n\n************************************** - #{file_name}"
+			puts "\n                                      ".underlined
+			print  "~,~´¨`~,~´¨`~,~´¨`~,~´¨`~,~´¨`~,~´¨`~,".underlined
+			puts " - #{file_name}"
 			begin
 				analyse_position file
 			rescue StandardError => e
@@ -214,7 +225,6 @@ class Institution
 			out = "#{@out_path}/#{dir_name}/#{file_name}_mov.csv"
 			print_mov out
 		end
-		puts "\n**************************************\n"
 	end
 
 	# Method to index files instead of full reading
@@ -224,14 +234,18 @@ class Institution
 			dir_path = File.dirname(file)
 			dir_name = dir_path[dir_path.rindex('/')+1..-1]
 			file_name = file[file.rindex('/')+1..-1]
-			puts "\n\n************************************** - #{file_name}"
+			puts "                                      ".underlined
+			print "-.,-´`-.,-´`-.,-´`-.,-´`-.,-´`-.,-´`-.".underlined
+			puts " - #{file_name}"
+				owner, date = analyse_index file
 			begin
-				analyse_index file
+				puts "#{legacy_code} : #{owner}"
 			rescue StandardError => e
 				puts e.to_s.red
 			end
 		end
-		puts "\n**************************************\n"
+		puts "                                      ".underlined
+		puts "¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-¨-".underlined
 	end
 
 	def to_number str

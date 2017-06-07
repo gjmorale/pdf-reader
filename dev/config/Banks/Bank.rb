@@ -34,6 +34,8 @@ MESES = [[1, /ene/i],
 		[11, /nov/i],
 		[12, /dic/i]]
 
+M_ALL = [MONTHS,MESES].flatten(1)
+
 	def total_s
 		@total_out.to_s.sub(".",",")
 	end
