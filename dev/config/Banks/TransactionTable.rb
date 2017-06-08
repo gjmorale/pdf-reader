@@ -4,7 +4,9 @@ class TransactionTable < AssetTable
 		movements = []
 		present = get_table do |table|
 			table.rows.each.with_index do |row, i|
-				results = table.headers.map {|h| h.results[-i-1].result}
+				results = table.headers.map {|h| h.results[-i-1].result}		#Row results
+				each_result_do results, row		
+				puts results if @verbose
 				movement = new_movement(results)
 				movements << movement if movement
 			end
