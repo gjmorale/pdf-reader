@@ -11,8 +11,10 @@ class Movement
 		@id_sec1 = clean args[:id_sec1] || ""
 		@factura = clean args[:factura] || ""
 		@id_ti_valor1 = clean args[:id_ti_valor1] || ""
+		@id_fi1 = args[:id_fi1] || ""
 		@cantidad1 = args[:cantidad1] || ""
 		@id_ti_valor2 = clean args[:id_ti_valor2] || ""
+		@id_ti2 = args[:id_ti2]
 		@precio = args[:precio] || ""
 		@cantidad2 = args[:cantidad2] || ""
 		@delta = args[:delta] || ""
@@ -34,15 +36,22 @@ class Movement
 	end
 
 	def print
-		out = "#{@fecha_movimiento}"
+		out = "#{@concepto}"
+		out << ";#{@fecha_movimiento}"
 		out << ";#{@fecha_pago}"
-		out << ";#{@concepto}"
-		out << ";#{@id_sec1}"
+		out << ";" #Monto Comision
+		out << ";" #Moneda Comision
 		out << ";#{@factura}"
+		out << ";#{@precio.to_s.gsub('.',',')}"
 		out << ";#{@id_ti_valor1}"
+		out << ";" #id_ti1
+		out << ";#{@id_sec1}"
+		out << ";#{@id_fi1}" #IF
 		out << ";#{@cantidad1.to_s.gsub('.',',')}"
 		out << ";#{@id_ti_valor2}"
-		out << ";#{@precio.to_s.gsub('.',',')}"
+		out << ";#{@id_ti2}"
+		out << ";" #{@id_sec2}"
+		out << ";" #{@id_fi2}"
 		out << ";#{@cantidad2.to_s.gsub('.',',')}"
 		out << ";#{@detalle};\n"
 		out

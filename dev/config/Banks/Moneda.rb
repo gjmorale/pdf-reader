@@ -37,7 +37,7 @@ MON.class_eval do
 		when Setup::Type::AMOUNT
 			'(-?\(?([1-9]\d{0,2}(?:\.[0-9]{3})*|0)(\,[0-9]{2})?\)?|-)'
 		when Setup::Type::INTEGER
-			'([$]?\(?[1-9]\d{0,2}(?:,?[0-9]{3})*\)?|(?:\342\200\224)){1}\s*'
+			'([-$]?\(?[1-9]\d{0,2}(?:\.?\d{3})*\)?|-|0)'
 		when Setup::Type::CURRENCY
 			'(CLP|EUR|USD|CAD|JPY|GBP|DO){1}'
 		when Setup::Type::ASSET
@@ -45,9 +45,11 @@ MON.class_eval do
 		when Setup::Type::LABEL
 			'.+'
 		when Setup::Type::DATE
-			'\d{2}\/\d{2}\/\d{4}'
+			'\d{2}(\/|-)\d{2}(\/|-)\d{4}'
 		when Setup::Type::FLOAT
 			'(\(?(?:[1-9]{1}\d*|0)\.\d+\)?|(?:\342\200\224)){1}'
+		when Setup::Type::BLANK
+			'^$'
 		when Custom::ACC_RUT
 			'\d{7,8}\/\d'
 		when Custom::OP_ID
@@ -138,7 +140,10 @@ MON.class_eval do
 			end
 
 			if Field.new("CUENTAS CORRIENTES").execute @reader
+				checkpoint = @reader.stash
 				account.add_pos analyse_cash
+				@reader.pop checkpoint
+				account.add_mov analyse_cash_transactions
 			end
 
 			
@@ -204,6 +209,13 @@ MON.class_eval do
 			new_pos = pos = []
 			new_pos += pos if (pos = MON::CashCLP.new(@reader).analyze)
 			new_pos += pos if (pos = MON::CashUSD.new(@reader).analyze)
+			new_pos
+		end
+
+		def analyse_cash_transactions
+			new_pos = pos = []
+			new_pos += pos if (pos = MON::CashTransaction.new(@reader).analyze)
+			#new_pos += pos if (pos = MON::CashUSD.new(@reader).analyze)
 			new_pos
 		end
 
