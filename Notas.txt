@@ -28,3 +28,15 @@ Errores personalizados para AR
 	  errors.add(:status, "must be YES or NO") unless ['YES', 'NO'].include?(status)
 	end
 
+https://github.com/gimite/google-drive-ruby
+Leer datos de google_spreadsheet
+
+https://docs.handsontable.com/
+Libreria para usar embedded spreadsheet basico
+
+http://www.bdnyc.org/2012/08/how-to-embed-a-live-google-docs-spreadsheet-into-a-webpage/
+Read-Only Google Spreadsheet Embed
+
+<iframe src="https://docs.google.com/a/quaam.cl/spreadsheets/d/1UTKsrl2TweHJ7baKgeMTnl2tbD1rM0dEiCg9qrZmXhI/edit?usp=sharing&widget=true&amp;headers=false"></iframe>
+https://docs.google.com/a/quaam.cl/spreadsheets/d/1UTKsrl2TweHJ7baKgeMTnl2tbD1rM0dEiCg9qrZmXhI/edit?usp=sharing
+
