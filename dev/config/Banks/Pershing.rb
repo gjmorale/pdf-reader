@@ -233,7 +233,7 @@ PER.class_eval do
 		def analyse_cash_esp factory
 			pos ||= factory::Cash.new(@reader).analyze
 			pos ||= factory::CashAlt.new(@reader).analyze
-			pos ||= factory::CashEmpty.new(@reader).analyze
+			#pos ||= factory::CashEmpty.new(@reader).analyze
 			return pos
 		end
 

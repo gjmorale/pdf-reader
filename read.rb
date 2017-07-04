@@ -71,9 +71,9 @@ OptionParser.new do |opt|
 end.parse!
 
  #in_path = 'C:/Users/windows7/Desktop/Cartolas'		#PC_1
- #in_path = 'C:/Users/Guillermo Morales/Desktop/Cartolas'#PC_2
+ in_path = 'C:/Users/Guillermo Morales/Desktop/Cartolas'#PC_2
  #in_path = Dir.home + '/gmo/Cartolas'					#VAIO
- in_path = Dir.home + '/gmo/Sandbox/Prueba'		#VAIO_CONFLICTO
+ #in_path = Dir.home + '/gmo/Sandbox/Prueba'		#VAIO_CONFLICTO
  out_path = in_path + '/output'							#RELEASE
  mid_path = in_path + '/temp'
  in_path = options.source_in || in_path
