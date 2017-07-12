@@ -1,0 +1,12 @@
+
+<td><%= statement.file_name %></td>
+<td><%= statement.eq_text %></td>
+<td><%= statement.society %></td>
+<td><%= statement.if %></td>
+<td><%= statement.date %></td>
+<td><%= statement.handler.short_name if statement.handler %></td>
+<td><%= statement.d_open.strftime("%d/%m/%Y") if statement.d_open %></td>
+<td><%= statement.d_close.strftime("%d/%m/%Y") if statement.d_close %></td>
+<td><%= link_to 'Show', statement %></td>
+<td><%= link_to 'Edit', edit_statement_path(statement) %></td>
+<td><%= link_to 'Destroy', statement, method: :delete, data: { confirm: 'Are you sure?' } %></td>

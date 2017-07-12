@@ -1,0 +1,35 @@
+.nested-container {
+	margin: 10px;
+	background-color: rgba(0,0,0,0.1);
+}
+
+.nested-root {
+	background-color: rgba(0,0,0,0.1);
+}
+
+.nested-child {
+	padding-left: 10px;	
+	padding-bottom: 2px;	
+	display: none;
+	background-color: rgba(0,0,0,0.1);
+}
+
+.animate-remove {
+	background-color: #000;
+    height: 0px;
+    transition: height 1s;
+}
+
+.nested-caret {
+	margin-right: 10px;
+	a, a:visited {
+		text-decoration: none;
+	}
+}
+
+.options-right {
+	float: right;
+	padding-right: 10px;
+	width: 80px;
+	text-align: center;
+}

@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Bank:</strong>
+  <%= @tax.bank %>
+</p>
+
+<p>
+  <strong>Society:</strong>
+  <%= @tax.society %>
+</p>
+
+<p>
+  <strong>Quantity:</strong>
+  <%= @tax.quantity %>
+</p>
+
+<p>
+  <strong>Periodicity:</strong>
+  <%= @tax.periodicity %>
+</p>
+
+<%= link_to 'Edit', edit_tax_path(@tax) %> |
+<%= link_to 'Back', taxes_path %>

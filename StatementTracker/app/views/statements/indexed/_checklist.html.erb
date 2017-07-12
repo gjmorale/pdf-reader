@@ -1,0 +1,34 @@
+<%= form_tag all_statements_path do %>
+  <% commit.each do |c| %>
+    <%= submit_tag c %>
+  <% end %>
+  <table>
+    <thead>
+      <tr>
+        <th>Check</th>
+        <th>File name</th>
+        <th>EQ</th>
+        <th>Society</th>
+        <th>IF</th>
+        <th>Year</th>
+        <th>Month</th>
+        <th>Week</th>
+        <th>Day</th>
+        <th colspan="3"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% statements.each do |statement| %>
+        <tr>
+          <td><%= check_box_tag "statements[#{statement.id}][check]", 'true', false %></td>
+          <%= render('statements/indexed/index', statement: statement) if !(edit) %>
+          <%= render('statements/indexed/edit', statement: statement) if (edit) %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <% commit.each do |c| %>
+    <%= submit_tag c %>
+  <% end %>
+<% end %>

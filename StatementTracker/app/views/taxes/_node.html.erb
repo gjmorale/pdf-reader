@@ -1,0 +1,8 @@
+
+<div class="nested-child" id=<%= element.js_id %> data-toggle="close" data-type="child">
+  <span class="nested-caret"><%= link_to "\\/", element, remote: true %></span>
+  <span><%= element.bank %></span>
+  <span><%= element.periodicity %></span>
+  <span class="options-right"><%= element.progress scope %> %</span>
+  <span class="options-right"><%= link_to "Tiempos", times_tax_path(element), remote: true %></span>
+</div>

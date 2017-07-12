@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Tax:</strong>
+  <%= @sequence.tax %>
+</p>
+
+<p>
+  <strong>Year:</strong>
+  <%= @sequence.year %>
+</p>
+
+<p>
+  <strong>Month:</strong>
+  <%= @sequence.month %>
+</p>
+
+<p>
+  <strong>Week:</strong>
+  <%= @sequence.week %>
+</p>
+
+<p>
+  <strong>Day:</strong>
+  <%= @sequence.day %>
+</p>
+
+<%= link_to 'Edit', edit_sequence_path(@sequence) %> |
+<%= link_to 'Back', sequences_path %>

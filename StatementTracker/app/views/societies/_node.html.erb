@@ -1,0 +1,9 @@
+
+<div class="nested-<%= element.parent_id ? "child" : "root" %>" id=<%= element.js_id %> data-toggle="close" data-type=<%= element.parent_id ? "child" : "root" %>>
+  <span class="nested-caret"><%= link_to "\\/", element, remote: true %></span>
+  <span><%= element.name %></span>
+  <span class="options-right"><%= element.progress scope %> %</span>
+  <span class="options-right"><%= link_to "IFs (#{element.all_ifs(scope).count})", ifs_society_path(element), remote: true %></span>
+  <span class="options-right"><%= link_to "Tiempos (#{element.all_times(scope).count})", times_society_path(element), remote: true %></span>
+  <span class="options-right"><%= link_to "Cartolas (#{element.all_statements(scope).count})", statements_society_path(element), remote: true %></span>
+</div>

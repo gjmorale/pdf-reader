@@ -1,0 +1,39 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Repo path:</strong>
+  <%= @handler.repo_path %>
+</p>
+
+<p>
+  <strong>Local path:</strong>
+  <%= @handler.local_path %>
+</p>
+
+<p>
+  <strong>Short name:</strong>
+  <%= @handler.short_name %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @handler.name %>
+</p>
+
+<%= link_to 'Edit', edit_handler_path(@handler) %> |
+<%= link_to 'Back', handlers_path %>
+
+<h1>My Statements</h1>
+
+<%= render 'statements/indexed/checklist', statements: @handler.statements, commit: [StatementsCommit::UNASSIGN], edit: false %>
+
+<br>
+<%= link_to 'Edit', edit_handler_path(@handler) %>
+
+<h1>Pick Statements</h1>
+
+<%= render 'statements/noticed/checklist', statements: @statements, commit: [StatementsCommit::ASSIGN], edit: false %>
+
+<br>
+
+<%= link_to 'Load New', new_statement_path %>

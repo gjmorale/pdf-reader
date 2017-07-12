@@ -1,0 +1,27 @@
+<%= form_for(dictionary_element) do |f| %>
+  <% if dictionary_element.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(dictionary_element.errors.count, "error") %> prohibited this dictionary_element from being saved:</h2>
+
+      <ul>
+      <% dictionary_element.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :element_id %>
+    <%= f.text_field :element_id %>
+  </div>
+
+  <div class="field">
+    <%= f.label :dictionary_id %>
+    <%= f.text_field :dictionary_id %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

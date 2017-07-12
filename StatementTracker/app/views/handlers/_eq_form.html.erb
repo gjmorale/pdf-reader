@@ -1,0 +1,15 @@
+<%= form_tag single_handler_path handler.id  do %>
+  <% handler.eq_societies.each do |eq_society| %>
+    <%= fields_for "eq_societies[]", eq_society do |eq| %>
+      <div class="field">
+        <%= eq.label :text %>
+        <%= eq.text_field :text %>
+        <%= eq.label :society %> 
+        <%= eq.collection_select(:society_id, Society.all, :id, :name, prompt: true) %>
+      </div>
+    <% end %>
+  <% end %>
+  <div class="actions">
+    <%= submit_tag EqsCommit::SOC_UPDATE %>
+  </div>
+<% end %>

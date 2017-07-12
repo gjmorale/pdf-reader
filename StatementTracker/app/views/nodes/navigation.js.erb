@@ -1,0 +1,35 @@
+var open = $("#<%= @element.js_id %>").data("toggle")
+if(open == 'open' ){
+	close_node("#<%= @element.js_id %>")
+	<% if @auto_open %>
+		open_node("#<%= @element.js_id %>")
+	<% end %>
+} else {
+	open_node("#<%= @element.js_id %>")
+}
+
+function close_node(id) {
+	console.log($(id).data("toggle")+id)
+	$(id).children("div").addClass('animate-remove')
+	$(id).children("div").slideUp(200, function(){
+		$(id).children("div.animate-remove").remove()
+    });
+	$(id).data('toggle','close')
+	$(id).children("span.nested-caret").children("a").html("\\/")
+}
+
+function open_node(id) {
+	console.log($(id).data("toggle")+id)
+	<% @children.each do |child| %>
+		$("#<%= child.js_id %>").remove()
+		$(id).append("<%= j (render @node_template, element: child, scope: @search_params) %>")
+		//$("#<%= child.js_id %>").removeClass('animate-remove')
+		$("#<%= child.js_id %>").slideDown(250)
+	<% end %>
+	$(id).data('toggle','open')
+	$(id).children("span.nested-caret").children("a").html("/\\")
+}
+
+
+
+

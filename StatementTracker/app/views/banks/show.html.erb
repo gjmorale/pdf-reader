@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @bank.name %>
+</p>
+
+<p>
+  <strong>Folder name:</strong>
+  <%= @bank.folder_name %>
+</p>
+
+<p>
+  <strong>Code name:</strong>
+  <%= @bank.code_name %>
+</p>
+
+<%= link_to 'Edit', edit_bank_path(@bank) %> |
+<%= link_to 'Back', banks_path %>

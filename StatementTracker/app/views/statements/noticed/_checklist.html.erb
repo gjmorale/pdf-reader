@@ -1,0 +1,26 @@
+<%= form_tag all_statements_path do %>
+  <%= submit_tag commit %>
+  <table>
+    <thead>
+      <tr>
+        <th>Check</th>
+        <th>File name</th>
+        <th>Client</th>
+        <th>Bank</th>
+        <th>Handler</th>
+        <th>Date filed</th>
+        <th colspan="3"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% statements.each do |statement| %>
+        <tr>
+          <td><%= check_box_tag "statements[#{statement.id}][check]", 'true', false %></td>
+          <%= render 'statements/noticed/index', statement: statement %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= submit_tag commit %>
+<% end %>

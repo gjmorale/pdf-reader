@@ -1,0 +1,42 @@
+<%= form_for(sequence) do |f| %>
+  <% if sequence.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(sequence.errors.count, "error") %> prohibited this sequence from being saved:</h2>
+
+      <ul>
+      <% sequence.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :tax_id %>
+    <%= f.text_field :tax_id %>
+  </div>
+
+  <div class="field">
+    <%= f.label :year %>
+    <%= f.number_field :year %>
+  </div>
+
+  <div class="field">
+    <%= f.label :month %>
+    <%= f.number_field :month %>
+  </div>
+
+  <div class="field">
+    <%= f.label :week %>
+    <%= f.number_field :week %>
+  </div>
+
+  <div class="field">
+    <%= f.label :day %>
+    <%= f.number_field :day %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

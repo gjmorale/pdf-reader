@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  repo_path: MyString
+  local_path: MyString
+  short_name: MyString
+  name: MyString
+
+two:
+  repo_path: MyString
+  local_path: MyString
+  short_name: MyString
+  name: MyString

@@ -1,0 +1,10 @@
+
+
+<td><%= text_field_tag "statements[#{statement.id}][file_name]", statement.file_name %></td>
+<td><%= collection_select("statements[#{statement.id}]", :client_id, Society.all, :id, :name, selected: (statement.client ? statement.client.id : ""), prompt: true) %></td>
+<td><%= collection_select("statements[#{statement.id}]", :bank_id, Bank.all, :id, :name, selected: statement.bank.id) %></td>
+<td><%= statement.handler %></td>
+<td><%= date_field_tag(:d_filed, statement.d_filed.year) %></td>
+<td><%= link_to 'Show', statement %></td>
+<td><%= link_to 'Edit', edit_statement_path(statement) %></td>
+<td><%= link_to 'Destroy', statement, method: :delete, data: { confirm: 'Are you sure?' } %></td>

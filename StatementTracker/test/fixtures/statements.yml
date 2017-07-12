@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  file_name: MyString
+  sequence: one
+  bank: one
+  handler: one
+  d_filed: 2017-06-13 13:31:45
+  d_open: 2017-06-13 13:31:45
+  d_close: 2017-06-13 13:31:45
+  d_read: 2017-06-13 13:31:45
+  status: MyString
+
+two:
+  file_name: MyString
+  sequence: two
+  bank: two
+  handler: two
+  d_filed: 2017-06-13 13:31:45
+  d_open: 2017-06-13 13:31:45
+  d_close: 2017-06-13 13:31:45
+  d_read: 2017-06-13 13:31:45
+  status: MyString

@@ -1,0 +1,8 @@
+<h1>Editing Handler</h1>
+
+<%= render 'form', handler: @handler %>
+<%= link_to 'Show', @handler %> |
+<%= link_to 'Back', handlers_path %>
+<br>
+<h3>CARTOLAS</h3>
+<%= render 'statements/indexed/checklist', statements: @handler.statements, commit: @options, edit: true %>

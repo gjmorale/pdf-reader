@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  bank: one
+  society: one
+  quantity: 1
+  periodicity: MyString
+
+two:
+  bank: two
+  society: two
+  quantity: 1
+  periodicity: MyString

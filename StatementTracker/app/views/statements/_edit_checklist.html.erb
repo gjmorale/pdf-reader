@@ -1,0 +1,43 @@
+<%= form_tag all_statements_path do %>
+  <%commit.each do |c|%>
+    <%= submit_tag c %>
+  <% end %>
+  <table>
+    <thead>
+      <tr>
+        <th>Check</th>
+        <th>File name</th>
+        <th>Society</th>
+        <th>Bank</th>
+        <th>Año</th>
+        <th>Mes</th>
+        <th>Semana</th>
+        <th>Día</th>
+        <th>Status</th>
+        <th colspan="3"></th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% statements.each do |statement| %>
+        <tr>
+          <td><%= check_box_tag "statements[#{statement.id}][check]", 'true', false %></td>
+          <td><%= text_field_tag "statements[#{statement.id}][file_name]", statement.file_name %></td>
+          <td><%= collection_select("statements[#{statement.id}]", :society_id, Society.all, :id, :name, selected: (statement.society ? statement.society.id : ""), prompt: true) %></td>
+          <td><%= collection_select("statements[#{statement.id}]", :bank_id, Bank.all, :id, :name, selected: statement.bank.id) %></td>
+          <td><%= number_field_tag("year", statement.sequence.year, in: 2010..Date.current.year) if statement.sequence %></td>
+          <td><%= number_field_tag("month", statement.sequence.month, in: 1..12) if statement.sequence and statement.sequence.month? %></td>
+          <td><%= number_field_tag("week", statement.sequence.week, in: 1..5) if statement.sequence and statement.sequence.week? %></td>
+          <td><%= number_field_tag("day", statement.sequence.day, in: 1..31) if statement.sequence and statement.sequence.day? %></td>
+          <td><%= statement.status %></td>
+          <td><%= link_to 'Show', statement %></td>
+          <td><%= link_to 'Edit', edit_statement_path(statement) %></td>
+          <td><%= link_to 'Destroy', statement, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%commit.each do |c|%>
+    <%= submit_tag c %>
+  <% end %>
+<% end %>

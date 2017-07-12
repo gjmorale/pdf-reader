@@ -1,0 +1,7 @@
+
+<div class="nested-child" id=<%= element.js_id %> data-toggle="close" data-type="child">
+  <span class="nested-caret"><%= link_to "\\/", element, remote: true %></span>
+  <span><%= element.date_path %></span>
+  <span class="options-right"><%= element.progress %> %</span>
+  <span class="options-right"><%= "#{element.statements.count} de #{element.tax.quantity}" %></span>
+</div>

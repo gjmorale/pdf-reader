@@ -1,0 +1,49 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>File name:</strong>
+  <%= @statement.file_name %>
+</p>
+
+<p>
+  <strong>Sequence:</strong>
+  <%= @statement.sequence %>
+</p>
+
+<p>
+  <strong>Bank:</strong>
+  <%= @statement.bank %>
+</p>
+
+<p>
+  <strong>Handler:</strong>
+  <%= @statement.handler %>
+</p>
+
+<p>
+  <strong>D filed:</strong>
+  <%= @statement.d_filed %>
+</p>
+
+<p>
+  <strong>D open:</strong>
+  <%= @statement.d_open %>
+</p>
+
+<p>
+  <strong>D close:</strong>
+  <%= @statement.d_close %>
+</p>
+
+<p>
+  <strong>D read:</strong>
+  <%= @statement.d_read %>
+</p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @statement.status %>
+</p>
+
+<%= link_to 'Edit', edit_statement_path(@statement) %> |
+<%= link_to 'Back', statements_path %>
