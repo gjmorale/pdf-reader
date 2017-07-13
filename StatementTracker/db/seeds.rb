@@ -111,25 +111,8 @@ tax_icafal_3_sec = Tax.where(
 	).first_or_create
 
 #SEQs
-seq_icafal_sec = Sequence.where(
-	tax: tax_icafal_2_sec,
-	year: 2017,
-	month: 1,
-	week: 1
-	).first_or_create
-seq_icafal_sec = Sequence.where(
-	tax: tax_icafal_2_sec,
-	year: 2017,
-	month: 1,
-	week: 2
-	).first_or_create
 seq_cell_ms = Sequence.where(
 	tax: tax_cell_ms,
-	year: 2017,
-	month: 3,
-	).first_or_create
-seq_cell_hsbc = Sequence.where(
-	tax: tax_cell_hsbc,
 	year: 2017,
 	month: 3,
 	).first_or_create
@@ -145,24 +128,24 @@ handler = Handler.where(
 	).first_or_create
 
 #StatementStatus
-StatementStatus.where(
+noticed_status = StatementStatus.where(
 	code: StatementStatus::NOTICED, 
-	progress: 10,
+	progress: 25,
 	message: "Identificado en BD"
 	).first_or_create
-StatementStatus.where(
+index_status = StatementStatus.where(
 	code: StatementStatus::INDEX, 
-	progress: 20,
+	progress: 50,
 	message: "Listo para indexar"
 	).first_or_create
-StatementStatus.where(
+indexed_status = StatementStatus.where(
 	code: StatementStatus::INDEXED, 
-	progress: 30,
+	progress: 75,
 	message: "Indexado según sociedad"
 	).first_or_create
 StatementStatus.where(
 	code: StatementStatus::READ, 
-	progress: 60,
+	progress: 100,
 	message: "Leído"
 	).first_or_create
 StatementStatus.where(
@@ -179,4 +162,59 @@ StatementStatus.where(
 	code: StatementStatus::ARCHIVED, 
 	progress: 100,
 	message: "Almacenado en sistema de archivos"
+	).first_or_create
+
+c1 = Statement.where(
+    file_name: "cartola_1",
+    path: "Cliente1/cartola1.pdf",
+    sequence: seq_cell_ms,
+    bank: ms,
+    handler: handler,
+    client: cell,
+    d_filed: Date.strptime("03-03-2017","%d-%m-%Y"),
+    d_open: Date.strptime("01-02-2017","%d-%m-%Y"),
+    d_close: Date.strptime("28-02-2017","%d-%m-%Y"),
+    status: index_status,
+    file_hash: "cartola_1"
+	).first_or_create
+
+5.times do |i|
+	Statement.where(
+	    file_name: "cartola_#{i+2}",
+	    path: "Cliente2/cartola#{i+2}.pdf",
+	    client: icafal_1,
+	    status: noticed_status,
+	    file_hash: "cartola_#{i+2}"
+		).first_or_create
+end
+
+15.times do |i|
+	Statement.where(
+	    file_name: "cartola_#{i+7}",
+	    path: "Cliente2/cartola#{i+7}.pdf",
+	    client: Society.all.order("RANDOM()").take,
+	    d_filed: rand(6.month.ago..1.day.ago).to_date,
+	    status: noticed_status,
+	    file_hash: "cartola_#{i+7}"
+		).first_or_create
+end
+
+cell_dict = Dictionary.where(
+	target: cell,
+	identifier: "DEBUG #{cell.name}"
+	).first_or_create
+
+icafal_1_dict = Dictionary.where(
+	target: icafal_1,
+	identifier: "DEBUG #{icafal_1.name}"
+	).first_or_create
+
+icafal_2_dict = Dictionary.where(
+	target: icafal_2,
+	identifier: "DEBUG #{icafal_2.name}"
+	).first_or_create
+
+c1_dict = DictionaryElement.where(
+	element: c1,
+	dictionary: cell_dict
 	).first_or_create

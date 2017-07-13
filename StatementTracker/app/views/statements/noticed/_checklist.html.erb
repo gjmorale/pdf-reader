@@ -1,26 +1,33 @@
-<%= form_tag all_statements_path do %>
-  <%= submit_tag commit %>
+<%= form_tag edit_handler_path @handler do %>
   <table>
     <thead>
       <tr>
-        <th>Check</th>
+        <th><%= check_box_tag "noticed_check_all", 'true', true, class: "check_all" %></th>
         <th>File name</th>
         <th>Client</th>
         <th>Bank</th>
         <th>Handler</th>
         <th>Date filed</th>
-        <th colspan="3"></th>
       </tr>
     </thead>
 
     <tbody>
       <% statements.each do |statement| %>
         <tr>
-          <td><%= check_box_tag "statements[#{statement.id}][check]", 'true', false %></td>
-          <%= render 'statements/noticed/index', statement: statement %>
+          <td><%= check_box_tag "statements[#{statement.id}][check]", 'true', true %></td>
+          <%= render('statements/noticed/index', statement: statement) if !(edit) %>
+          <%= render('statements/noticed/edit', statement: statement) if (edit) %>
         </tr>
       <% end %>
     </tbody>
   </table>
-  <%= submit_tag commit %>
+  <% if edit %>
+    <%= submit_tag StatementsCommit::RELOAD %>
+    <%= submit_tag StatementsCommit::AUTO %>
+    <%= submit_tag StatementsCommit::INDEX %>
+  <% else %>
+    <% commit.each do |c| %>
+      <%= submit_tag c %>
+    <% end %>
+  <% end %>
 <% end %>

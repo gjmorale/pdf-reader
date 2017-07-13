@@ -23,8 +23,9 @@ class Statement < ApplicationRecord
   def unassign_handler
     self.handler = nil
     if FileManager.rm_raw raw_path
-      self.save
+      return self.save
     end
+    return false
   end
 
   def self.unassigned
@@ -44,7 +45,7 @@ class Statement < ApplicationRecord
   def periodicity
     periodicity = nil
     if d_close and d_open
-      delta = (d_open-d_close).days
+      delta = (d_close - d_open).to_i
       if delta > 31
         periodicity = Tax::ANNUAL
       elsif delta > 8
@@ -73,24 +74,31 @@ class Statement < ApplicationRecord
   end
 
   def if
-    return nil unless self.sequence and self.sequence.tax
+    return nil unless self.sequence and self.sequence.tax_id
     self.sequence.tax.bank
   end
 
   def date
-    return nil unless self.sequence
-    self.sequence.date
+    date_hash = nil
+    if self.sequence_id
+      date_hash = self.sequence.date
+    else
+      date_hash = {} unless self.sequence
+    end
+    return date_hash
   end
 
-  def find_tax society
+  def find_tax society_id
     if periodicity
-      return Tax.find_by(bank: bank, society: society, periodicity: periodicity)
+      puts "#{periodicity} #{society_id}"
+      return Tax.find_by(bank: bank, society_id: society_id, periodicity: periodicity)
     else
-      return Tax.find_by(bank: bank, society: society)
+      return Tax.find_by(bank: bank, society_id: society_id)
     end
   end
 
   def file
+    return "DEBUG in file"
     real_file = FileManager.get_file path, file_hash
     if File.exist? real_file
       return real_file
@@ -107,10 +115,17 @@ class Statement < ApplicationRecord
   end
 
   def set_raw
+    return "DEBUG in set_raw"
     FileManager.get_raw file, raw_path
   end
 
-  def eq_text
+  def renotice
+    return "DEBUG in renotice"
+    attrs = FileMeta.classify file if file?
+    return self.assign_attributes attrs
+  end
+
+  def eq
     text = nil
     if self.dictionary
       text = self.dictionary.identifier
@@ -138,8 +153,8 @@ class Statement < ApplicationRecord
 
     def integrity
       if rank? :noticed
-        errors.add(:hash,"File not found") unless file?
-        errors.add(:hash,"Temp file not found") unless set_raw
+        errors.add(:file_hash,"File not found") unless file?
+        errors.add(:file_hash,"Temp file not found") unless set_raw
       else
         errors.add(:status, "No status")
       end
@@ -148,14 +163,21 @@ class Statement < ApplicationRecord
         errors.add(:client, "Client not set") unless client
       end
       if rank? :indexed
+        errors.add(:d_open, "Open date not set") unless d_open
+        errors.add(:d_close, "Close date not set") unless d_close
         errors.add(:dictionary, "EQ not found or created") unless dictionary
-        errors.add(:dictionary, "EQ doesn't point to a society") unless society
+        errors.add(:sequence, "Couldn't fit with a society") unless society
+        errors.add(:sequence, "Doesn't belong to a sequence") unless sequence
+        errors.add(:sequence, "Sequence is full") unless sequence.nil? or accepting?
       end
       if rank? :read
-        errors.add(:sequence, "Sequence not set") unless sequence
-        errors.add(:sequence, "Sequence is full") unless sequence.accepting?
       end
-      puts "POST INTEGRITY #{errors.inspect}"
+      puts "ERRORS: #{errors.messages}" if errors.any?
+    end
+
+    def accepting?
+      return false unless sequence
+      !!(sequence.accepting? or sequence.statements.include? self)
     end
 
 end

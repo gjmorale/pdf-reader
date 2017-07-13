@@ -22,7 +22,7 @@ class Tax < ApplicationRecord
   def fit statement
   	hash = Tax.parse_date statement.d_open, statement.d_close
   	seq = self.sequences.find_by(hash) || self.sequences.build(hash)
-    return seq.accepting? ? seq : nil
+    return seq
   end
 
   def self.to_date **date
@@ -57,14 +57,14 @@ class Tax < ApplicationRecord
   def self.parse_date open, close
     open ||= close
     date = {year: 0, month: 0, week: 0, day: 0}
-    delta = (open-close).days
+    delta = (close-open).to_i
     date[:year] = open.year
     if delta <= 31
       date[:month] = open.month
       if delta <= 1
         date[:day] = close.day
-      else
-        date[:week] = (close.day%7+1)
+      elsif delta <= 7
+        date[:week] = (close.day/7+1)
       end
     end
     return date

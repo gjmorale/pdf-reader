@@ -1,0 +1,33 @@
+<td><div class="field-with-errors" data-errors="<%= statement.errors.include? :file_hash %>">
+	<%= statement.file_name %>
+	<% if statement.errors and statement.errors.include? :file_hash %>
+		<div class="error-message"><%= render 'static_pages/error_list', errors: statement.errors.messages[:file_hash] %></div>		
+	<% end %>
+</div></td>
+<td><div class="field-with-errors" data-errors="<%= statement.errors.include? :dictionary %>">
+	<%= statement.eq %>
+	<% if statement.errors and statement.errors.include? :dictionary %>
+		<div class="error-message"><%= render 'static_pages/error_list', errors: statement.errors.messages[:dictionary] %></div>		
+	<% end %>
+</div></td>
+<td><div class="field-with-errors" data-errors="<%= statement.errors.include? :sequence %>">
+	<%= collection_select("statements[#{statement.id}]", :society_id, Society.all, :id, :name, selected: (statement.society ? statement.society.id : ""), prompt: true) %>
+	<% if statement.errors and statement.errors.include? :sequence %>
+		<div class="error-message"><%= render 'static_pages/error_list', errors: statement.errors.messages[:sequence] %></div>		
+	<% end %>
+</div></td>
+<td>
+	<%= statement.bank %>
+</td>
+<td><div class="field-with-errors" data-errors="<%= statement.errors.include? :d_open %>">
+	<%= date_field_tag("statements[#{statement.id}][d_open]", statement.d_open) %>
+	<% if statement.errors and statement.errors.include? :d_open %>
+		<div class="error-message"><%= render 'static_pages/error_list', errors: statement.errors.messages[:d_open] %></div>		
+	<% end %>
+</div></td>
+<td><div class="field-with-errors" data-errors="<%= statement.errors.include? :d_close %>">
+	<%= date_field_tag("statements[#{statement.id}][d_close]", statement.d_close) %>
+	<% if statement.errors and statement.errors.include? :d_close %>
+		<div class="error-message"><%= render 'static_pages/error_list', errors: statement.errors.messages[:d_close] %></div>		
+	<% end %>
+</div></td>

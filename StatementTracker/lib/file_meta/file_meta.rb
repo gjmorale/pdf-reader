@@ -59,29 +59,31 @@ module FileMeta
 	def self.classify_files files
 		files_out = []
 		files.each.with_index do |file, i|
-			name = File.basename(file,'.pdf')
-			puts "[#{i+1}/#{files.size}]#{name}"
-			digest = Digest::MD5.file(file).hexdigest
-			next if Statement.find_by(file_hash: digest)
-			client = File.dirname file
-			client = Society.find_by(name: client[client.rindex('/')+1..-1])
-			bank = date = nil
-			correct_file file do |reader|
-				date, producer, creator = extract_meta file, reader
-				bank = find_bank producer, creator, reader
-			end
-			bank = Bank.find_by(code_name: bank)
-			statement = Statement.new(
-				bank: bank, 
-				client: client,
-				d_filed: date, 
-				file_hash: digest, 
-				file_name: name,
-				path: file.gsub(Paths::DROPBOX,''))
+			attrs = FileMeta.classify file
+			puts "[#{i+1}/#{files.size}]#{attrs[:file_name]}"
+			next if Statement.find_by(file_hash: attrs[:file_hash])
+			statement = Statement.new(attrs)
 			files_out << statement if statement.save
 			puts statement.errors.inspect
 		end
 		files_out
+	end
+
+	def self.classify file
+		attrs = {}
+		attrs[:file_name] = File.basename(file,'.pdf')
+		attrs[:path] = file.gsub(Paths::DROPBOX,'')
+		attrs[:file_hash] = Digest::MD5.file(file).hexdigest
+		client = File.dirname file
+		client = Society.find_by(name: client[client.rindex('/')+1..-1])
+		attrs[:client_id] = client.id if client
+		correct_file file do |reader|
+			date, producer, creator = extract_meta file, reader
+			attrs[:d_filed] = date if date
+			bank = find_bank producer, creator, reader
+		end
+		attrs[:bank] = Bank.find_by(code_name: bank)
+		return attrs
 	end
 
 	def self.read_field field_name, reader

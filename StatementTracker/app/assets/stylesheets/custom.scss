@@ -33,3 +33,30 @@
 	width: 80px;
 	text-align: center;
 }
+
+
+div.error-message {
+	display: none;
+    text-align: center;
+    background-color: red;
+    color: black;
+    padding: 2px;
+    ul {
+    	text-decoration: none;
+    	list-style: none outside none;
+    	padding: 0;
+    }
+
+    position: absolute;
+}
+
+div[data-errors="true"] {
+	border-color: red;
+    border-style: solid;
+    border-width: 1px;
+}
+
+table {
+	width: 100%;
+	text-align: center;
+}

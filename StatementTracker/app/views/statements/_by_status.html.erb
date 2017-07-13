@@ -1,0 +1,20 @@
+<% if statements %>
+	<% read = statements.select{|s| s.status.code == StatementStatus::READ} %>
+	<% if read.any? %>
+		<%= render 'statements/read/checklist', statements: read, commit: commit, edit: edit %>
+	<% end %>
+	<br><% indexed = statements.select{|s| s.status.code == StatementStatus::INDEXED} %>
+	<% if indexed.any? %>
+		<%= render 'statements/indexed/checklist', statements: indexed, commit: commit, edit: edit %>
+	<% end %>
+	<br>
+	<% index_status = statements.select{|s| s.status.code == StatementStatus::INDEX} %>
+	<% if statements and index_status.any? %>
+		<%= render 'statements/index/checklist', statements: index_status, commit: commit, edit: edit %>
+	<% end %>
+	<br>
+	<% noticed = statements.select{|s| s.status.code == StatementStatus::NOTICED} %>
+	<% if statements and noticed.any? %>
+		<%= render 'statements/noticed/checklist', statements: noticed, commit: commit, edit: edit %>
+	<% end %>
+<% end %>

@@ -2,12 +2,7 @@
 
 <h1>Statements</h1>
 
-<% if @indexed_statements and @indexed_statements.any? %>
-	<%= render 'statements/indexed/checklist', statements: @indexed_statements, commit: [StatementsCommit::RELOAD], edit: false %>
-<% end %>
-<% if @noticed_statements and @noticed_statements.any? %>
-	<%= render 'statements/noticed/checklist', statements: @noticed_statements, commit: [StatementsCommit::RELOAD], edit: false %>
-<% end %>
+<%= render 'statements/all/checklist', statements: @statements, commit: [StatementsCommit::RELOAD] %>
 
 <br>
 

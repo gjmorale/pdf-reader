@@ -1,11 +1,13 @@
 class StatementsCommit
 
-	RELOAD = "statement_reload".freeze
-	INDEX = "statement_index".freeze
-	INDEXED = "statement_indexed".freeze
-	ASSIGN = "statement_assign".freeze
-	UNASSIGN = "statement_unassign".freeze
-	UPDATE = "statement_update".freeze
+	RELOAD = "reload".freeze
+	AUTO = "auto".freeze
+	INDEX = "index".freeze
+	INDEXED = "indexed".freeze
+	READ = "read".freeze
+	ASSIGN = "assign".freeze
+	UNASSIGN = "unassign".freeze
+	UPDATE = "update".freeze
 
 	def initialize(*param_values)
 		@param_values = param_values

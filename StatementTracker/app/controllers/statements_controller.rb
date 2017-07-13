@@ -5,8 +5,7 @@ class StatementsController < ApplicationController
   # GET /statements
   # GET /statements.json
   def index
-    @noticed_statements = Statement.joins(:status).where("statement_statuses.code = ?", StatementStatus::NOTICED)
-    @indexed_statements = Statement.joins(:status).where("statement_statuses.code = ?", StatementStatus::INDEXED)
+    @statements = Statement.all
   end
 
   # GET /statements/1

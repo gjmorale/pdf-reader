@@ -6,11 +6,10 @@ class CreateStatements < ActiveRecord::Migration[5.0]
       t.belongs_to :sequence, foreign_key: true
       t.belongs_to :bank, foreign_key: true
       t.belongs_to :handler, foreign_key: true
-      t.belongs_to :dictionary, foreign_key: true
       t.belongs_to :client, references: :societies
-      t.datetime :d_filed
-      t.datetime :d_open
-      t.datetime :d_close
+      t.date :d_filed
+      t.date :d_open
+      t.date :d_close
       t.datetime :d_read
       t.belongs_to :status, references: :statement_statuses
       t.string :file_hash

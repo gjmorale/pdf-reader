@@ -5,4 +5,4 @@
 <%= link_to 'Back', handlers_path %>
 <br>
 <h3>CARTOLAS</h3>
-<%= render 'statements/indexed/checklist', statements: @handler.statements, commit: @options, edit: true %>
+<%= render 'statements/by_status', statements: @statements, commit: [], edit: true %>

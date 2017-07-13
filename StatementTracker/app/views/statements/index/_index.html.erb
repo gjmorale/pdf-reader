@@ -1,0 +1,7 @@
+
+<td><%= statement.file_name %></td>
+<td><%= statement.society %></td>
+<td><%= statement.eq %></td>
+<td><%= statement.bank %></td>
+<td><%= statement.d_open.strftime("%d/%m/%Y") if statement.d_open %></td>
+<td><%= statement.d_close.strftime("%d/%m/%Y") if statement.d_close %></td>

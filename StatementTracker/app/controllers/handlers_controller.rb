@@ -1,6 +1,6 @@
 class HandlersController < ApplicationController
-  before_action :set_handler, only: [:show, :edit, :update, :destroy]
-  before_action :set_statements, only: [:assign, :unassign, :update_statements, :index_statements, :fit_statements]
+  before_action :set_handler, only: [:show, :edit, :update, :destroy, :assign, :unassign, :update_statements, :auto_statements, :index_statements, :fit_statements, :reload_statements]
+  before_action :set_statements, only: [:assign, :unassign, :update_statements, :auto_statements, :index_statements, :fit_statements, :reload_statements]
 
   # GET /handlers
   # GET /handlers.json
@@ -30,26 +30,48 @@ class HandlersController < ApplicationController
     redirect_to handler #Update with current_user
   end
 
-  def update_statements
+  def reload_statements
     handler = Handler.first #Update with current_user
     @statements.select{|s| s.handler == handler}.each do |statement|
-      statement.handler_update(params[:statements]["#{statement.id}"])
+      handler.renotice statement
     end
-    redirect_to edit_handler_path(handler) #Update with current_user
+    #redirect_to edit_handler_path(handler) #Update with current_user
+    complete_statements
+    render :edit
+  end
+
+  def auto_statements
+    handler = Handler.first #Update with current_user
+    @statements.select{|s| s.handler == handler}.each do |statement|
+      handler.auto statement
+    end
+    #redirect_to edit_handler_path(handler) #Update with current_user
+    complete_statements
+    render :edit
   end
 
   def index_statements
     handler = Handler.first #Update with current_user
-    handler.index @statements.select{|s| s.handler == handler}
-    redirect_to edit_handler_path(handler) #Update with current_user
+    @statements.select{|s| s.handler == handler}.each do |statement|
+      handler.index statement, 
+        params[:statements][statement.id.to_s][:bank_id]
+    end
+    #redirect_to edit_handler_path(handler) #Update with current_user
+    complete_statements
+    render :edit
   end
 
   def fit_statements
     handler = Handler.first #Update with current_user
     @statements.select{|s| s.handler == handler}.each do |statement|
-      handler.fit_in_seq statement, params[:statements][statement.id.to_s][:society_id]
+      handler.fit_in_seq statement, 
+        params[:statements][statement.id.to_s][:society_id],
+        params[:statements][statement.id.to_s][:d_open],
+        params[:statements][statement.id.to_s][:d_close]
     end
-    redirect_to edit_handler_path(handler) #Update with current_user
+    #redirect_to edit_handler_path(handler) #Update with current_user
+    complete_statements
+    render :edit
   end
 
   # GET /handlers/new
@@ -59,7 +81,7 @@ class HandlersController < ApplicationController
 
   # GET /handlers/1/edit
   def edit
-    @options = [StatementsCommit::UPDATE, StatementsCommit::RELOAD, StatementsCommit::INDEX, StatementsCommit::INDEXED]
+    @statements = @handler.statements
   end
 
   # POST /handlers
@@ -130,5 +152,11 @@ class HandlersController < ApplicationController
         new_params[key] = value.permit(:text, :society_id)
       end
       new_params
+    end
+
+    def complete_statements
+      ids = @statements.map{|s| s.id}
+      other_statements = @handler.statements.where.not(id: ids)
+      @statements += other_statements
     end
 end

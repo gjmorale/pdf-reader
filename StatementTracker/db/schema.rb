@@ -87,19 +87,17 @@ ActiveRecord::Schema.define(version: 20170622210455) do
     t.integer  "sequence_id"
     t.integer  "bank_id"
     t.integer  "handler_id"
-    t.integer  "dictionary_id"
     t.integer  "client_id"
-    t.datetime "d_filed"
-    t.datetime "d_open"
-    t.datetime "d_close"
+    t.date     "d_filed"
+    t.date     "d_open"
+    t.date     "d_close"
     t.datetime "d_read"
     t.integer  "status_id"
     t.string   "file_hash"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
     t.index ["bank_id"], name: "index_statements_on_bank_id"
     t.index ["client_id"], name: "index_statements_on_client_id"
-    t.index ["dictionary_id"], name: "index_statements_on_dictionary_id"
     t.index ["file_hash"], name: "index_statements_on_file_hash", unique: true
     t.index ["handler_id"], name: "index_statements_on_handler_id"
     t.index ["sequence_id"], name: "index_statements_on_sequence_id"

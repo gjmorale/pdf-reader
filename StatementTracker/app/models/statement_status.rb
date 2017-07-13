@@ -53,60 +53,62 @@ class StatementStatus < ApplicationRecord
     end
 
     def self.change_state new_status, statement
-
-      case new_status
+      puts "CHANGING FROM #{statement.status.code} TO #{new_status} #{from_sym new_status}"
+      original_status = statement.status
+      safe = false
+      case new_status.to_sym
       when :noticed
         if statement.rank? :noticed
           yield
-        end
-        if statement.file? and
-          statement.set_raw
           statement.status = StatementStatus.find_by(code: NOTICED)
-          return statement.save
+          sequence = statement.sequence
+          statement.sequence = nil
+          safe = statement.save
+          sequence.destroy if sequence and safe and not sequence.statements.any?
         end
       when :index
         if statement.rank? :noticed
           yield
-        end
-        if statement.bank_id and
-          statement.client_id
           statement.status = StatementStatus.find_by(code: INDEX)
-          return statement.save
+          sequence = statement.sequence
+          statement.sequence = nil
+          safe = statement.save
+          sequence.destroy if sequence and safe and not sequence.statements.any?
         end
       when :indexed
         if statement.rank? :index 
           yield
-        end
-        if statement.society
           statement.status = StatementStatus.find_by(code: INDEXED)
-          return statement.save
+          if safe = statement.save
+            if statement.dictionary
+              statement.dictionary.target = statement.society
+              statement.dictionary.save
+            end
+          end
         end
       when :read
         if statement.rank? :indexed
           yield
-        end
-        if statement.sequence
           statement.status = StatementStatus.find_by(code: READ)
-          return statement.save
         end
+        safe = statement.save
       when :stage
         if statement.rank? :read
           yield
         end
-        return false
+        safe = false
       when :upload
         if statement.rank? :stage
           yield
         end
-        return false
+        safe = false
       when :archived
         if statement.rank? :upload
           yield
         end
-        return false
-      else
-        false
+        safe = false
       end
-
+      statement.status = original_status unless safe
+      return safe
     end
 end
