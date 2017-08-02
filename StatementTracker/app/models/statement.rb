@@ -4,7 +4,7 @@ class Statement < ApplicationRecord
 
   belongs_to :sequence, required: false
   belongs_to :client, class_name: "Society"
-  has_one :dictionary_element, :as =>:element
+  has_one :dictionary_element, as: :element
   has_one :dictionary, :through => :dictionary_element
   has_one :target, :through => :dictionary, source: 'target', source_type: 'Society'
   belongs_to :bank, required: false
@@ -90,7 +90,6 @@ class Statement < ApplicationRecord
 
   def find_tax society_id
     if periodicity
-      puts "#{periodicity} #{society_id}"
       return Tax.find_by(bank: bank, society_id: society_id, periodicity: periodicity)
     else
       return Tax.find_by(bank: bank, society_id: society_id)
@@ -98,7 +97,6 @@ class Statement < ApplicationRecord
   end
 
   def file
-    return "DEBUG in file"
     real_file = FileManager.get_file path, file_hash
     if File.exist? real_file
       return real_file
@@ -115,12 +113,36 @@ class Statement < ApplicationRecord
   end
 
   def set_raw
-    return "DEBUG in set_raw"
     FileManager.get_raw file, raw_path
   end
 
+  def delete_raw
+    FileManager.rm_raw raw_path
+  end
+
+  def archive_file
+    move_file archive_path
+  end
+
+  def dearchive_file
+    full_path = Paths::DROPBOX+path
+    return true if full_path.start_with? Paths::INPUT
+    return false unless client
+    move_file "#{Paths::INPUT}/#{client}/#{file_name}"
+  end
+
+  def move_file new_path
+    moved = FileManager.mv_file file, new_path
+    path = new_path if moved
+    return moved
+  end
+
+  def archive_path
+    return nil unless sequence
+    return "#{Paths::ARCHIVE}/#{sequence.path}/#{file_name}.pdf"
+  end
+
   def renotice
-    return "DEBUG in renotice"
     attrs = FileMeta.classify file if file?
     return self.assign_attributes attrs
   end
@@ -140,6 +162,14 @@ class Statement < ApplicationRecord
     self.status.progress
   end
 
+  def possible_socs
+    if client
+      return Society.where("id IN (?) AND parent_id NOT NULL", client.descendant_ids)
+    else
+      return Bank.all
+    end
+  end
+
   private
 
     def default_status
@@ -153,8 +183,11 @@ class Statement < ApplicationRecord
 
     def integrity
       if rank? :noticed
-        errors.add(:file_hash,"File not found") unless file?
-        errors.add(:file_hash,"Temp file not found") unless set_raw
+        errors.add(:file_hash, "File not found") unless file?
+        unless rank? :archived
+          errors.add(:file_hash, "Temp file not found") unless set_raw
+          errors.add(:path, "File is not in Input folder") unless dearchive_file
+        end
       else
         errors.add(:status, "No status")
       end
@@ -170,7 +203,9 @@ class Statement < ApplicationRecord
         errors.add(:sequence, "Doesn't belong to a sequence") unless sequence
         errors.add(:sequence, "Sequence is full") unless sequence.nil? or accepting?
       end
-      if rank? :read
+      if rank? :archived
+        errors.add(:file_name, "Unable to delete temp data") unless delete_raw
+        errors.add(:path, "Unable to archive file") unless archive_file
       end
       puts "ERRORS: #{errors.messages}" if errors.any?
     end
@@ -179,5 +214,7 @@ class Statement < ApplicationRecord
       return false unless sequence
       !!(sequence.accepting? or sequence.statements.include? self)
     end
+
+
 
 end

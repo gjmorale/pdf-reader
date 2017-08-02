@@ -3,15 +3,13 @@ class Society < ApplicationRecord
 
   acts_as_tree order: "name"
 
-  belongs_to :parent, class_name: "Society", required: false
-  has_many :societies, as: :parent, dependent: :destroy
   has_many :taxes, dependent: :destroy
   has_many :banks, through: :taxes
   has_many :sequences, through: :taxes
   has_many :statements, through: :sequences
   has_many :dictionaries, as: :target, dependent: :nullify
 
-  validates_uniqueness_of :rut, scope: :name
+  #validates_uniqueness_of :rut, scope: :name #DANGEROUS IN DEBUG
 
 	def invalid?
 		name.eql? "INVALID"
@@ -22,6 +20,23 @@ class Society < ApplicationRecord
 	end
 
 	def self.treefy societies
+		final_socs = []
+		societies.each do |soc|
+			ancestors = soc.ancestors
+			nested = false
+			ancestors.each do |anc|
+				if societies.include? anc
+					nested = true
+				else
+					final_socs << anc unless final_socs.include? anc
+				end
+			end
+			final_socs << soc unless nested #or soc.invalid?
+		end
+		final_socs
+	end 
+
+	def treefy societies
 		final_socs = []
 		societies.each do |soc|
 			ancestors = soc.ancestors
@@ -113,6 +128,15 @@ class Society < ApplicationRecord
 
 	def descendant_ids
 		self_and_descendants.map{|s| s.id}
+	end
+
+	def path
+		super_soc = this
+		until super_soc.root?
+			path << "/#{super_soc.name}"
+			super_soc = super_soc.parent
+		end
+		path << "#{super_soc.name}"
 	end
 
 =begin RECURSIVENESS REQUIRES sql3driver >= 3.8.1

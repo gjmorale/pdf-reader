@@ -3,11 +3,21 @@ class CrediCorp < Institution
 	LEGACY = "CrediCorp"
 	TEXT_EXPAND = 0.0
 	TABLE_OFFSET = 30
+	EQS = [
+		"CrediCorp",
+		"CC",
+		"CCorp",
+		"Credicorp"
+	]
 end
 
 Dir[File.dirname(__FILE__) + '/CORP/*.rb'].each {|file| require_relative file } 
 
 CrediCorp.class_eval do
+
+	def eqs
+		self.class::EQS
+	end
 
 	def dir
 		self.class::DIR

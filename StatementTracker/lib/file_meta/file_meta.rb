@@ -1,7 +1,7 @@
 module FileMeta
 
+=begin
 	module FileMeta::Map
-
 		NOT_FOUND = "Banco no encontrado".freeze
 		FULL = [
 			["BC",/Acrobat PDFWriter 5\.0 para Windows NT/, /Aplicaci.+n Mantenedores ADC - \[Procesos de Cierre\]/],
@@ -55,6 +55,7 @@ module FileMeta
 			/.*/, /.*/]
 		]
 	end
+=end
 
 	def self.classify_files files
 		files_out = []
@@ -80,9 +81,9 @@ module FileMeta
 		correct_file file do |reader|
 			date, producer, creator = extract_meta file, reader
 			attrs[:d_filed] = date if date
-			bank = find_bank producer, creator, reader
+			attrs[:bank] = find_bank producer, creator, reader
 		end
-		attrs[:bank] = Bank.find_by(code_name: bank)
+		attrs[:d_filed] ||= File.mtime(file)
 		return attrs
 	end
 
@@ -113,18 +114,17 @@ module FileMeta
 	end
 
 	def self.find_bank producer, creator, reader
-		bank = nil
-		bank =
-			FileMeta.match(FileMeta::Map::FULL, producer: producer, creator: creator) || 
-			FileMeta.match(FileMeta::Map::IGNORE, producer: producer, creator: creator)
-		unless bank
-			options = FileMeta.match(FileMeta::Map::CONFLICT, producer: producer, creator: creator)
-			options.each do |opt|
-				bank = opt[0] if FileMeta.identify opt[1], reader
-				break if bank
+		meta_print = MetaPrint.find_by(producer: producer, creator: creator)
+		if meta_print
+			unless meta_print.bank.nil?
+				return meta_print.bank
+			else
+				if meta_print.cover_prints
+					#TODO CoverPrint search
+				end
 			end
 		end
-		bank
+		return Bank.find_by(code_name: Bank::Format::BLANK)
 	end
 
 	def self.match collection, **params
@@ -153,10 +153,10 @@ module FileMeta
 	end
 
 	def self.correct_file file
+		begin
 			PDF::Reader.open(file) do |reader|
 				yield reader
 			end
-		begin
 			return true
 		rescue StandardError => e
 			if e.message == "PDF does not contain EOF marker"
@@ -182,5 +182,27 @@ module FileMeta
 			File.truncate(file, end_pos+5)
 		end 
 		return !!end_pos
+	end
+
+	def self.learn_from file, bank
+		puts "#{File.basename file} ; #{bank}"
+		learnt = nil
+		if File.exist? file
+			correct_file file do |reader|
+				date, producer, creator = extract_meta file, reader
+				puts "DATE #{date}, PROD #{producer}, CREAT #{creator}"
+				registered = MetaPrint.find_by(producer: producer, creator: creator)
+				if registered
+					if registered.bank != bank
+						raise #TODO: Check cover prints
+					else
+						learnt = registered
+					end
+				else
+					learnt = MetaPrint.create(bank: bank, producer: producer, creator: creator)
+				end
+			end
+		end
+		learnt
 	end
 end

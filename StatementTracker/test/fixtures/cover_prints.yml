@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  first_filter: MyString
+  second_filter: MyString
+  bank: one
+  meta_print: one
+
+two:
+  first_filter: MyString
+  second_filter: MyString
+  bank: two
+  meta_print: two

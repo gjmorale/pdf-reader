@@ -135,20 +135,14 @@ class Institution
 
 	# Method to index files instead of full reading
 	def index file
-		file_name = file[file.rindex('/')+1..-1]
-		puts "                                      ".underlined
-		print "-.,-´`-.,-´`-.,-´`-.,-´`-.,-´`-.,-´`-.".underlined
-		puts " - #{file}"
-			soc, date = analyse_index file
-			if date =~ /\d+((\/|-)\d+){2}/
-				date = date.gsub('/','-')
-				date = Date.strptime(date, "%d-%m-%Y")
-			end
-			return [soc, date]
 		begin
+			soc, date_i, date_f = analyse_index file
+			date_i = Date.strptime(date_i, "%d-%m-%Y") if date_i
+			date_f = Date.strptime(date_f, "%d-%m-%Y") if date_f
+			return [soc, date_i, date_f]
 		rescue StandardError => e
 			puts e.to_s.red
-			return [nil, nil]
+			return [nil, nil, nil]
 		end
 	end
 

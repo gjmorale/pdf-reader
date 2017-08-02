@@ -1,12 +1,11 @@
 class SocietiesController < ApplicationController
   before_action :set_society, only: [:show, :edit, :update, :destroy, :time_nodes, :if_nodes, :statement_nodes]
   before_action :search_params, only: [:filter]
-  before_action :set_search_params, only: [:index, :show, :time_nodes, :if_nodes, :statement_nodes]
+  before_action :set_search_params, only: [:index, :show, :time_nodes, :if_nodes, :statement_nodes, :seed]
 
   # GET /societies
   # GET /societies.json
   def index
-    @societies = Society.roots
     @societies = Society.filter @search_params if @search_params
     @societies = Society.treefy @societies
     respond_to do |format|
@@ -29,8 +28,7 @@ class SocietiesController < ApplicationController
         @element = @society
         @node_template = 'societies/node'
         @children = @society.filter @search_params
-        @progress = '10'
-        @children = Society.treefy @children
+        @children = @society.treefy @children #TODO: Check and fix
         render 'nodes/navigation'
       end
     end
@@ -136,7 +134,6 @@ class SocietiesController < ApplicationController
       params.require(:society).permit(:name, :rut, :parent_id)
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def search_params
       @search_params = SearchParams.new(params[:search_params])
       cookies[:search] = {value: @search_params.serialize, expires: 10.hours.from_now}

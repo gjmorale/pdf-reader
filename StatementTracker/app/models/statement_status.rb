@@ -103,10 +103,12 @@ class StatementStatus < ApplicationRecord
         end
         safe = false
       when :archived
-        if statement.rank? :upload
+        #PRE-READING ITERATION
+        if statement.rank? :indexed
           yield
+          statement.status = StatementStatus.find_by(code: ARCHIVED)
+          safe = statement.save?
         end
-        safe = false
       end
       statement.status = original_status unless safe
       return safe

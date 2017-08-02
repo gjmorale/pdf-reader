@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170622210455) do
+ActiveRecord::Schema.define(version: 20170731144247) do
 
   create_table "banks", force: :cascade do |t|
     t.string   "name"
@@ -20,6 +20,18 @@ ActiveRecord::Schema.define(version: 20170622210455) do
     t.datetime "updated_at",  null: false
     t.index ["code_name"], name: "index_banks_on_code_name", unique: true
     t.index ["folder_name"], name: "index_banks_on_folder_name", unique: true
+  end
+
+  create_table "cover_prints", force: :cascade do |t|
+    t.string   "first_filter"
+    t.string   "second_filter"
+    t.integer  "bank_id"
+    t.integer  "meta_print_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.index ["bank_id"], name: "index_cover_prints_on_bank_id"
+    t.index ["first_filter", "second_filter", "meta_print_id"], name: "cover_filters_index", unique: true
+    t.index ["meta_print_id"], name: "index_cover_prints_on_meta_print_id"
   end
 
   create_table "dictionaries", force: :cascade do |t|
@@ -43,12 +55,22 @@ ActiveRecord::Schema.define(version: 20170622210455) do
   end
 
   create_table "handlers", force: :cascade do |t|
-    t.string   "name"
     t.string   "short_name"
     t.string   "repo_path"
     t.string   "local_path"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "meta_prints", force: :cascade do |t|
+    t.string   "last_ref"
+    t.string   "creator"
+    t.string   "producer"
+    t.integer  "bank_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bank_id"], name: "index_meta_prints_on_bank_id"
+    t.index ["creator", "producer"], name: "index_meta_prints_on_creator_and_producer", unique: true
   end
 
   create_table "sequences", force: :cascade do |t|
@@ -114,6 +136,27 @@ ActiveRecord::Schema.define(version: 20170622210455) do
     t.index ["bank_id"], name: "index_taxes_on_bank_id"
     t.index ["society_id", "bank_id"], name: "index_taxes_on_society_id_and_bank_id", unique: true
     t.index ["society_id"], name: "index_taxes_on_society_id"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string   "name"
+    t.string   "role_type"
+    t.integer  "role_id"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.string   "email",                  default: "", null: false
+    t.string   "encrypted_password",     default: "", null: false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          default: 0,  null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["role_type", "role_id"], name: "index_users_on_role_type_and_role_id"
   end
 
 end

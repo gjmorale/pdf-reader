@@ -5,6 +5,13 @@ class PER < Institution
 	TEXT_EXPAND = 0.0
 	VERTICAL_SEARCH_RANGE = 13
 	SAFE_ZONE = 7
+	EQS = [
+		"Pershing",
+		"pershing",
+		"Per",
+		"PER",
+		"per",
+	]
 end
 
 module PER::ESP end
@@ -13,6 +20,10 @@ module PER::ENG end
 Dir[File.dirname(__FILE__) + '/PER/*.rb'].each {|file| require_relative file } 
 
 PER.class_eval do
+
+	def eqs
+		self.class::EQS
+	end
 
 	def dir
 		self.class::DIR

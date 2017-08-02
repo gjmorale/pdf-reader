@@ -4,6 +4,15 @@ class BC < Institution
 	TABLE_OFFSET = 40
 	VERTICAL_SEARCH_RANGE = 5
 	HORIZONTAL_SEARCH_RANGE = 5
+
+	EQS = [
+		"Banchile",
+		"BanChile",
+		"Ban Chile",
+		"BC",
+		"BChile"
+	]
+
 end
 
 module BC1
@@ -18,6 +27,10 @@ if File.exist? File.dirname(__FILE__) + '/BC/TransactionTable.rb'
 end
 
 BC.class_eval do
+
+	def eqs
+		self.class::EQS
+	end
 
 	def dir
 		self.class::DIR
@@ -75,15 +88,20 @@ BC.class_eval do
 	private  
 
 		def set_date value
-			day, month, year = value[value.rindex(' ')+1..-1].split('/')
-			@date_out = "#{day}-#{month}-#{year}"
+			sections = value.split(' ')
+			date_f = "%s-%s-%s" % sections[-1].split('/')
+			date_i = "%s-%s-%s" % sections[-3].split('/')
+			day, month, year = value[value.rindex(' ')+1..-1].split('/') #DELETE
+			@date_out = date_f
 			puts @date_out
+			[date_i, date_f]
 		end
 
 		def analyse_index file
 			@reader = Reader.new(self, file)
 			owner = nil
-			set_date @reader.find_text(/Período.*: .*\d{2}\/\d{2}\/\d{4} (al|-) \d{2}\/\d{2}\/\d{4}/i)
+			d_i, d_f = set_date @reader.find_text(/Período.*: .*\d{2}\/\d{2}\/\d{4} (al|-) \d{2}\/\d{2}\/\d{4}/i)
+			raise
 			field = SingleField.new("[Señor:|Señores:]",[Setup::Type::LABEL],3,Setup::Align::LEFT)
 			if field.execute @reader
 				owner = field.results[0].result.inspect.strip
@@ -100,7 +118,7 @@ BC.class_eval do
 				owner = header.results[0].result.strings.select{|s| not s.empty?}.first.strip
 				owner = nil if owner.empty?
 			end
-			return [owner, @date_out]
+			return [owner, d_i, d_f]
 		end
 
 		def analyse_position file

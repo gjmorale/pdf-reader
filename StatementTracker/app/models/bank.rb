@@ -9,6 +9,7 @@ class Bank < ApplicationRecord
 		MON = "MON"
 		CORP = "CORP"
 		PER = "PER"
+		BLANK = "BLANK"
 	end
 
 	validates :code_name, presence: true, uniqueness: true
@@ -21,9 +22,11 @@ class Bank < ApplicationRecord
 	def index path
 		dir = FileManager.get_raw_dir path
 		FileReader.index reader_bank, dir
+		raise #TODO: If un-noticed, delete method
 	end
 
 	def reader_bank
+		puts "FOLDER: #{self.folder_name}"
 		case self.folder_name
 		when Format::HSBC
 			return HSBC.new()
@@ -39,6 +42,8 @@ class Bank < ApplicationRecord
 			return CrediCorp.new()
 		when Format::PER
 			return PER.new()
+		when Format::BLANK
+			return BLANK.new()
 		else
 			return nil
 		end

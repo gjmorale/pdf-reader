@@ -14,8 +14,8 @@
   <tbody>
     <% @dictionary_elements.each do |dictionary_element| %>
       <tr>
-        <td><%= dictionary_element.element %></td>
-        <td><%= dictionary_element.dictionary %></td>
+        <td><%= dictionary_element.element.file_name %></td>
+        <td><%= dictionary_element.dictionary.target %></td>
         <td><%= link_to 'Show', dictionary_element %></td>
         <td><%= link_to 'Edit', edit_dictionary_element_path(dictionary_element) %></td>
         <td><%= link_to 'Destroy', dictionary_element, method: :delete, data: { confirm: 'Are you sure?' } %></td>

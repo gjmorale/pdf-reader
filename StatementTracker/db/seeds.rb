@@ -6,6 +6,43 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }]).first_or_create
 #   Character.create(name: 'Luke', movie: movies.first).first_or_create
 
+#StatementStatus
+noticed_status = StatementStatus.where(
+	code: StatementStatus::NOTICED, 
+	progress: 25,
+	message: "Identificado en BD"
+	).first_or_create
+index_status = StatementStatus.where(
+	code: StatementStatus::INDEX, 
+	progress: 50,
+	message: "Listo para indexar"
+	).first_or_create
+indexed_status = StatementStatus.where(
+	code: StatementStatus::INDEXED, 
+	progress: 75,
+	message: "Indexado según sociedad"
+	).first_or_create
+StatementStatus.where(
+	code: StatementStatus::READ, 
+	progress: 100,
+	message: "Leído"
+	).first_or_create
+StatementStatus.where(
+	code: StatementStatus::STAGE, 
+	progress: 80,
+	message: "Leído e indexado correctamente"
+	).first_or_create
+StatementStatus.where(
+	code: StatementStatus::UPLOAD, 
+	progress: 90,
+	message: "Lectura ha sido validada en el servidor"
+	).first_or_create
+StatementStatus.where(
+	code: StatementStatus::ARCHIVED, 
+	progress: 100,
+	message: "Almacenado en sistema de archivos"
+	).first_or_create
+
 #BANKs
 ms = Bank.where(
 	name: "Morgan Stanley",
@@ -42,6 +79,20 @@ bc = Bank.where(
 	code_name: "BC",
 	folder_name: "BC"
 	).first_or_create
+blank = Bank.where(
+	name: "Blank",
+	code_name: "BLANK",
+	folder_name: "BLANK"
+	).first_or_create
+
+#Handlers
+handler = Handler.where(
+	short_name: "Guille",
+	repo_path: "/home/finantecdeveloper/gmo/Sandbox/Dropbox",
+	local_path: "/Clientes"
+	).first_or_create
+
+=begin
 
 #SOCs
 null = Society.where(
@@ -119,51 +170,6 @@ seq_cell_ms = Sequence.where(
 
 
 
-#Handlers
-handler = Handler.where(
-	name: "Guillermo Morales",
-	short_name: "Guille",
-	repo_path: "/home/finantecdeveloper/gmo/Sandbox/Dropbox",
-	local_path: "/Clientes"
-	).first_or_create
-
-#StatementStatus
-noticed_status = StatementStatus.where(
-	code: StatementStatus::NOTICED, 
-	progress: 25,
-	message: "Identificado en BD"
-	).first_or_create
-index_status = StatementStatus.where(
-	code: StatementStatus::INDEX, 
-	progress: 50,
-	message: "Listo para indexar"
-	).first_or_create
-indexed_status = StatementStatus.where(
-	code: StatementStatus::INDEXED, 
-	progress: 75,
-	message: "Indexado según sociedad"
-	).first_or_create
-StatementStatus.where(
-	code: StatementStatus::READ, 
-	progress: 100,
-	message: "Leído"
-	).first_or_create
-StatementStatus.where(
-	code: StatementStatus::STAGE, 
-	progress: 80,
-	message: "Leído e indexado correctamente"
-	).first_or_create
-StatementStatus.where(
-	code: StatementStatus::UPLOAD, 
-	progress: 90,
-	message: "Lectura ha sido validada en el servidor"
-	).first_or_create
-StatementStatus.where(
-	code: StatementStatus::ARCHIVED, 
-	progress: 100,
-	message: "Almacenado en sistema de archivos"
-	).first_or_create
-
 c1 = Statement.where(
     file_name: "cartola_1",
     path: "Cliente1/cartola1.pdf",
@@ -218,3 +224,4 @@ c1_dict = DictionaryElement.where(
 	element: c1,
 	dictionary: cell_dict
 	).first_or_create
+=end

@@ -17,7 +17,7 @@
     <% @taxes.each do |tax| %>
       <tr>
         <td><%= tax.bank %></td>
-        <td><%= tax.society %></td>
+        <td><%= link_to tax.society, society_path(tax.society) %></td>
         <td><%= tax.quantity %></td>
         <td><%= tax.periodicity %></td>
         <td><%= link_to 'Show', tax %></td>

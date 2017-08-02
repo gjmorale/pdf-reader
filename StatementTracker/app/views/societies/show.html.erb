@@ -12,8 +12,28 @@
 
 <p>
   <strong>Parent:</strong>
-  <%= @society.parent.name %>
+  <%= @society.root? ? "Root" : @society.parent.name %>
 </p>
+
+<p>
+  <strong>Taxes:</strong>
+  <ul>
+  	<% @society.taxes.each do |tax| %>
+  	<li>
+  		<%= tax.bank %>:
+  		<%= pluralize(tax.quantity, "statement") %>
+  		<%= tax.periodicity %>
+  		<%= link_to "Edit", edit_tax_path(tax) %>
+        <%= link_to 'X', tax, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  	</li>
+  	<% end %>
+  </ul>
+</p>
+
+<div>
+  <strong>New Tax:</strong>
+  <%= render 'taxes/form', tax: @society.taxes.build %>
+</div>
 
 <%= link_to 'Edit', edit_society_path(@society) %> |
 <%= link_to 'Back', societies_path %>

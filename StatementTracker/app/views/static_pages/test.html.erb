@@ -1,7 +1,22 @@
-<h1>TEST</h1>
+<h1>APRENDER DE CARPETA</h1>
 <p>DETECTAR ARCHIVOS</p>
-<%= link_to "new_statement", new_statement_path %>
-<p>ASIGNAR/ORDENAR ARCHIVOS</p>
-<%= link_to "new_statement", new_statement_path %>
-<p>LEER ARCHIVOS</p>
-<p>SUBIR ARCHIVOS</p>
+<% if @prev_dir %>
+	<%= form_tag file_manager_files_path do %>
+		<%= submit_tag FileManagerCommits::OPEN %>
+		<%= submit_tag FileManagerCommits::USE %>
+		<%= hidden_field_tag :route, @prev_dir %>
+		BACK TO <%= File.basename @prev_dir %>
+	<% end %>
+<% end %>
+<ul>
+	<% @files.each do |file| %>
+		<li>
+			<%= form_tag file_manager_files_path do %>
+				<%= submit_tag FileManagerCommits::OPEN %>
+				<%= submit_tag FileManagerCommits::USE, remote: true %>
+				<%= hidden_field_tag :route, file %>
+				<%= File.basename file %>
+			<% end %>
+		</li>
+	<% end %>
+</ul>

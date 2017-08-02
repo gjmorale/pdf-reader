@@ -1,11 +1,20 @@
 class HSBC < Institution
 	DIR = "HSBC"
 	LEGACY = "HSBC"
+	EQS = [
+		"HSBC",
+		"Hsbc",
+		"hsbc"
+	]
 end
 
 Dir[File.dirname(__FILE__) + '/HSBC/*.rb'].each {|file| require_relative file }
 
 HSBC.class_eval do
+
+	def eqs
+		self.class::EQS
+	end
 
 	def dir 
 		self.class::DIR

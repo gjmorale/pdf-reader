@@ -1,0 +1,32 @@
+<%= form_for(meta_print) do |f| %>
+  <% if meta_print.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(meta_print.errors.count, "error") %> prohibited this meta_print from being saved:</h2>
+
+      <ul>
+      <% meta_print.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :creator %>
+    <%= f.text_field :creator %>
+  </div>
+
+  <div class="field">
+    <%= f.label :producer %>
+    <%= f.text_field :producer %>
+  </div>
+
+  <div class="field">
+    <%= f.label :bank_id %>
+    <%= f.text_field :bank_id %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

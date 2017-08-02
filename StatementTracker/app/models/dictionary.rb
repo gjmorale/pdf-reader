@@ -11,6 +11,10 @@ class Dictionary < ApplicationRecord
 
   def self.register element, value
     puts "LOOKING FOR DIC WITH IDENTIFIER #{value}"
+    if value.nil? or value.length < 5
+      puts "DICTIONARY IDENTIFIER TOO SHORT"
+      return false
+    end
   	dictionary = Dictionary.find_by(identifier: value)
   	#check_possible repeated elements and acceptance of element to dictionary
   	dictionary ||= Dictionary.create(identifier: value, target: nil)

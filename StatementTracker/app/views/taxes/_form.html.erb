@@ -18,7 +18,7 @@
 
   <div class="field">
     <%= f.label :society_id %>
-    <%= collection_select(:tax, :society_id, Society.all, :id, :name) %>
+    <%= f.collection_select(:society_id, Society.all, :id, :name) %>
   </div>
 
   <div class="field">

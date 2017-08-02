@@ -11,7 +11,7 @@
 	<% end %>
 </div></td>
 <td><div class="field-with-errors" data-errors="<%= statement.errors.include? :sequence %>">
-	<%= collection_select("statements[#{statement.id}]", :society_id, Society.all, :id, :name, selected: (statement.society ? statement.society.id : ""), prompt: true) %>
+	<%= collection_select("statements[#{statement.id}]", :society_id, statement.possible_socs, :id, :name, selected: (statement.society ? statement.society.id : ""), prompt: true) %>
 	<% if statement.errors and statement.errors.include? :sequence %>
 		<div class="error-message"><%= render 'static_pages/error_list', errors: statement.errors.messages[:sequence] %></div>		
 	<% end %>

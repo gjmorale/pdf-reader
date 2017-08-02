@@ -1,7 +1,8 @@
 class HandlersController < ApplicationController
-  before_action :set_handler, only: [:show, :edit, :update, :destroy, :assign, :unassign, :update_statements, :auto_statements, :index_statements, :fit_statements, :reload_statements]
-  before_action :set_statements, only: [:assign, :unassign, :update_statements, :auto_statements, :index_statements, :fit_statements, :reload_statements]
-
+  before_action :set_handler, only: [:show, :edit, :update, :destroy]
+  before_action :set_statements, only: [:assign]
+  before_action :own_statements, only: [:unassign, :update_statements, :auto_statements, :index_statements, :fit_statements, :reload_statements]
+  before_action :authenticate_user!, except: [:index, :new, :create, :destroy]
   # GET /handlers
   # GET /handlers.json
   def index
@@ -15,63 +16,56 @@ class HandlersController < ApplicationController
   end
 
   def assign
-    handler = Handler.first
-    @statements.select{|s| s.handler.nil?}.each do |statement|
-      statement.assign_to handler
+    @statements.each do |statement|
+      statement.assign_to @handler
     end
-    redirect_to handler #Update with current_user
+    redirect_to @handler
   end
 
   def unassign
-    handler = Handler.first
-    @statements.select{|s| s.handler == handler}.each do |statement|
+    @statements.each do |statement|
       statement.unassign_handler
     end
-    redirect_to handler #Update with current_user
+    redirect_to @handler
   end
 
   def reload_statements
-    handler = Handler.first #Update with current_user
-    @statements.select{|s| s.handler == handler}.each do |statement|
-      handler.renotice statement
+    @statements.each do |statement|
+      @handler.renotice statement
     end
-    #redirect_to edit_handler_path(handler) #Update with current_user
     complete_statements
     render :edit
   end
 
   def auto_statements
-    handler = Handler.first #Update with current_user
-    @statements.select{|s| s.handler == handler}.each do |statement|
-      handler.auto statement
+    @statements.each do |statement|
+      @handler.auto statement
     end
-    #redirect_to edit_handler_path(handler) #Update with current_user
     complete_statements
     render :edit
   end
 
   def index_statements
-    handler = Handler.first #Update with current_user
-    @statements.select{|s| s.handler == handler}.each do |statement|
-      handler.index statement, 
+    @statements.each do |statement|
+      @handler.index statement, 
         params[:statements][statement.id.to_s][:bank_id]
     end
-    #redirect_to edit_handler_path(handler) #Update with current_user
     complete_statements
     render :edit
   end
 
   def fit_statements
-    handler = Handler.first #Update with current_user
-    @statements.select{|s| s.handler == handler}.each do |statement|
-      handler.fit_in_seq statement, 
+    @statements.each do |statement|
+      @handler.fit_in_seq statement, 
         params[:statements][statement.id.to_s][:society_id],
         params[:statements][statement.id.to_s][:d_open],
         params[:statements][statement.id.to_s][:d_close]
     end
-    #redirect_to edit_handler_path(handler) #Update with current_user
     complete_statements
     render :edit
+  end
+
+  def archive_statements
   end
 
   # GET /handlers/new
@@ -130,8 +124,10 @@ class HandlersController < ApplicationController
       @handler = Handler.find(params[:id])
     end
 
-    # Use callbacks to share common setup or constraints between actions.
     def set_statements
+      set_handler
+      puts "#{current_user.role} VS #{@handler}"
+      return false unless current_user.role == @handler
       @statements = []
       if params[:statements]
         params[:statements].each do |key, value|
@@ -140,9 +136,15 @@ class HandlersController < ApplicationController
       end
     end
 
+    def own_statements
+      return false unless set_statements
+      @statements = @statements.select{|s| s.handler == @handler}
+      puts "STATEMENTS! (#{@statements.count}) HANDLER: #{@handler}"
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def handler_params
-      params.require(:handler).permit(:repo_path, :local_path, :short_name, :name, eq_societies_attributes: [:id, :society_id, :text])
+      params.require(:handler).permit(:repo_path, :local_path, :short_name, eq_societies_attributes: [:id, :society_id, :text])
     end
 
     def eq_societies_params

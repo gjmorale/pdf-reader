@@ -1,13 +1,19 @@
 Rails.application.routes.draw do
+  resources :cover_prints
+  resources :meta_prints
+  devise_for :users
+  resources :users
   resources :dictionary_elements
   resources :dictionaries
-  get 'file_manager/update'
 
-  get 'file_manager/new'
-
-  get 'file_manager/index'
+  get "file_manager/index"
+  get "file_manager/new"
+  post "file_manager/files", constraints: FileManagerCommits.new(FileManagerCommits::OPEN), action: :open, controller: :file_manager
+  get "file_manager/learn"
 
   get 'static_pages/test'
+
+  root 'static_pages#home'
 
   resources :statements do 
     collection do

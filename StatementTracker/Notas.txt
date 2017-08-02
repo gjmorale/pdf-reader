@@ -1,0 +1,8 @@
+Importacion:
+ - Probar con cartolas reales
+ 	- Completar lector de fechas por banco
+ 	- ???
+
+ - Eliminar info? Crear taxes a partir de carpetas?
+
+ - Corregir numero de ifs en societies index

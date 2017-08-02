@@ -25,6 +25,10 @@ class Tax < ApplicationRecord
     return seq
   end
 
+  def path
+    "#{society.path}"
+  end
+
   def self.to_date **date
     open = close = nil
     date.each{|key,value| value = value.to_i}
@@ -85,7 +89,7 @@ class Tax < ApplicationRecord
 
   def progress params
     means = time_nodes(params).joins(statements: :status).group("sequences.id").sum("statement_statuses.progress")
-    return "--" unless means.any?
+    return 0 unless means.any?
     (means.map{|m| m[1].to_f}.inject{|t, m| t+(m)}/(quantity*means.size)).to_i
   end
 

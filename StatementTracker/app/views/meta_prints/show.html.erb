@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Creator:</strong>
+  <%= @meta_print.creator %>
+</p>
+
+<p>
+  <strong>Producer:</strong>
+  <%= @meta_print.producer %>
+</p>
+
+<p>
+  <strong>Bank:</strong>
+  <%= @meta_print.bank %>
+</p>
+
+<%= link_to 'Edit', edit_meta_print_path(@meta_print) %> |
+<%= link_to 'Back', meta_prints_path %>

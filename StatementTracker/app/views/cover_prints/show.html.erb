@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>First filter:</strong>
+  <%= @cover_print.first_filter %>
+</p>
+
+<p>
+  <strong>Second filter:</strong>
+  <%= @cover_print.second_filter %>
+</p>
+
+<p>
+  <strong>Bank:</strong>
+  <%= @cover_print.bank %>
+</p>
+
+<p>
+  <strong>Meta print:</strong>
+  <%= @cover_print.meta_print %>
+</p>
+
+<%= link_to 'Edit', edit_cover_print_path(@cover_print) %> |
+<%= link_to 'Back', cover_prints_path %>

@@ -3,6 +3,11 @@ class MON < Institution
 	LEGACY = "Moneda"
 	HEADER_ORIENTATION = 1
 	TABLE_OFFSET = 50
+	EQS = [
+		"Moneda",
+		"Mon",
+		"MON"
+	]
 end
 
 Dir[File.dirname(__FILE__) + '/MON/*.rb'].each {|file| require_relative file } 
@@ -14,6 +19,10 @@ if File.exist? File.dirname(__FILE__) + '/MON/TransactionTable.rb'
 end
 
 MON.class_eval do
+
+	def eqs
+		self.class::EQS
+	end
 
 	def dir
 		self.class::DIR

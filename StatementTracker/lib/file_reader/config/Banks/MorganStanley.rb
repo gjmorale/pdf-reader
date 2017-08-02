@@ -2,11 +2,22 @@ class MS < Institution
 	DIR = "MS"
 	LEGACY = "MStanley"
 	TABLE_OFFSET = 10
+	EQS = [
+		"Morgan Stanley",
+		"Morgan",
+		"Stanley",
+		"MS",
+		"M S"
+	]
 end
 
 Dir[File.dirname(__FILE__) + '/MS/*.rb'].each {|file| require_relative file } 
 
 MS.class_eval do
+
+	def eqs
+		self.class::EQS
+	end
 
 	def dir
 		self.class::DIR

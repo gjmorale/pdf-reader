@@ -3,11 +3,22 @@ class SEC < Institution
 	LEGACY = "Security"
 	TEXT_EXPAND = 0.0
 	TABLE_OFFSET = 20
+	EQS = [
+		"Security",
+		"security",
+		"Sec",
+		"SEC",
+		"sec"
+	]
 end
 
 Dir[File.dirname(__FILE__) + '/SEC/*.rb'].each {|file| require_relative file } 
 
 SEC.class_eval do
+
+	def eqs
+		self.class::EQS
+	end
 
 	def dir
 		self.class::DIR

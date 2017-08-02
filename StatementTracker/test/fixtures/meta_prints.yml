@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  creator: MyString
+  producer: MyString
+  bank: one
+
+two:
+  creator: MyString
+  producer: MyString
+  bank: two

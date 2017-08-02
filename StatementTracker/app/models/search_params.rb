@@ -99,7 +99,7 @@ class SearchParams
 		end
 		if date_to
 			d_t, m_t, y_t = date_to.split('-').map{|d| d.to_i}
-			#Check border case ej: mar-31 -> (mar-35 or apr-0)
+			#TODO: Check border case ej: mar-31 -> (mar-35 or apr-0)
 			date = y_t*433+m_t*36+d_t
 			query = query.where("sequences.year*433+sequences.month*36+(sequences.week*7-sequences.week%7)+sequences.day <= ?", date)
 		end

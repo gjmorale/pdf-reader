@@ -43,6 +43,28 @@ module FileManager
 		return false
 	end
 
+	def self.mv_file file, path
+		return nil unless file and path
+		return true if file == path
+		safe = false
+		begin
+			FileUtils.mkdir_p(File.dirname(path)) unless Dir.exist? File.dirname(path)
+			if Dir.exist? File.dirname(path)
+				FileUtils.cp(file, path)
+				if File.exist? path
+					FileUtils.rm(file)
+					if Dir["#{File.dirname(file)}/**/*.pdf"].size == 0
+						FileUtils.rm_r File.dirname(file)
+					end
+					safe = true
+				end
+			end
+		rescue StandardError => e
+			return nil
+		end
+		return safe
+	end
+
 	def self.get_raw_dir raw_path
 		file = FileManager.output(raw_path)
 		return file if Dir.exist? file
@@ -70,7 +92,7 @@ module FileManager
 	end
 
 	def self.read_new client = nil
-		sub = "**"
+		sub = "*"
 		if client
 			if client.is_a? Integer
 				client = Client.find(client)
@@ -81,7 +103,138 @@ module FileManager
 			end
 		end
 		sub = client.name if client
+		puts "READING..."
+		puts Paths::INPUT + "/#{sub}/*.pdf"
+		puts Dir[Paths::INPUT + "/#{sub}/*.pdf"]
 		return FileMeta.classify_files Dir[Paths::INPUT + "/#{sub}/*.pdf"]
 	end
+
+	def self.learn_from_seeds
+		dirs = Dir[Paths::SEED + "/*"]
+		dirs = dirs.map{|d| [d, match_bank_by_path(d)]}.reject{|r| r[1].nil?}
+		learnt = []
+		dirs.each do |record|
+			files = Dir[record[0]+'/*.{pdf,PDF}']
+			files.each do |file|
+				puts file
+				if mp = FileMeta.learn_from(file, record[1])
+					learnt << mp
+					FileUtils.rm file
+				end
+			end
+		end
+		learnt.uniq
+	end
+
+	def self.match_bank_by_path path
+		return nil unless Dir.exist? path
+		return match_bank File.basename(path)
+	end
+
+	def self.match_bank name
+		Bank.all.each do |bank|
+			if bank.reader_bank and bank.reader_bank.dir.eql? name
+				return bank
+			else
+				if bank.code_name.eql? name
+					return bank
+				end
+			end
+		end
+		return nil
+	end
+
+=begin
+OBSOLETE, might be useful later for true tree archiving
+
+	def self.reset_societies
+		seed_socs Society.roots, Paths::SEED, nil
+	end
+
+	def self.seed_socs societies, path, parent
+		info_file = "#{path}/.info"
+		if societies and parent and not File.exist? info_file
+			puts "INFO MISSING #{info_file} #{parent}"
+		elsif parent and File.exist? info_file
+			update_parents info_file, parent
+		end
+		existing_nodes = []
+		original_nodes = Hash.new
+		societies.each do |node|
+			file = "#{path}/#{node.name}"
+			existing_nodes << file
+			original_nodes[file] = node
+			unless File.exist? file
+				FileUtils.mkdir file 
+				register_info node, "#{file}/.info"
+			end
+		end
+		nodes = Dir[path+"/*/"].map{|p| p[0..-2]}
+		diff = nodes - existing_nodes
+		diff.each do |new_node|
+			next unless File.exist? "#{new_node}/.info"
+			name = File.basename new_node
+			node = Society.create(name: name, parent: parent)
+			original_nodes[new_node] = node
+		end
+		has_samples = false
+		nodes.each do |node|
+			puts "#{File.basename node} IS A NODE? #{File.exist? "#{node}/.info"}"
+			if File.exist? "#{node}/.info"
+				parent = original_nodes[node]
+				children = parent.children
+				seed_socs children, node, parent
+			else
+				has_samples = true
+			end
+		end
+		learn_from path if has_samples
+	end
+
+	def self.update_parents info_file, parent
+		info = YAML.load_file(info_file)
+		puts "READING #{parent}"
+		if not info
+			info = {updated_at: DateTime.now - 4.hours}
+		elsif info[:updated_at].nil? or info[:updated_at] < File.mtime(info_file) - 4.hours
+			info[:updated_at] = DateTime.now - 4.hours
+			if info[:taxes]
+				info[:taxes].each do |tax|
+					bank = match_bank tax[:bank]
+					new_tax = Tax.where(bank: bank, society: parent).first_or_create
+					new_tax.update_attributes(tax[:attributes])
+				end
+			end
+			if info[:attributes]
+				parent.update_attributes(info[:attributes])
+			end
+		end
+		puts "READ #{parent} with #{parent.taxes.size}"
+		register_info parent, info_file
+	end
+
+	def self.register_info node, path
+		if node.valid?
+			info = {updated_at: DateTime.now - 4.hours}
+			info[:attributes] = Hash.new
+			info[:attributes][:name] = node.name if node.name?
+			info[:attributes][:rut] = node.rut if node.rut?
+			if node.taxes.any?
+				info[:taxes] = []
+				node.taxes.each do |tax|
+					tax_hash = Hash.new
+					tax_hash[:bank] = tax.bank.code_name
+					tax_hash[:attributes] = Hash.new
+					tax_hash[:attributes][:quantity] = tax.quantity
+					tax_hash[:attributes][:periodicity] = tax.periodicity
+					info[:taxes] << tax_hash
+				end
+			end
+			puts "WRITTING #{node}"
+			puts info
+			File.open(path, 'w') { |fo| fo.puts info.to_yaml }
+		end
+	end
+=end
 
 end
