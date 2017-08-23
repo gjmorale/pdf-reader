@@ -78,6 +78,7 @@ PER.class_eval do
 
 		def set_date months, value
 			date = value.split('-')[1].gsub(',','').split(' ').map{|s| s.strip}
+			date_start = value.split('-')[0].gsub(',','').split(' ').map{|s| s.strip}
 			month = -1
 			months.each do |reg|
 				if date[0].match reg[1]
@@ -88,13 +89,16 @@ PER.class_eval do
 			day = date[1]
 			year = date[2]
 			@date_out = "#{day}-#{month}-#{year}"
+			date_f = @date_out
+			date_i = "#{date_start[1]}-#{month}-#{year}"
 			puts (month == -1 ? @date_out.red : @date_out)
+			return [date_i, date_f]
 		end
 
 		def analyse_index file
 			@reader = Reader.new(self, file)
 			owner = nil
-			set_date Institution::M_ALL, @reader.find_text(/[A-Z][a-z]{3,9}\s\d\d?,\s20\d\d - [A-Z][a-z]{3,9}\s\d\d?,\s20\d\d/)
+			d_i, d_f = set_date Institution::M_ALL, @reader.find_text(/[A-Z][a-z]{3,9}\s\d\d?,\s20\d\d - [A-Z][a-z]{3,9}\s\d\d?,\s20\d\d/)
 			header = HeaderField.new("[Monto de la Comisi|Commission Amount:]",1,Setup::Type::LABEL)
 			if header.execute @reader
 				xi = header.left < self.offset ? 0 : header.left + self.offset
@@ -107,7 +111,7 @@ PER.class_eval do
 				owner = header.results[0].result.strings.select{|s| not s.empty?}.first.strip
 				owner = nil if owner.empty?
 			end
-			return [owner, @date_out]
+			return [owner, d_i, d_f]
 		end
 
 		def analyse_position file

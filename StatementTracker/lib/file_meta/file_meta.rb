@@ -1,62 +1,5 @@
 module FileMeta
 
-=begin
-	module FileMeta::Map
-		NOT_FOUND = "Banco no encontrado".freeze
-		FULL = [
-			["BC",/Acrobat PDFWriter 5\.0 para Windows NT/, /Aplicaci.+n Mantenedores ADC - \[Procesos de Cierre\]/],
-			["BC",/Apache FOP Version 1\.0/, /Apache FOP Version 1\.0/],
-			["BC",/Mac OS X 10\.10\.2 Quartz PDFContext/, /Apache FOP Version 1\.0/],
-			["BC",/GPL Ghostscript 9\.05/, /PDFCreator Version 1\.5\.1/],
-			["BC",/GPL Ghostscript 9\.10/, /PDFCreator Version 1\.7\.3/],
-			["CrediCorp",/Mac OS X 10\.10\.2 Quartz PDFContext/, /wkhtmltopdf 0\.12\.3\.1/],
-			["CrediCorp",/modified using iTextSharp/, /wkhtmltopdf 0\.12\.3\.1/],
-			["CrediCorp",/Mac OS X 10\.10\.2 Quartz PDFContext/, /wkhtmltopdf 0\.12\.3\.1/],
-			["CrediCorp",/Qt 4\.8\.7"/, /wkhtmltopdf 0\.12\.3\.1/],
-			["HSBC",/Actuate XML to PDF Converter 1\.0/, /Actuate/],
-			["MON", /ComponentOne PDF Generator 8.0/,/^$/],
-			["MS",//, /Morgan Stanley/i],
-			["PER",/303l Linux \(64bit\)/, /Ricoh Production Print Solutions Afp2Pdf Version: 303l/],
-			["SEC",/Adobe LiveCycle Output 8\.2/, /Adobe LiveCycle Output 8\.2/],
-			["SEC",/Mac OS X 10\.10\.2 Quartz PDFContext/, /Adobe LiveCycle Output 8\.2/]
-		]
-		IGNORE = [
-			["MS",/PDFlib 7\.0\.4p3 \(zSeries USS\)/, /Designer 11\.0\.13 Build: 181/],
-			["CITI",/Mac OS X 10\.10\.2 Quartz PDFContext/, /Papyrus Server/],
-			["CITI",/"PDFium"/, /"PDFium"/],
-			["CITI",/Mac OS X 10\.10\.2 Quartz PDFContext/, /PDFium/],
-			["CITI",/"iText 2\.1\.0 \(by lowagie\.com\)"/, /^$/],
-			["EA",/iText 2\.1\.7 by 1T3XT/, /JasperReports \(InfoCarteraMasterPag1_H\)/],
-			["LV",/Powered By Crystal/, /Crystal Reports/],
-			["LV",/Mac OS X 10\.10\.2 Quartz PDFContext/, /Crystal Reports/],
-			["LV",/iTextSharp 4\.1\.2 \(based on iText 2\.1\.2u\)/, /^$/],
-			["LV",/Mac OS X 10\.10\.2 Quartz PDFContext/, /^$/],
-			["LV",/iText 2\.1\.7 by 1T3XT/, /JasperReports Library version 5\.6\.1/],
-			["LV",/Mac OS X 10\.10\.2 Quartz PDFContext/, /JasperReports Library version 5\.6\.1/],
-			["LV",/Toolkit http:\/\/www\.activepdf\.com/, /Toolkit http:\/\/www\.activepdf\.com/],
-			["LV",/Mac OS X 10\.10\.2 Quartz PDFContext/, /PaperPort 12/],
-			["LV",/Mac OS X 10\.10\.2 Quartz PDFContext/, /Toolkit http:\/\/www\.activepdf\.com/],
-			["MBI",/iTextSharp.+ 5\.4\.1 .+2000-2012 1T3XT BVBA \(AGPL-version\)/, /^$/],
-			["MBI",/phpToPDF\.com/, /phpToPDF\.com/],
-			["MBI",/Mac OS X 10\.10\.2 Quartz PDFContext/, /phpToPDF\.com/],
-			["BTG",/iText 2\.1\.7 by 1T3XT/, /JasperReports \(OnlineNormal\)/],
-			["FIDELITY",/303m z\/OS USS \(64bit\)/, /Ricoh Production Print Solutions Afp2Pdf Version: 303m/],
-			["BICE",/Stimulsoft Reports/, /Stimulsoft Reports 2013\.1\.1600 from 2 April 2013/],
-			["SANTANDER",/aspEasyPDF 3\.30 http:\/\/www\.mitdata\.com/, /^$/],
-			["BCI",/GPL Ghostscript 9\.04/, /PDFCreator Version 1\.2\.3/]
-		]
-		CONFLICT = [
-			[
-				[
-					["SEC",/VALORES SECURITY/],
-					["BC",/BANCHILE/],
-					["BCI",/BCI/]
-				],
-			/.*/, /.*/]
-		]
-	end
-=end
-
 	def self.classify_files files
 		files_out = []
 		files.each.with_index do |file, i|
@@ -206,3 +149,61 @@ module FileMeta
 		learnt
 	end
 end
+
+=begin
+	# OLD MAPPING
+	module FileMeta::Map
+		NOT_FOUND = "Banco no encontrado".freeze
+		FULL = [
+			["BC",/Acrobat PDFWriter 5\.0 para Windows NT/, /Aplicaci.+n Mantenedores ADC - \[Procesos de Cierre\]/],
+			["BC",/Apache FOP Version 1\.0/, /Apache FOP Version 1\.0/],
+			["BC",/Mac OS X 10\.10\.2 Quartz PDFContext/, /Apache FOP Version 1\.0/],
+			["BC",/GPL Ghostscript 9\.05/, /PDFCreator Version 1\.5\.1/],
+			["BC",/GPL Ghostscript 9\.10/, /PDFCreator Version 1\.7\.3/],
+			["CrediCorp",/Mac OS X 10\.10\.2 Quartz PDFContext/, /wkhtmltopdf 0\.12\.3\.1/],
+			["CrediCorp",/modified using iTextSharp/, /wkhtmltopdf 0\.12\.3\.1/],
+			["CrediCorp",/Mac OS X 10\.10\.2 Quartz PDFContext/, /wkhtmltopdf 0\.12\.3\.1/],
+			["CrediCorp",/Qt 4\.8\.7"/, /wkhtmltopdf 0\.12\.3\.1/],
+			["HSBC",/Actuate XML to PDF Converter 1\.0/, /Actuate/],
+			["MON", /ComponentOne PDF Generator 8.0/,/^$/],
+			["MS",//, /Morgan Stanley/i],
+			["PER",/303l Linux \(64bit\)/, /Ricoh Production Print Solutions Afp2Pdf Version: 303l/],
+			["SEC",/Adobe LiveCycle Output 8\.2/, /Adobe LiveCycle Output 8\.2/],
+			["SEC",/Mac OS X 10\.10\.2 Quartz PDFContext/, /Adobe LiveCycle Output 8\.2/]
+		]
+		IGNORE = [
+			["MS",/PDFlib 7\.0\.4p3 \(zSeries USS\)/, /Designer 11\.0\.13 Build: 181/],
+			["CITI",/Mac OS X 10\.10\.2 Quartz PDFContext/, /Papyrus Server/],
+			["CITI",/"PDFium"/, /"PDFium"/],
+			["CITI",/Mac OS X 10\.10\.2 Quartz PDFContext/, /PDFium/],
+			["CITI",/"iText 2\.1\.0 \(by lowagie\.com\)"/, /^$/],
+			["EA",/iText 2\.1\.7 by 1T3XT/, /JasperReports \(InfoCarteraMasterPag1_H\)/],
+			["LV",/Powered By Crystal/, /Crystal Reports/],
+			["LV",/Mac OS X 10\.10\.2 Quartz PDFContext/, /Crystal Reports/],
+			["LV",/iTextSharp 4\.1\.2 \(based on iText 2\.1\.2u\)/, /^$/],
+			["LV",/Mac OS X 10\.10\.2 Quartz PDFContext/, /^$/],
+			["LV",/iText 2\.1\.7 by 1T3XT/, /JasperReports Library version 5\.6\.1/],
+			["LV",/Mac OS X 10\.10\.2 Quartz PDFContext/, /JasperReports Library version 5\.6\.1/],
+			["LV",/Toolkit http:\/\/www\.activepdf\.com/, /Toolkit http:\/\/www\.activepdf\.com/],
+			["LV",/Mac OS X 10\.10\.2 Quartz PDFContext/, /PaperPort 12/],
+			["LV",/Mac OS X 10\.10\.2 Quartz PDFContext/, /Toolkit http:\/\/www\.activepdf\.com/],
+			["MBI",/iTextSharp.+ 5\.4\.1 .+2000-2012 1T3XT BVBA \(AGPL-version\)/, /^$/],
+			["MBI",/phpToPDF\.com/, /phpToPDF\.com/],
+			["MBI",/Mac OS X 10\.10\.2 Quartz PDFContext/, /phpToPDF\.com/],
+			["BTG",/iText 2\.1\.7 by 1T3XT/, /JasperReports \(OnlineNormal\)/],
+			["FIDELITY",/303m z\/OS USS \(64bit\)/, /Ricoh Production Print Solutions Afp2Pdf Version: 303m/],
+			["BICE",/Stimulsoft Reports/, /Stimulsoft Reports 2013\.1\.1600 from 2 April 2013/],
+			["SANTANDER",/aspEasyPDF 3\.30 http:\/\/www\.mitdata\.com/, /^$/],
+			["BCI",/GPL Ghostscript 9\.04/, /PDFCreator Version 1\.2\.3/]
+		]
+		CONFLICT = [
+			[
+				[
+					["SEC",/VALORES SECURITY/],
+					["BC",/BANCHILE/],
+					["BCI",/BCI/]
+				],
+			/.*/, /.*/]
+		]
+	end
+=end

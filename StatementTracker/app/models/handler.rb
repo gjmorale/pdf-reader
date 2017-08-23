@@ -27,8 +27,6 @@ class Handler < ApplicationRecord
 		puts "#{statement.file_name} CHANGING TO INDEX WITH BANK_ID #{bank_id}"
 		StatementStatus.change_state :index, statement do
 			statement.bank_id = bank_id if bank_id
-			date = nil
-			date = statement.d_close || statement.d_filed || Date.current-1.month
 			owner, date_i, date_f = statement.bank.reader_bank.index statement.set_raw
 			statement.d_open = date_i
 			statement.d_close = date_f

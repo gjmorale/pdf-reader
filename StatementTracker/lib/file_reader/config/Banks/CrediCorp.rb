@@ -79,8 +79,11 @@ CrediCorp.class_eval do
 				date = Date.strptime(value1, "%d-%m-%Y")
 				day = date.next_month.prev_day.day
 			end
+			date_i = Date.strptime(value1, "%d-%m-%Y")
+			date_f = Date.strptime(value2, "%d-%m-%Y")
 			@date_out = "#{day}-#{month}-#{year}"
 			puts @date_out
+			return [date_i, date_f]
 		end
 
 		def analyse_index file
@@ -95,8 +98,8 @@ CrediCorp.class_eval do
 			f_desde.execute @reader
 			f_hasta = SingleField.new("Hasta",[Setup::Type::DATE])
 			f_hasta.execute @reader
-			set_date f_desde.results[0].result, f_hasta.results[0].result
-			return [owner, @date_out]
+			f_i, f_f = set_date f_desde.results[0].result, f_hasta.results[0].result
+			return [owner, f_i, f_f]
 		end
 
 		def analyse_position file

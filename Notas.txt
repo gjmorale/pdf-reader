@@ -40,3 +40,12 @@ Read-Only Google Spreadsheet Embed
 <iframe src="https://docs.google.com/a/quaam.cl/spreadsheets/d/1UTKsrl2TweHJ7baKgeMTnl2tbD1rM0dEiCg9qrZmXhI/edit?usp=sharing&widget=true&amp;headers=false"></iframe>
 https://docs.google.com/a/quaam.cl/spreadsheets/d/1UTKsrl2TweHJ7baKgeMTnl2tbD1rM0dEiCg9qrZmXhI/edit?usp=sharing
 
+
+
+
+REVIEW
+
+Solo cartolas en las hojas del arbol
+
+Interfaz de carga de archivos
+

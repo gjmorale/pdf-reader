@@ -69,19 +69,23 @@ SEC.class_eval do
 		def set_date value
 			day, month, year = value[value.rindex(' ')..-1].split('-')
 			@date_out = "#{day}-#{month}-#{year}".strip
+			date_f = @date_out
+			day, month, year = value[value.index('el ')+3..value.index(' al ')-1].split('-')
+			date_i = "#{day}-#{month}-#{year}"
 			puts @date_out
+			return [date_i, date_f]
 		end
 
 		def analyse_index file
 			@reader = Reader.new(self, file)
 			owner = nil
-			set_date @reader.find_text(/ al \d{2}-\d{2}-\d{4}/i)
+			d_i, d_f = set_date @reader.find_text(/desde el \d{2}-\d{2}-\d{4} al \d{2}-\d{2}-\d{4}/i)
 			field = SingleField.new("Nombre :",[Setup::Type::LABEL],3,Setup::Align::LEFT)
 			if field.execute @reader
 				owner = field.results[0].result.inspect.strip
 				owner = nil if owner.empty?
 			end
-			return [owner, @date_out]
+			return [owner, d_i, d_f]
 		end
 
 		def analyse_position file

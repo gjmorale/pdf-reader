@@ -70,7 +70,11 @@ MON.class_eval do
 			value = value.strip
 			day, month, year = value.split('/')
 			@date_out = "#{day}-#{month}-#{year}".strip
+			date_f = @date_out
+			date_i = Date.new(year.to_i, month.to_i, 1)
+			str_i = "#{date_i.day}-#{date_i.month}-#{date_i.year}"
 			puts @date_out
+			return [date_i, str_f]
 		end
 
 		def analyse_index file
@@ -83,8 +87,8 @@ MON.class_eval do
 			end
 			date_field = SingleField.new("Fecha:",[Setup::Type::DATE])
 			date_field.execute @reader
-			set_date date_field.results[0].result
-			return [owner, @date_out]
+			d_i, d_f = set_date date_field.results[0].result
+			return [owner, d_i, d_f]
 		end
 
 		def analyse_position file

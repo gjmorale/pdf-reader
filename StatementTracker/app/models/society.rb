@@ -54,7 +54,9 @@ class Society < ApplicationRecord
 	def self.filter params
 		query = Society.all
 		query = query.left_outer_joins(taxes: [sequences: [statements: :status]])
-		params.filter query
+		aux = params.filter query
+		puts aux.inspect
+		aux
 	end
 
 	def filter params

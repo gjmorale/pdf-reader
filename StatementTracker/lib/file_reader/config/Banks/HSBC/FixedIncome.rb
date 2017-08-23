@@ -16,7 +16,7 @@ class HSBC::FixedIncome < HSBCAssetTable
 			headers << HeaderField.new(["Mkt. value","incl. accr. int."], headers.size, BankUtils.to_arr(Setup::Type::AMOUNT, 2), false, 4)
 			headers << HeaderField.new(["Mkt. value (USD)","incl. accr. int."], headers.size, BankUtils.to_arr(Setup::Type::AMOUNT, 2), false, 4)
 			headers << HeaderField.new(["Unr. P&L","incl. FX"], headers.size, BankUtils.to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
-			headers << HeaderField.new(["% Acc.","% FI"], headers.size, BankUtils.to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
+			headers << HeaderField.new(['% Acc.','% FI'], headers.size, BankUtils.to_arr(Setup::Type::PERCENTAGE, 2), false, 4)
 		@total = SingleField.new("Total Fixed Income",[Setup::Type::AMOUNT,
 			Setup::Type::PERCENTAGE])
 		@offset = [Field.new("Fixed Income Mutual Funds"), Field.new("Bonds")]

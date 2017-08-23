@@ -79,15 +79,19 @@ MS.class_eval do
 					break
 				end
 			end
-			day = value[value.index('-')+1..value.index(',')-1]
+			day_f = value[value.index('-')+1..value.index(',')-1]
+			day_i = value[value.index(' ')+1..value.index('-')-1]
 			year = value[value.rindex(' ')+1..-1].strip
-			@date_out = "#{day}-#{month}-#{year}"
+			@date_out = "#{day_f}-#{month}-#{year}"
+			date_i = @date_out
+			date_f = "#{day_i}-#{month}-#{year}"
+			return [date_i, date_f]
 		end
 
 		def analyse_index file
 			@reader = Reader.new(self, file)
 			owner = nil
-			set_date @reader.find_text(/[A-Z][a-z]+\ \d{1,2}\-\d{1,2}\,\ 20\d{2}/i)
+			d_i, d_f = set_date @reader.find_text(/[A-Z][a-z]+\ \d{1,2}\-\d{1,2}\,\ 20\d{2}/i)
 			header = HeaderField.new("[STATEMENT PACKAGE FOR:|STATEMENT FOR:]",1,Setup::Type::LABEL)
 			if header.execute @reader
 				xi = header.left < self.offset ? 0 : header.left + self.offset
@@ -100,7 +104,7 @@ MS.class_eval do
 				owner = header.results[0].result.inspect.strip
 				owner = nil if owner.empty?
 			end
-			return [owner, @date_out]
+			return [owner, d_i, d_f]
 		end
 
 		def analyse_position file
