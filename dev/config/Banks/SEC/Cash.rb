@@ -15,8 +15,18 @@ class SEC::Cash < SECAssetTable
 			3, Setup::Align::LEFT)
 		@page_end = 		Field.new("Página ")
 		@price_default =	1.0
-		@quantity_index = 	4
-		@value_index = 		4
+		@quantity_index = 	3
+		@value_index = 		3
 		@total_index = 		0
+	end
+
+	def pre_check_do positions
+		in_usd = positions.select{|p| p.name =~ /En Dolar/i }
+		if in_usd.any?
+			in_usd.each do |p|
+				p.price = "USD"
+			end
+			@total = nil
+		end
 	end
 end

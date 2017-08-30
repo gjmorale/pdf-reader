@@ -44,7 +44,8 @@ MESES = [[1, /ene/i],
 		accounts.reverse_each do |acc|
 			file.write("#{acc.code};;;Total;;;;#{acc.value_s}\n")
 			acc.positions.each do |pos|
-				file.write("#{acc.code};#{legacy_code};#{date_out};#{pos.print}")
+				code = acc.code || pos.code
+				file.write("#{code};#{legacy_code};#{date_out};#{pos.print}")
 			end
 		end
 		file.write(";;;Total;;;;#{total_s}\n")

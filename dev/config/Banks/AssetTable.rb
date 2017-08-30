@@ -125,13 +125,13 @@ class AssetTable
 
 	def new_position titles, quantity, price, value, ai
 		quantity = BankUtils.to_number(quantity, spanish)
-		price = BankUtils.to_number(price, spanish)
+		#price = BankUtils.to_number(price, spanish)
+		price = @alt_currency ? @alt_currency.to_s.upcase : "CLP"
 		value = BankUtils.to_number(value, spanish)
 		ai = BankUtils.to_number(ai, spanish)
-		price *= @@alt_currs[@alt_currency.to_sym] if @alt_currency
-		value *= @@alt_currs[@alt_currency.to_sym] if @alt_currency
+		alt_value = value*@@alt_currs[@alt_currency.to_sym] if @alt_currency
 		titles[1] ||= ""
-		titles[1] << "[Obtenido con #{@alt_currency} a $#{@@alt_currs[@alt_currency.to_sym].round(3)}]" if @alt_currency
+		titles[1] << "[Estimado a #{alt_value} en #{@alt_currency} a $#{@@alt_currs[@alt_currency.to_sym].round(3)}]" if @alt_currency
 		puts "POS: #{titles[0]} : #{value} + #{ai}".yellow if verbose
 		Position.new(titles[0], 
 			quantity, 
@@ -158,9 +158,9 @@ class AssetTable
 		pre_check_do new_positions
 		puts "Pre-Check  reader #{@reader}" if verbose
 		table_total = (total and total.execute(@reader)) ? BankUtils.to_number(total.results[total_index].result, spanish) : nil
-		table_total *= @@alt_currs[@alt_currency.to_sym] if table_total and @alt_currency
+		#table_total *= @@alt_currs[@alt_currency.to_sym] if table_total and @alt_currency
 		ai_total = (table_total and total_ai_index) ? BankUtils.to_number(BankUtils.to_ai(total.results[total_ai_index].result), spanish) : nil
-		ai_total *= @@alt_currs[@alt_currency.to_sym] if ai_total and @alt_currency
+		#ai_total *= @@alt_currs[@alt_currency.to_sym] if ai_total and @alt_currency
 		table_total += ai_total if table_total and ai_total
 		total.print_results if verbose and table_total
 		puts "Post-Check reader #{@reader}" if verbose

@@ -45,6 +45,12 @@ class SECTransactionTable < SECAssetTable
 		if c =~ /(Venta|Rescate|Sorteo)/i
 			hash[:concepto] = 9005
 			hash[:cantidad2] -= hash[:delta]
+		elsif c =~ /(Retiro)/i
+			hash[:concepto] = 9002
+			hash[:cantidad2] -= hash[:delta]
+		elsif c =~ /(Aporte)/i
+			hash[:concepto] = 9001
+			hash[:cantidad2] += hash[:delta]
 		elsif c =~ /(Compra|Inversi.n)/i
 			hash[:concepto] = 9004
 			hash[:cantidad2] += hash[:delta]
