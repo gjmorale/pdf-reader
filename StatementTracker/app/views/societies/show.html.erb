@@ -1,5 +1,3 @@
-<p id="notice"><%= notice %></p>
-
 <p>
   <strong>Name:</strong>
   <%= @society.name %>
@@ -10,30 +8,94 @@
   <%= @society.rut %>
 </p>
 
+<% unless @society.root? %>
 <p>
   <strong>Parent:</strong>
-  <%= @society.root? ? "Root" : @society.parent.name %>
+  <%= link_to @society.parent.name, @society.parent %>
 </p>
+<% end %>
 
 <p>
+
+<% if @society.leaf? or @society.root? %>
   <strong>Taxes:</strong>
   <ul>
-  	<% @society.taxes.each do |tax| %>
-  	<li>
-  		<%= tax.bank %>:
-  		<%= pluralize(tax.quantity, "statement") %>
-  		<%= tax.periodicity %>
-  		<%= link_to "Edit", edit_tax_path(tax) %>
-        <%= link_to 'X', tax, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-  	</li>
-  	<% end %>
+    <% @society.taxes.each do |tax| %>
+      <li>
+        <%= tax.bank %>:
+        <%= pluralize(tax.quantity, "statement") %>
+        <%= tax.periodicity %>
+        <%= link_to "Edit", edit_tax_path(tax) %>
+        <%= link_to 'X', tax, method: :delete, data: { confirm: 'Are you sure?' } %>
+      </li>
+    <% end %>
   </ul>
+
+  <div>
+    <strong>New Tax:</strong>
+    <%= form_for @society do |f| %>
+    <%= f.fields_for :taxes, @society.taxes.build do |t| %>
+      <div class="field">
+        <%= t.label :bank_id %>
+        <%= t.collection_select(:bank_id, Bank.all, :id, :name) %>
+        <%= t.label :periodicity %>
+        <%= t.select :periodicity, Tax::Periodicity::ALL.map{|p| [p,p]} %>
+      </div>
+      <div class="field">
+        <%= t.label :quantity %>
+        <%= t.number_field :quantity %>
+        <%= t.label :optional %>
+        <%= t.number_field :optional %>
+      </div>
+      <div class="field">
+        <%= t.label :source_path %>
+        <%= t.text_field :source_path, placeholder: @society.path %>
+      </div>
+    <% end %>
+    <div class="actions">
+      <%= f.submit "Create Tax" %>
+    </div>
+    <% end %>    
+  </div>
+<% end %> 
+
+<% if @society.taxes.count == 0 %>
+  <% if @society.children.any? %>
+    <strong>Societies:</strong>
+    <ul>
+      <% @society.children.each do |child| %>
+        <li>
+          <%= link_to child.name, child %>
+          <%= child.rut %>
+          <%= link_to 'X', child, method: :delete, data: { confirm: 'Are you sure?' } %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <div>
+    <strong>New Society:</strong>
+    <%= form_for @society do |f| %>
+    <%= f.fields_for :children, @society.children.build do |t| %>
+      <div class="field">
+        <%= t.label :name %>
+        <%= t.text_field :name %>
+      </div>
+      <div class="field">
+        <%= t.label :rut %>
+        <%= t.text_field :rut %>
+      </div>
+    <% end %>
+    <div class="actions">
+      <%= f.submit "Create Society" %>
+    </div>
+    <% end %>
+  </div>
+<% end %> 
+
 </p>
 
-<div>
-  <strong>New Tax:</strong>
-  <%= render 'taxes/form', tax: @society.taxes.build %>
-</div>
+
 
 <%= link_to 'Edit', edit_society_path(@society) %> |
 <%= link_to 'Back', societies_path %>

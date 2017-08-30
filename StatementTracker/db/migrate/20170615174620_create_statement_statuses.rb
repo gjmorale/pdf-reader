@@ -4,6 +4,7 @@ class CreateStatementStatuses < ActiveRecord::Migration[5.0]
       t.integer :code
       t.integer :progress
       t.string :message
+      t.string :description
 
       t.timestamps
     end

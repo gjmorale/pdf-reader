@@ -1,14 +1,12 @@
-<p id="notice"><%= notice %></p>
-
 <h1>Societies</h1>
 
-<%= render 'search_form', search_params: @search_params %>
-
-<div id="nested-container">
+<ul>
   <% @societies.each do |society| %>
-    <%= render 'node', element: society, scope: @search_params %>
+    <li>
+    	<%= link_to society.name, society %>
+    </li>
   <% end %>
-</div>
+</ul>
 
 <br>
 

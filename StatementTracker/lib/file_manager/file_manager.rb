@@ -1,11 +1,26 @@
 module FileManager
 
+	module FileFormats
+		PDF = ["pdf","PDF"]
+		XLS = ["xlsx","XLSX"]
+		IMAGE = ["jpg","jpeg","png"]
+		ALL = [
+			PDF,
+			XLS,
+			IMAGE
+		].flatten
+	end
+
+	def self.digest_this file
+		Digest::MD5.file(file).hexdigest
+	end
+
 	def self.get_file path, hash
 		return false unless path and hash
 		name = File.basename path, '.pdf'
 		if File.exist?(file = Paths::DROPBOX + "#{path}")
 		#CASE: Path is right
-			digest = Digest::MD5.file(file).hexdigest
+			digest = digest_this file
 			if hash.eql? digest
 				#CASE: Hash matches
 				return file
@@ -27,6 +42,7 @@ module FileManager
 				digest = Digest::MD5.file(file).hexdigest
 				if hash.eql? digest
 				#CASE: File moved but not renamed
+					raise IOError, "Unhandled File Location for File: #{path}"
 					return file
 				end
 			end
@@ -34,6 +50,7 @@ module FileManager
 				digest = Digest::MD5.file(file).hexdigest
 				if hash.eql? digest
 				#CASE: File was moved and renamed
+					raise IOError, "Unhandled File Location for File: #{path}"
 					return file
 				end
 			end
@@ -41,28 +58,6 @@ module FileManager
 		#Catch other cases
 		raise IOError, "#{path} : #{hash} NO MATCH"
 		return false
-	end
-
-	def self.mv_file file, path
-		return nil unless file and path
-		return true if file == path
-		safe = false
-		begin
-			FileUtils.mkdir_p(File.dirname(path)) unless Dir.exist? File.dirname(path)
-			if Dir.exist? File.dirname(path)
-				FileUtils.cp(file, path)
-				if File.exist? path
-					FileUtils.rm(file)
-					if Dir["#{File.dirname(file)}/**/*.pdf"].size == 0
-						FileUtils.rm_r File.dirname(file)
-					end
-					safe = true
-				end
-			end
-		rescue StandardError => e
-			return nil
-		end
-		return safe
 	end
 
 	def self.get_raw_dir raw_path
@@ -91,59 +86,14 @@ module FileManager
 		return true
 	end
 
-	def self.read_new client = nil
-		sub = "*"
-		if client
-			if client.is_a? Integer
-				client = Client.find(client)
-			elsif client.is_a? Client
-				client = client
-			elsif client.is_a? String
-				client = Client.find_by(name: client)
-			end
-		end
-		sub = client.name if client
-		puts "READING..."
-		puts Paths::INPUT + "/#{sub}/*.pdf"
-		puts Dir[Paths::INPUT + "/#{sub}/*.pdf"]
-		return FileMeta.classify_files Dir[Paths::INPUT + "/#{sub}/*.pdf"]
+	def self.load_from path, date_from, date_to
+		dbox_path = Paths::DROPBOX + '/' + path
+		return false unless Dir.exist? dbox_path
+		files = Dir[dbox_path + "/**/*.{#{FileFormats::ALL.join(',')}}"]
+		files.select{|f| File.mtime(f) >= date_from and File.mtime(f) <= date_to }
 	end
 
-	def self.learn_from_seeds
-		dirs = Dir[Paths::SEED + "/*"]
-		dirs = dirs.map{|d| [d, match_bank_by_path(d)]}.reject{|r| r[1].nil?}
-		learnt = []
-		dirs.each do |record|
-			files = Dir[record[0]+'/*.{pdf,PDF}']
-			files.each do |file|
-				puts file
-				if mp = FileMeta.learn_from(file, record[1])
-					learnt << mp
-					FileUtils.rm file
-				end
-			end
-		end
-		learnt.uniq
-	end
-
-	def self.match_bank_by_path path
-		return nil unless Dir.exist? path
-		return match_bank File.basename(path)
-	end
-
-	def self.match_bank name
-		Bank.all.each do |bank|
-			if bank.reader_bank and bank.reader_bank.dir.eql? name
-				return bank
-			else
-				if bank.code_name.eql? name
-					return bank
-				end
-			end
-		end
-		return nil
-	end
-
+end
 =begin
 OBSOLETE, might be useful later for true tree archiving
 
@@ -236,5 +186,3 @@ OBSOLETE, might be useful later for true tree archiving
 		end
 	end
 =end
-
-end

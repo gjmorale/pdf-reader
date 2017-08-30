@@ -1,9 +1,15 @@
 <p id="notice"><%= notice %></p>
 
+<%= render 'search_form', search_params: @search_params %>
+
 <h1>Statements</h1>
-
-<%= render 'statements/all/checklist', statements: @statements, commit: [StatementsCommit::RELOAD] %>
-
+  <% @societies.each do |society| %>
+    <%= render 'societies/node', element: society, scope: @search_params %>
+  <% end %>
 <br>
 
-<%= link_to 'New Statements', new_statement_path %>
+<%= form_tag reload_statements_path, method: :post do %>
+	<%= date_field_tag :reload_from, Date.new(2017,6,1) %>
+	<%= date_field_tag :reload_to, Date.current %>
+	<%= submit_tag 'Load Statements' %>
+<% end %>

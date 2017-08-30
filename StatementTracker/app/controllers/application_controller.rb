@@ -4,8 +4,12 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
 
     def set_search_params
-      @search_params = SearchParams.deserialize cookies[:search]
-      puts "SEARCH: #{@search_params.inspect}"
+      @search_params ||= SearchParams.deserialize cookies[:search]
+    end
+
+    def search_params
+      @search_params = SearchParams.new(params[:search_params])
+      cookies[:search] = {value: @search_params.serialize, expires: 10.hours.from_now}
     end
 
 	protected

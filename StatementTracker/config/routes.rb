@@ -17,6 +17,8 @@ Rails.application.routes.draw do
 
   resources :statements do 
     collection do
+      post :filter, action: :filter
+      post :reload
       post :all, constraints: StatementsCommit.new(StatementsCommit::RELOAD), action: :reload_statements, controller: :handlers
       post :all, constraints: StatementsCommit.new(StatementsCommit::AUTO), action: :auto_statements, controller: :handlers
       post :all, constraints: StatementsCommit.new(StatementsCommit::INDEX), action: :index_statements, controller: :handlers
@@ -46,9 +48,6 @@ Rails.application.routes.draw do
     end
   end
   resources :societies do 
-    collection do
-      post :filter, action: :filter
-    end
     member do
       get :times, action: :time_nodes
       get :ifs, action: :if_nodes

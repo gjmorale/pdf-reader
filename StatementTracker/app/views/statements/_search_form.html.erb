@@ -1,0 +1,50 @@
+<%= form_for search_params, url: filter_statements_url do |f| %>
+
+  <div class="field">
+    <%= f.label :date_from %><br>
+    <%= f.number_field "date_from(1i)", in: 2010..Date.current.year, include_blank: true, value: search_params.date(:year_from) %>
+    <%= f.number_field "date_from(2i)", in: 1..12, include_blank: true, value: search_params.date(:month_from) %>
+    <%= f.number_field "date_from(3i)", in: 1..31, include_blank: true, value: search_params.date(:day_from) %>
+  </div>
+
+  <div class="field">
+    <%= f.label :date_to %><br>
+    <%= f.number_field "date_to(1i)", in: 2010..Date.current.year, include_blank: true, value: search_params.date(:year_to) %>
+    <%= f.number_field "date_to(2i)", in: 1..12, include_blank: true, value: search_params.date(:month_to) %>
+    <%= f.number_field "date_to(3i)", in: 1..31, include_blank: true, value: search_params.date(:day_to) %>
+  </div>
+  <br>
+  <div class="field">
+    <%= f.label :periodicities, "Periodicidad" %> </br>
+    <% Tax::Periodicity::ALL.each do |per| %>
+      <%= check_box_tag "search_params[periodicities][]", per, search_params.periodicities.include?(per) %>
+      <%= f.label :periodicities, per %> </br>
+    <% end %> 
+  </div>
+  <br>
+  <div class="field">
+    <%= f.label :ifs, "Instituciones Financieras" %> </br>
+    <% Bank.all.each do |bank| %>
+      <%= check_box_tag "search_params[ifs][]", bank.id, (search_params.ifs and search_params.ifs.include?(bank.id.to_s)) %>
+      <%= f.label :ifs, bank.name %> </br>
+    <% end %> 
+  </div>
+  <div class="field">
+    <%= f.label :handlers, "Handlers" %> </br>
+    <% Handler.all.each do |handler| %>
+      <%= check_box_tag "search_params[handlers][]", handler.id, (search_params.handlers and search_params.handlers.include?(handler.id.to_s)) %>
+      <%= f.label :handler, handler.short_name %> </br>
+    <% end %> 
+  </div>
+  <div class="field">
+    <%= f.label :statuses, "Status" %> </br>
+    <% StatementStatus.all.each do |status| %>
+      <%= check_box_tag "search_params[statuses][]", status.id, (search_params.statuses and search_params.statuses.include?(status.id.to_s)) %>
+      <%= f.label :statuses, status.message %> </br>
+    <% end %> 
+  </div>
+  <br>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

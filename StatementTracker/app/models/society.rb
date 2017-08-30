@@ -3,17 +3,15 @@ class Society < ApplicationRecord
 
   acts_as_tree order: "name"
 
-  has_many :taxes, dependent: :destroy
+  has_many :taxes, dependent: :destroy, inverse_of: :society
   has_many :banks, through: :taxes
   has_many :sequences, through: :taxes
   has_many :statements, through: :sequences
-  has_many :dictionaries, as: :target, dependent: :nullify
+
+  accepts_nested_attributes_for :children, allow_destroy: true
+  accepts_nested_attributes_for :taxes, allow_destroy: true
 
   #validates_uniqueness_of :rut, scope: :name #DANGEROUS IN DEBUG
-
-	def invalid?
-		name.eql? "INVALID"
-	end
 
 	def to_s
 		name
@@ -133,14 +131,10 @@ class Society < ApplicationRecord
 	end
 
 	def path
-		super_soc = this
-		until super_soc.root?
-			path << "/#{super_soc.name}"
-			super_soc = super_soc.parent
-		end
-		path << "#{super_soc.name}"
+		self.ancestors.join('/')
 	end
 
+end
 =begin RECURSIVENESS REQUIRES sql3driver >= 3.8.1
   def descendents
     self_and_descendents - [self]
@@ -172,4 +166,3 @@ class Society < ApplicationRecord
 	    SQL
 	  end
 =end
-end

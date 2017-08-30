@@ -19,15 +19,17 @@ function close_node(id) {
 }
 
 function open_node(id) {
-	console.log($(id).data("toggle")+id)
-	<% @children.each do |child| %>
-		$("#<%= child.js_id %>").remove()
-		$(id).append("<%= j (render @node_template, element: child, scope: @search_params) %>")
-		//$("#<%= child.js_id %>").removeClass('animate-remove')
-		$("#<%= child.js_id %>").slideDown(250)
+	<% if @children.any? %>	
+		console.log($(id).data("toggle")+id)
+		<% @children.each do |child| %>
+			$("#<%= child.js_id %>").remove()
+			$(id).append("<%= j (render @node_template, element: child, scope: @search_params) %>")
+			//$("#<%= child.js_id %>").removeClass('animate-remove')
+			$("#<%= child.js_id %>").slideDown(250)
+		<% end %>
+		$(id).data('toggle','open')
+		$(id).children("span.nested-caret").children("a").html("/\\")
 	<% end %>
-	$(id).data('toggle','open')
-	$(id).children("span.nested-caret").children("a").html("/\\")
 }
 
 

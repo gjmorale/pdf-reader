@@ -1,18 +1,12 @@
 class SocietiesController < ApplicationController
   before_action :set_society, only: [:show, :edit, :update, :destroy, :time_nodes, :if_nodes, :statement_nodes]
   before_action :search_params, only: [:filter]
-  before_action :set_search_params, only: [:index, :show, :time_nodes, :if_nodes, :statement_nodes, :seed]
+  before_action :set_search_params, only: [:show, :time_nodes, :if_nodes, :statement_nodes, :seed]
 
   # GET /societies
   # GET /societies.json
   def index
-    @societies = Society.filter @search_params if @search_params
-    @societies = Society.treefy @societies
-    respond_to do |format|
-      format.html
-      format.js do 
-      end
-    end
+    @societies = Society.all
   end
 
   def filter
@@ -131,12 +125,17 @@ class SocietiesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def society_params
-      params.require(:society).permit(:name, :rut, :parent_id)
-    end
-
-    def search_params
-      @search_params = SearchParams.new(params[:search_params])
-      cookies[:search] = {value: @search_params.serialize, expires: 10.hours.from_now}
-      puts "COOKIES: #{cookies[:search].inspect}"
+      params.require(:society).permit(:name, :rut, :parent_id, 
+        taxes_attributes: [:bank_id, 
+                          :periodicity, 
+                          :quantity, 
+                          :optional, 
+                          :source_path, 
+                          :id, 
+                          :_destroy],
+        children_attributes: [:name,
+                              :rut,
+                              :id,
+                              :_destroy])
     end
 end

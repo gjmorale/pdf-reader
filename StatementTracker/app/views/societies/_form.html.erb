@@ -21,11 +21,6 @@
     <%= f.text_field :rut %>
   </div>
 
-  <div class="field">
-    <%= f.label :parent_id %>
-    <%= collection_select(:society, :parent_id, Society.all, :id, :name) %>
-  </div>
-
   <div class="actions">
     <%= f.submit %>
   </div>

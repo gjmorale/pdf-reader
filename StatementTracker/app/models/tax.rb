@@ -1,78 +1,25 @@
 class Tax < ApplicationRecord
 	has_many :sequences, dependent: :destroy
-  has_many :statements, through: :sequences
+  has_many :statements, through: :sequences, inverse_of: :taxes
 
-	ANNUAL = "Annual"
-	MONTHLY = "Monthly"
-	WEEKLY = "Weekly"
-	DAILY = "Daily"
+  module Periodicity
+  	ANNUAL = "Annual"
+  	MONTHLY = "Monthly"
+  	WEEKLY = "Weekly"
+  	DAILY = "Daily"
 
-	PERIODICITIES = [
-		ANNUAL,
-		MONTHLY,
-		WEEKLY,
-		DAILY
-	]
+  	ALL = [
+  		ANNUAL,
+  		MONTHLY,
+  		WEEKLY,
+  		DAILY
+  	]
+  end
 
   belongs_to :bank
   belongs_to :society
 
   validates_uniqueness_of :society_id, scope: :bank_id
-
-  def fit statement
-  	hash = Tax.parse_date statement.d_open, statement.d_close
-  	seq = self.sequences.find_by(hash) || self.sequences.build(hash)
-    return seq
-  end
-
-  def path
-    "#{society.path}"
-  end
-
-  def self.to_date **date
-    open = close = nil
-    date.each{|key,value| value = value.to_i}
-    if date[:year] != 0
-      year = date[:year]
-      if date[:month] != 0
-        open_month = close_month = date[:month]
-      else
-        open_month = 1
-        close_month = 12
-      end
-      limit = Time.days_in_month close_month, year
-      if date[:day] != 0
-        open_day = close_day = date[:day]
-      elsif date[:week] != 0 and date[:week] <= 5
-        open_day = (date[:week] - 1)*7
-        close_day = [(date[:week])*7, limit].min
-      else
-        open_day = 1
-        close_day = limit
-      end
-      open_s = "#{open_day}-#{open_month}-#{year}"
-      close_s = "#{close_day}-#{close_month}-#{year}"
-      open = Date.strptime(open_s, "%d-%m-%Y")
-      close = Date.strptime(close_s, "%d-%m-%Y")
-    end
-    return [open, close]
-  end
-
-  def self.parse_date open, close
-    open ||= close
-    date = {year: 0, month: 0, week: 0, day: 0}
-    delta = (close-open).to_i
-    date[:year] = open.year
-    if delta <= 31
-      date[:month] = open.month
-      if delta <= 1
-        date[:day] = close.day
-      elsif delta <= 7
-        date[:week] = (close.day/7+1)
-      end
-    end
-    return date
-  end
 
   def filter params
     query = statements
@@ -91,6 +38,54 @@ class Tax < ApplicationRecord
     means = time_nodes(params).joins(statements: :status).group("sequences.id").sum("statement_statuses.progress")
     return 0 unless means.any?
     (means.map{|m| m[1].to_f}.inject{|t, m| t+(m)}/(quantity*means.size)).to_i
+  end
+
+  def self.reload date_from = nil, date_to = nil
+    self.all.each do |tax|
+      tax.reload date_from, date_to
+    end
+  end
+
+  def reload date_from = Date.new(2017,4,1), date_to = Date.current
+    case periodicity
+    when Periodicity::ANNUAL
+      date_from = Date.new(date_from.year,1,1)
+      date_to = Date.new(date_to.year+1,6,1)
+    when Periodicity::MONTHLY
+      date_from = Date.new(date_from.year,date_from.month,-5)
+      if date_to.month == 12
+        date_to = Date.new(date_to.year+1,1,22)
+      else
+        date_to = Date.new(date_to.year,date_to.month+1,22)
+      end
+    end
+    files = FileManager.load_from source_path, date_from, date_to
+    return unless files
+    files.each do |file|
+      date = File.mtime(file).to_date
+      params = {}
+      case periodicity
+      when Periodicity::ANNUAL
+        params[:year] = date.year
+        params[:year] = date.year-1 if date.month <= 10
+      when Periodicity::MONTHLY
+        params[:year] = date.year
+        params[:month] = date.month
+        if date.day < 22
+          if date.month == 1
+            params[:year] = date.year-1
+            params[:month] = 12
+          else
+            params[:month] = date.month-1
+          end
+        end
+      end
+      seq = sequences.where(params).first_or_create
+      return unless seq
+      statement = Statement.new_from_file file.gsub(Paths::DROPBOX,'')
+      seq.statements << statement
+      seq.save
+    end
   end
 
 end

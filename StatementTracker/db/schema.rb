@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170731144247) do
+ActiveRecord::Schema.define(version: 20170719164451) do
 
   create_table "banks", force: :cascade do |t|
     t.string   "name"
@@ -22,55 +22,12 @@ ActiveRecord::Schema.define(version: 20170731144247) do
     t.index ["folder_name"], name: "index_banks_on_folder_name", unique: true
   end
 
-  create_table "cover_prints", force: :cascade do |t|
-    t.string   "first_filter"
-    t.string   "second_filter"
-    t.integer  "bank_id"
-    t.integer  "meta_print_id"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-    t.index ["bank_id"], name: "index_cover_prints_on_bank_id"
-    t.index ["first_filter", "second_filter", "meta_print_id"], name: "cover_filters_index", unique: true
-    t.index ["meta_print_id"], name: "index_cover_prints_on_meta_print_id"
-  end
-
-  create_table "dictionaries", force: :cascade do |t|
-    t.text     "identifier"
-    t.string   "target_type"
-    t.integer  "target_id"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-    t.index ["identifier"], name: "index_dictionaries_on_identifier"
-    t.index ["target_type", "target_id"], name: "index_dictionaries_on_target_type_and_target_id"
-  end
-
-  create_table "dictionary_elements", force: :cascade do |t|
-    t.string   "element_type"
-    t.integer  "element_id"
-    t.integer  "dictionary_id"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
-    t.index ["dictionary_id"], name: "index_dictionary_elements_on_dictionary_id"
-    t.index ["element_type", "element_id"], name: "index_dictionary_elements_on_element_type_and_element_id"
-  end
-
   create_table "handlers", force: :cascade do |t|
     t.string   "short_name"
     t.string   "repo_path"
     t.string   "local_path"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "meta_prints", force: :cascade do |t|
-    t.string   "last_ref"
-    t.string   "creator"
-    t.string   "producer"
-    t.integer  "bank_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["bank_id"], name: "index_meta_prints_on_bank_id"
-    t.index ["creator", "producer"], name: "index_meta_prints_on_creator_and_producer", unique: true
   end
 
   create_table "sequences", force: :cascade do |t|
@@ -99,27 +56,21 @@ ActiveRecord::Schema.define(version: 20170731144247) do
     t.integer  "code"
     t.integer  "progress"
     t.string   "message"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
   create_table "statements", force: :cascade do |t|
     t.string   "file_name"
     t.string   "path"
     t.integer  "sequence_id"
-    t.integer  "bank_id"
     t.integer  "handler_id"
-    t.integer  "client_id"
     t.date     "d_filed"
-    t.date     "d_open"
-    t.date     "d_close"
-    t.datetime "d_read"
     t.integer  "status_id"
     t.string   "file_hash"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
-    t.index ["bank_id"], name: "index_statements_on_bank_id"
-    t.index ["client_id"], name: "index_statements_on_client_id"
     t.index ["file_hash"], name: "index_statements_on_file_hash", unique: true
     t.index ["handler_id"], name: "index_statements_on_handler_id"
     t.index ["sequence_id"], name: "index_statements_on_sequence_id"
@@ -130,12 +81,15 @@ ActiveRecord::Schema.define(version: 20170731144247) do
     t.integer  "bank_id"
     t.integer  "society_id"
     t.integer  "quantity"
+    t.integer  "optional"
+    t.string   "source_path"
     t.string   "periodicity"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
     t.index ["bank_id"], name: "index_taxes_on_bank_id"
     t.index ["society_id", "bank_id"], name: "index_taxes_on_society_id_and_bank_id", unique: true
     t.index ["society_id"], name: "index_taxes_on_society_id"
+    t.index ["source_path"], name: "index_taxes_on_source_path", unique: true
   end
 
   create_table "users", force: :cascade do |t|

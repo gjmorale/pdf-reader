@@ -1,11 +1,22 @@
 class StatementsController < ApplicationController
   before_action :set_statement, only: [:show, :edit, :update, :destroy]
-  before_action :set_statements, only: [:reset]
+  before_action :search_params, only: [:filter]
+  before_action :set_search_params, only: [:index]
 
   # GET /statements
   # GET /statements.json
   def index
-    @statements = Statement.all
+    @societies = Society.filter @search_params if @search_params
+    @societies = Society.treefy @societies
+  end
+
+  def filter
+    redirect_to statements_path
+  end
+
+  def reload
+    Tax.reload(params[:reload_from].to_date, params[:reload_to].to_date)
+    redirect_to statements_path
   end
 
   # GET /statements/1
@@ -20,13 +31,6 @@ class StatementsController < ApplicationController
 
   # GET /statements/1/edit
   def edit
-  end
-
-  # PATCH/PUT /statements/1
-  # PATCH/PUT /statements/1.json
-  def reset
-    puts @statements
-    render 'index'
   end
 
   # PATCH/PUT /statements/1
@@ -57,15 +61,6 @@ class StatementsController < ApplicationController
     # Use callbacks to share common setup or constraints between actions.
     def set_statement
       @statement = Statement.find(params[:id])
-    end
-    # Use callbacks to share common setup or constraints between actions.
-    def set_statements
-      @statements = []
-      puts params.inspect
-      raise
-      params[:statements].each do |key, value|
-        @statements << Statement.find(key.to_i) if value[:check]
-      end
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.

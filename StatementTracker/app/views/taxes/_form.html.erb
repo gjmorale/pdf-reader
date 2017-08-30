@@ -14,21 +14,20 @@
   <div class="field">
     <%= f.label :bank_id %>
     <%= collection_select(:tax, :bank_id, Bank.all, :id, :name) %>
-  </div>
-
-  <div class="field">
-    <%= f.label :society_id %>
-    <%= f.collection_select(:society_id, Society.all, :id, :name) %>
+    <%= f.label :periodicity %>
+    <%= f.select :periodicity, Tax::Periodicity::ALL.map{|p| [p,p]} %>
   </div>
 
   <div class="field">
     <%= f.label :quantity %>
     <%= f.number_field :quantity %>
+    <%= f.label :optional %>
+    <%= f.number_field :optional %>
   </div>
 
   <div class="field">
-    <%= f.label :periodicity %>
-    <%= f.select :periodicity, Tax::PERIODICITIES.map{|p| [p,p]} %>
+    <%= f.label :source_path %>
+    <%= f.text_field :source_path, placeholder: tax.society.path %>
   </div>
 
   <div class="actions">
