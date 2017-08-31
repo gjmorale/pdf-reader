@@ -31,6 +31,7 @@ PER.class_eval do
 		NUM3 = 		-3
 		NUM4 = 		-4
 		NO_MM_DATE =-5
+		ACTIVIDAD =	-6
 	end
 
 	def regex(type)
@@ -63,13 +64,24 @@ PER.class_eval do
 			'-?\$?([1-9]\d{0,2}(?:\,\d{3})*|0)\.\d{4}'
 		when Custom::NO_MM_DATE
 			'(\d{2}\/\d{2}\/\d{2}|Saldo .+$)'
+		when Custom::ACTIVIDAD
+			'(Retiro|Dep.sito|etc...)'
 		end
 	end
 
 	private  
 
 		def set_date months, value
-			date = value.split('-')[1].gsub(',','').split(' ').map{|s| s.strip}
+			date = []
+			puts value
+			if value.include? ','
+				date = value.split('-')[1].gsub(',','').split(' ').map{|s| s.strip}
+			else
+				date = value.split('-')[1].split(' ').map{|s| s.strip}.delete_if{|d| d.eql? "de"}
+				month = date[1]
+				date[1] = date[0]
+				date[0] = month
+			end
 			month = -1
 			months.each do |reg|
 				if date[0].match reg[1]
@@ -153,7 +165,9 @@ PER.class_eval do
 		end
 
 		def analyse_position_esp factory
-			set_date Bank::MESES, @reader.find_text(/[A-Z][a-z]{3,9}\s\d\d?,\s20\d\d - [A-Z][a-z]{3,9}\s\d\d?,\s20\d\d/)
+			date_string = @reader.find_text(/[A-Z][a-z]{3,9}\s\d\d?,\s20\d\d - [A-Z][a-z]{3,9}\s\d\d?,\s20\d\d/)
+			date_string ||= @reader.find_text(/\d{1,2}\sde\s[a-z]{3,9}\sde\s20\d\d - \d{1,2}\sde\s[a-z]{3,9}\sde\s20\d\d/)
+			set_date Bank::MESES, @reader.find_text(date_string)
 
 			acc_num = SingleField.new("Número de Cuenta:", [Custom::PER_ACC],3,Setup::Align::LEFT)
 			if acc_num.execute @reader

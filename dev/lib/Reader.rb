@@ -202,6 +202,7 @@ class Reader
 			@page_content.clean(range, regex)
 		end
 		while (row_y = @page_content.get_row(range, guide))
+			row_y -= 1 if row_y
 			row.yi = row_y 
 			if prev_row
 				prev_row.upper_text = @page_content.get_chunk(range[0],range[1],row.yi+1,row.yf) 

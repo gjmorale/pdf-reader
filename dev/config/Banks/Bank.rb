@@ -58,7 +58,6 @@ MESES = [[1, /ene/i],
 		accounts.reverse_each do |acc|
 			acc.movements.each do |mov|
 				fill_mov mov, acc
-				puts "MOV #{mov.print}"
 				file.write(mov.print) if mov.valid?
 			end
 		end

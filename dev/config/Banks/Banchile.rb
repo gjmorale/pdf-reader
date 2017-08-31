@@ -77,6 +77,11 @@ BC.class_eval do
 
 	private  
 
+		def fill_mov mov, acc
+			mov.id_sec1 = acc.code
+			mov.id_fi1 = legacy_code
+		end
+
 		def set_date value
 			day, month, year = value[value.rindex(' ')+1..-1].split('/')
 			@date_out = "#{day}-#{month}-#{year}"

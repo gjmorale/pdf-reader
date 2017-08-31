@@ -25,7 +25,7 @@ class SEC::CashTransactions < SECTransactionTable
 		hash = {
 			fecha_movimiento: args[0],
 			fecha_pago: args[0],
-			id_sec1: args[2],
+			id_sec1: args[1],
 			id_ti_valor1: "CLP", #CLP
 			cantidad1: neto, 	# abono o cargo	valor absoluto	# O 1.0?
 			detalle: args[5],
@@ -35,6 +35,15 @@ class SEC::CashTransactions < SECTransactionTable
 	end
 
 	def parse_movement hash
+		case hash[:id_sec1]
+		when /N/i
+			hash[:id_sec1] = "NOADM"
+		when /S/i
+			hash[:id_sec1] = "ADM"
+		end
+		if hash[:id_ti_valor1] =~ /^(USD|CLP)$/
+			hash[:id_ti1] = "Currency"
+		end
 		if hash[:cantidad1] > 0
 			hash[:concepto] = 9001
 			hash[:cantidad1] *= 1

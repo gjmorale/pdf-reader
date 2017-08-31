@@ -7,8 +7,16 @@ class PER::TransactionTable < TransactionTable
 	end
 
 	def parse_movement hash
+		hash[:fecha_pago] = hash[:fecha_movimiento] if (hash[:fecha_pago] =~ /Result not found/)
 		hash[:value] = hash[:cantidad2]
 		case hash[:concepto]
+		when /^FEDERAL FUNDS/i
+			hash[:id_ti1] = "Currency"
+			hash[:cantidad1] = hash[:cantidad2]
+			hash[:cantidad2] = 0
+			hash[:id_ti_valor1] = hash[:id_ti_valor2]
+			hash[:id_ti_valor2] = ""
+			hash[:concepto] = 9001 
 		when /(SOLD|Retiro)/i
 			hash[:concepto] = 9005
 		when /(PURCHASED|Dep.sito)/i
@@ -20,6 +28,10 @@ class PER::TransactionTable < TransactionTable
 		else
 			hash[:concepto] = 9000
 		end
+		if hash[:id_ti_valor2] =~ /(CLP|USD)/
+			hash[:id_ti2] = "Currency"
+		end
+		hash[:id_ti_valor1] = hash[:id_ti_valor1].gsub(/\(.+$/,"")
 		hash
 	end
 end
@@ -95,7 +107,7 @@ class PER::CashTransactionTable < CashTransactionTable
 		total_i = pre_check_do new_positions
 		puts "Pre-Check  reader #{@reader}" if verbose
 		table_total = (total and total.execute(@reader)) ? BankUtils.to_number(total.results[total_index].result, spanish) : nil
-		table_total *= @@alt_currs[@alt_currency.to_sym] if table_total and @alt_currency
+		#table_total *= @@alt_currs[@alt_currency.to_sym] if table_total and @alt_currency
 		total.print_results if verbose and table_total
 		puts "Post-Check reader #{@reader}" if verbose
 		acumulated = 0

@@ -73,7 +73,7 @@ class SEC::TransactionsAlt < SECTransactionTable
 			fecha_movimiento: args[0],
 			fecha_pago: args[0],
 			concepto: args[2],
-			id_sec1: args[3],
+			id_sec1: args[1],
 			factura: "",
 			id_ti_valor1: args[5],
 			cantidad1: BankUtils.to_number(args[6], spanish),

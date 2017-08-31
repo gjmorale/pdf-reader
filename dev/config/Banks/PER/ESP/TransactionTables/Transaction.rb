@@ -23,13 +23,14 @@ class PER::ESP::Transactions < PER::TransactionTable
 			fecha_movimiento: 	0,
 			fecha_pago: 		1,
 			concepto: 			2,
-			id_ti_valor1: 		5, #TickerBB??
+			id_ti_valor1: 		3,
 			cantidad1: 			4,
 			id_ti_valor2: 		8,
 			precio: 			5,
 			cantidad2: 			7,
 			detalle: 			3,
 			delta: [
+				6
 			]
 		}
 	end
@@ -59,7 +60,7 @@ class PER::ESP::TransactionsAlt < PER::TransactionTable
 			fecha_movimiento: 	0,
 			fecha_pago: 		0,
 			concepto: 			1,
-			id_ti_valor1: 		5, #TickerBB??
+			id_ti_valor1: 		2,
 			cantidad1: 			3,
 			id_ti_valor2: 		7,
 			precio: 			4,

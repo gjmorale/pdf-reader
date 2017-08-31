@@ -1,11 +1,12 @@
 class PER::ESP::CashTransactions < PER::CashTransactionTable
 	def load
+		@verbose = true
 		@name = "cash transactions"
 		@title = Field.new("Detalles del Fondo de Money Market")
 		@table_end = Field.new("Saldo al Cierre")
 		@headers = []
 			headers << HeaderField.new("Fecha", headers.size, Setup::Type::DATE)
-			headers << HeaderField.new("Tipo de Actividad", headers.size, Setup::Type::LABEL)
+			headers << HeaderField.new("Tipo de Actividad", headers.size, Custom::ACTIVIDAD)
 			headers << HeaderField.new("Descripción", headers.size, Setup::Type::LABEL)
 			headers << HeaderField.new("Monto", headers.size, Custom::NUM2, true)
 			headers << HeaderField.new("Saldo", headers.size, Custom::NUM2)
@@ -26,5 +27,38 @@ class PER::ESP::CashTransactions < PER::CashTransactionTable
 		initial_amount = new_positions.select{|p| p.detalle.match /^\[/}.first
 		new_positions.delete initial_amount
 		return initial_amount.value
+	end
+
+	def new_movement args
+		args = args.map{|arg| "#{arg}".strip}
+		puts args
+		abono = @mov_map[:abono].nil? ? 0.0 : BankUtils.to_number(args[@mov_map[:abono]], spanish)
+		hash = {
+			fecha_movimiento: args[@mov_map[:fecha_movimiento]],
+			fecha_pago: args[@mov_map[:fecha_pago]],
+			concepto: args[@mov_map[:concepto]],
+			id_ti_valor1: "MONEY MARKET", #CLP
+			cantidad1: abono,
+			id_ti_valor2: @cash_curr, #CLP
+			id_ti2: "Currency", #CLP
+			cantidad2: abono,
+			detalle: args[@mov_map[:detalle]]
+		}
+		params = parse_movement hash
+		return Movement.new(params) if params
+	end
+
+
+	def parse_movement hash
+		hash[:value] = hash[:cantidad1]
+		case hash[:concepto]
+		when /Retiro/i
+			hash[:concepto] = 9005
+		when /Dep.sito/i
+			hash[:concepto] = 9004
+		else
+			hash[:concepto] = 9000
+		end
+		hash
 	end
 end
