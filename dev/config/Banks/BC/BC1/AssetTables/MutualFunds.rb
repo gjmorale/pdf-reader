@@ -1,5 +1,6 @@
 class BC1::MutualFundsCLP < BC1::AssetTable
 	def load
+		@title_limit = 2
 		@name = "fondos mutuos en clp"
 		@title = Field.new("Fondos Mutuos en Pesos Chilenos: Vigentes al")
 		@table_end = Field.new("Monto Total Vigente en Pesos Chilenos:")

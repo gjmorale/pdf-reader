@@ -18,12 +18,12 @@ class MON::Custody < MON::TransactionTable
 			fecha_movimiento: 	1,
 			fecha_pago: 		1,
 			concepto: 			4,
-			id_ti_valor1: 		5,
+			id_ti_valor1: 		3,
 			cantidad1: 			6,
-			id_ti_valor2: 		3,
+			id_ti_valor2_default:	"CLP",
 			precio: 			7,
 			cantidad2: 			8,
-			detalle: 			0,
+			detalle: 			5,
 			delta: [
 			]
 		}

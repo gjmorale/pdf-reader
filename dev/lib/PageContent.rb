@@ -9,6 +9,7 @@ class PageContent
 	def initialize(page_number, content)
 		@number = page_number
 		@content = content
+		raise IOError, "PDF can't be read properly" unless @content.lines[0]
 		@line_size = @content.lines[0].length
 		@line_height = @content.lines.size
 	end 

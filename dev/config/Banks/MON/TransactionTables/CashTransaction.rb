@@ -51,23 +51,34 @@ class MON::CashTransaction < MON::CashTransactionTable
 	end
 
 	def parse_movement hash
+		puts hash
 		hash[:value] = hash[:cantidad1]
 		case hash[:concepto]
-		when /(Venta|Rescate)/i
+		when /Factura (Venta|Compra)/i
+			hash[:invalid] = true
+		when /(Venta)/i
 			hash[:concepto] = 9005
-		when /(Compra|Aporte)/i
+		when /(Compra)/i
 			hash[:concepto] = 9004
+		when /(Aporte)/i
+			hash[:concepto] = 9001
+			hash[:id_ti_valor1] = @cash_curr
+			hash[:id_ti1] = "Currency"
+		when /(Rescate)/i
+			hash[:concepto] = 9002
+			hash[:id_ti_valor1] = @cash_curr
+			hash[:id_ti1] = "Currency"
 		when /Patrimonio/i
 			hash[:concepto] = 9013
 		when /Retiro/i
 			hash[:concepto] = 9002
 		when /Dividendo/i
 			hash[:concepto] = 9006
-			hash[:cantidad2] = hash[:contidad1]
+			hash[:cantidad2] = hash[:cantidad1]
 			hash[:cantidad1] = 0
 			hash[:id_ti_valor2] = @cash_curr
 			hash[:id_ti2] = "Currency"
-			hash[:id_ti_valor1] = "#{hash[:detalle].match /(?>=DIVIDENDO ).+$/i}"
+			hash[:id_ti_valor1] = "#{hash[:detalle].match /(?<=DIVIDENDO ).+$/i}"
 		else
 			hash[:concepto] = 9000
 		end

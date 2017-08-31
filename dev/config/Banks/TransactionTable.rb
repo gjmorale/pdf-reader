@@ -31,17 +31,26 @@ class TransactionTable < AssetTable
 			concepto: args[@mov_map[:concepto]],
 			id_ti_valor1: args[@mov_map[:id_ti_valor1]], #CLP
 			cantidad1: BankUtils.to_number(args[@mov_map[:cantidad1]], spanish),
-			id_ti_valor2: args[@mov_map[:id_ti_valor2]],
+			id_ti_valor2: @mov_map[:id_ti_valor2] ? args[@mov_map[:id_ti_valor2]] : @mov_map[:id_ti_valor2_default],
 			precio: BankUtils.to_number(args[@mov_map[:precio]], spanish),
 			cantidad2: BankUtils.to_number(args[@mov_map[:cantidad2]], spanish),
 			detalle: args[@mov_map[:detalle]],
 			delta: delta
 		}
-		return Movement.new(parse_movement hash)
+		params = parse_movement hash
+		return Movement.new(params) if params
 	end
 
 	def parse_movement hash
 		hash[:value] = hash[:cantidad2]
+		case hash[:id_ti_valor2]
+		when /^(CLP|USD)$/i
+			hash[:id_ti2] = "Currency"
+		end
+		case hash[:id_ti_valor1]
+		when /^(CLP|USD)$/i
+			hash[:id_ti1] = "Currency"
+		end
 		case hash[:concepto]
 		when /(Venta|Rescate)/i
 			hash[:concepto] = 9005
@@ -72,11 +81,16 @@ class CashTransactionTable < TransactionTable
 			cantidad1: abono - cargo,
 			detalle: args[@mov_map[:detalle]]
 		}
-		return Movement.new(parse_movement hash)
+		params = parse_movement hash
+		return Movement.new(params) if params
 	end
 
 	def parse_movement hash
 		hash[:value] = hash[:cantidad1]
+		case hash[:id_ti_valor1]
+		when /^(CLP|USD)$/i
+			hash[:id_ti1] = "Currency"
+		end
 		case hash[:concepto]
 		when /(Venta|Rescate)/i
 			hash[:concepto] = 9005

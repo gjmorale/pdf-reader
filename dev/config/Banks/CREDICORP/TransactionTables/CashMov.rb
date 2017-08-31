@@ -1,6 +1,6 @@
 class CrediCorp::CashMovCLP < CrediCorp::CashTransactionTable
 	def load
-		@name = "movimientos de caja"
+		@name = "movimientos de caja clp"
 		@offset = Field.new("CAJA CLP")
 		@table_end = Field.new("FECHA FINAL PERIODO")
 		@headers = []
@@ -26,7 +26,7 @@ end
 
 class CrediCorp::CashMovUSD < CrediCorp::CashTransactionTable
 	def load
-		@name = "movimientos de caja"
+		@name = "movimientos de caja usd"
 		@offset = Field.new("CAJA USD")
 		@table_end = Field.new("FECHA FINAL PERIODO")
 		@headers = []
@@ -47,5 +47,6 @@ class CrediCorp::CashMovUSD < CrediCorp::CashTransactionTable
 			cargo: 				5,
 			detalle: 			2
 		}
+		@cash_curr = "USD"
 	end
 end

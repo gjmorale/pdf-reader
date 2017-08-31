@@ -1,16 +1,31 @@
 class Movement
 
-	attr_accessor :value
-	attr_accessor :detalle
+
+	attr_accessor :fecha_movimiento
+	attr_accessor :fecha_pago
+	attr_accessor :concepto
+	attr_accessor :factura
+	attr_accessor :id_ti_valor1
+	attr_accessor :id_ti1
 	attr_accessor :id_sec1
+	attr_accessor :id_fi1
+	attr_accessor :cantidad1
+	attr_accessor :id_ti_valor2
+	attr_accessor :id_ti2
+	attr_accessor :precio
+	attr_accessor :cantidad2
+	attr_accessor :delta
+	attr_accessor :detalle
+	attr_accessor :value
 
 	def initialize **args
 		@fecha_movimiento = clean args[:fecha_movimiento] || ""
 		@fecha_pago = fecha_pago args[:fecha_pago] || @fecha_movimiento
 		@concepto = args[:concepto] || "9000"
-		@id_sec1 = clean args[:id_sec1] || ""
 		@factura = clean args[:factura] || ""
 		@id_ti_valor1 = clean args[:id_ti_valor1] || ""
+		@id_ti1 = clean args[:id_ti1] || ""
+		@id_sec1 = clean args[:id_sec1] || ""
 		@id_fi1 = args[:id_fi1] || ""
 		@cantidad1 = args[:cantidad1] || ""
 		@id_ti_valor2 = clean args[:id_ti_valor2] || ""
@@ -20,6 +35,11 @@ class Movement
 		@delta = args[:delta] || ""
 		@detalle = clean args[:detalle] || ""
 		@value = args[:value] || 0.0
+		@invalid = args[:invalid]
+	end
+
+	def valid?
+		!@invalid
 	end
 
 	def fecha_pago fp
@@ -44,7 +64,7 @@ class Movement
 		out << ";#{@factura}"
 		out << ";#{@precio.to_s.gsub('.',',')}"
 		out << ";#{@id_ti_valor1}"
-		out << ";" #id_ti1
+		out << ";#{@id_ti1}"
 		out << ";#{@id_sec1}"
 		out << ";#{@id_fi1}" #IF
 		out << ";#{@cantidad1.to_s.gsub('.',',')}"

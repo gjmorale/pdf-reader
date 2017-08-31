@@ -161,8 +161,8 @@ class Table
 		#puts "RANGE: #{@range} #{reader} #{@bottom}" if Setup::Debug.overview
 		#reader.print(5) if Setup::Debug.overview
 		return false unless @headers_row
-		@bottom = reader.read_next_field(original_bottom) if bottom_in_headers(reader)
 		@offset = reader.move_to(@offset, 1, @require_offset) if @offset
+		@bottom = reader.read_next_field(original_bottom) if bottom_in_headers or bottom_above_offset
 		return false if @require_offset and not @offset
 		reader.skip @offset if @offset
 		set_range reader.line_size, reader.line_height
@@ -176,10 +176,15 @@ class Table
 		return true
 	end
 
-	def bottom_in_headers reader
+	def bottom_in_headers
 		return false unless @bottom
 		#puts "IN: #{(@headers_row.yi <= @bottom.top and @headers_row.yf >= @bottom.bottom)} AT: #{reader} BOTTOM: /\\#{@bottom.top} \\/#{@bottom.bottom}" if Setup::Debug.overview
 		return !!(@headers_row.yi <= @bottom.top and @headers_row.yf >= @bottom.bottom)
+	end
+
+	def bottom_above_offset
+		return false unless @bottom and @offset
+		return !(@offset.bottom < @bottom.top)
 	end
 
 	def print_borders

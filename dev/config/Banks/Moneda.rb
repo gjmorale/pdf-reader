@@ -59,6 +59,10 @@ MON.class_eval do
 
 	private  
 
+		def fill_mov mov, acc = nil
+			mov.id_fi1 = legacy_code
+		end
+
 		def set_date value
 			value = value.strip
 			day, month, year = value.split('/')

@@ -60,11 +60,16 @@ CrediCorp.class_eval do
 		when Custom::OPERATION
 			'(VENTA|COMPRA|RETIRO|APORTE|INGRESO).(FONDOS?\s?MUTUOS?|RV|POR\s?CANJE\s?DE\s?INSTRUMENTO)'
 		when Custom::MOV_ID
-			'(15\d{6}|(3|6)\d{5})'
+			'(1\d{7}|[2-9]\d{5})'
 		end
 	end
 
 	private  
+
+		def fill_mov mov, acc = nil
+			mov.id_fi1 = legacy_code
+			mov.id_sec1 = acc.code
+		end
 
 		def set_date value1, value2
 			day, month, year = value2.split('-')
@@ -167,19 +172,24 @@ CrediCorp.class_eval do
 		end
 
 		def check_movs cash_movs, movs
-			new_movs = []
 			cash_movs.each do |cash_mov|
 				id = cash_mov.detalle
-				cash = -1*cash_mov.value
+				next unless id and not id.empty?
+				puts "DETALLES #{id} #{movs.map{|m| m.detalle}}"
+				cash = cash_mov.value 
+				cash *= -1 if cash < 0
 				afected_movs = movs.select {|m| m.detalle.eql? id}
+				next unless afected_movs.any?
 				unafected_movs = movs.select {|m| not m.detalle.eql? id}
 				total = afected_movs.inject(0) {|accum, m| accum += m.value}
+				puts "TOTAL TO SHARE #{cash}-#{total} = #{cash-total}"
 				afected_movs.map {|m| m.value += (cash-total)*m.value/total}
-				new_movs += afected_movs
-				new_movs += unafected_movs
+				movs = []
+				movs += afected_movs
+				movs += unafected_movs
 			end
-			new_movs += cash_movs
-			new_movs
+			movs += cash_movs
+			movs
 		end
 
 		def analyse_mutual_funds
@@ -205,12 +215,17 @@ CrediCorp.class_eval do
 		end
 
 		def analyse_custody
-			return CrediCorp::Custody.new(@reader).analyze
+			movs = CrediCorp::Custody.new(@reader).analyze
+			puts movs
+			return movs
 		end
 
 		def analyse_cash_movs
 			mov = new_mov = []
-			new_mov += mov if(mov = CrediCorp::CashMovCLP.new(@reader).analyze)
+			if(mov = CrediCorp::CashMovCLP.new(@reader).analyze)
+				new_mov += mov 
+				@reader.go_to(@reader.page, 1)
+			end
 			new_mov += mov if(mov = CrediCorp::CashMovUSD.new(@reader).analyze)
 			return new_mov
 		end

@@ -57,10 +57,18 @@ MESES = [[1, /ene/i],
 		file.write("concepto;fecha_movimiento;fecha_pago;Monto Comision;Moneda Comision;factura;precio;id_ti_valor1;id_ti1;id_sec1;id_fi1;cantidad1;id_ti_valor2;id_ti2;id_sec2;id_fi2;cantidad2;detalle\n")
 		accounts.reverse_each do |acc|
 			acc.movements.each do |mov|
-				file.write(mov.print)
+				fill_mov mov, acc
+				puts "MOV #{mov.print}"
+				file.write(mov.print) if mov.valid?
 			end
 		end
 	end
+
+	private
+
+		def fill_mov mov, acc = nil
+			#Override to personalize movements
+		end
 
 end
 

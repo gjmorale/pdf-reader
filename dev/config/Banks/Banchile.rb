@@ -35,6 +35,7 @@ BC.class_eval do
 		FACTURA = 	-5
 		FLOAT2 = 	-6
 		FLOAT4 = 	-7
+		EMISOR = 	-8
 	end
 
 	def regex(type)
@@ -50,7 +51,7 @@ BC.class_eval do
 		when Setup::Type::ASSET
 			'(Equities|Fixed Income|Liquidity and Money Market|Others){1}'
 		when Setup::Type::LABEL
-			'.*[a-zA-Z].*'
+			'[a-zA-Z]{2}.*'
 		when Setup::Type::DATE
 			'\d{2}\/\d{2}\/\d{4}'
 		when Setup::Type::FLOAT
@@ -69,6 +70,8 @@ BC.class_eval do
 			'-?(?:[1-9]\d{0,2}(?:\.\d{3})*|0)?(,(?:\d{2}))'
 		when Custom::FLOAT4
 			'-?(?:[1-9]\d{0,2}(?:\.\d{3})*|0)?(,(?:\d{4}))'
+		when Custom::EMISOR
+			'BANCHILE ADMINISTRAD'
 		end
 	end
 

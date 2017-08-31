@@ -205,7 +205,7 @@ class Institution
 			begin
 				analyse_position file
 			rescue StandardError => e
-				puts e.to_s.red
+				puts "ERROR: #{e.to_s}".red
 			end
 			unless File.exist? "#{@out_path}/#{dir_name}"
 				Dir.mkdir("#{@out_path}/#{dir_name}")
