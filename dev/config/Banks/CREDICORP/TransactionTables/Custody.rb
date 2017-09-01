@@ -1,6 +1,5 @@
 class CrediCorp::Custody < CrediCorp::TransactionTable
 	def load
-		@verbose = true
 		@name = "movimientos en custodia"
 		@offset = Field.new("EN CUSTODIA")
 		@headers = []

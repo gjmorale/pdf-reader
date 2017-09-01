@@ -1,6 +1,5 @@
 class PER::ESP::CashTransactions < PER::CashTransactionTable
 	def load
-		@verbose = true
 		@name = "cash transactions"
 		@title = Field.new("Detalles del Fondo de Money Market")
 		@table_end = Field.new("Saldo al Cierre")
@@ -31,7 +30,6 @@ class PER::ESP::CashTransactions < PER::CashTransactionTable
 
 	def new_movement args
 		args = args.map{|arg| "#{arg}".strip}
-		puts args
 		abono = @mov_map[:abono].nil? ? 0.0 : BankUtils.to_number(args[@mov_map[:abono]], spanish)
 		hash = {
 			fecha_movimiento: args[@mov_map[:fecha_movimiento]],
