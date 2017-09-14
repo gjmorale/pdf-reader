@@ -8,6 +8,8 @@ class Society < ApplicationRecord
   has_many :sequences, through: :taxes
   has_many :statements, through: :sequences
 
+  validates :name, presence: true
+
   accepts_nested_attributes_for :children, allow_destroy: true
   accepts_nested_attributes_for :taxes, allow_destroy: true
 
@@ -18,47 +20,49 @@ class Society < ApplicationRecord
 	end
 
 	def self.treefy societies
-		final_socs = []
-		societies.each do |soc|
-			ancestors = soc.ancestors
-			nested = false
-			ancestors.each do |anc|
-				if societies.include? anc
-					nested = true
-				else
-					final_socs << anc unless final_socs.include? anc
+		posibilities = Society.roots.to_a
+		final = []
+		societies.each do |society|
+			ids = society.ancestors.map{|a| a.id}
+			posibilities.each do |posibility|
+				if ids.include? posibility.id
+					final << posibility
+					posibilities.delete(posibility)
 				end
 			end
-			final_socs << soc unless nested #or soc.invalid?
+			unless posibilities.any?
+				break
+			end
 		end
-		final_socs
+		final
 	end 
 
 	def treefy societies
-		final_socs = []
-		societies.each do |soc|
-			ancestors = soc.ancestors
-			nested = false
-			ancestors.each do |anc|
-				if societies.include? anc
-					nested = true
+		posibilities = children.to_a
+		final = []
+		societies.each do |society|
+			ids = society.self_and_ancestors.map{|a| a.id}
+			posibilities.each do |posibility|
+				if ids.include? posibility.id
+					final << posibility
+					posibilities.delete(posibility)
 				end
 			end
-			final_socs << soc unless nested #or soc.invalid?
+			unless posibilities.any?
+				break
+			end
 		end
-		final_socs
+		final
 	end 
 
 	def self.filter params
 		query = Society.all
 		query = query.left_outer_joins(taxes: [sequences: [statements: :status]])
-		aux = params.filter query
-		puts aux.inspect
-		aux
+		params.filter query
 	end
 
 	def filter params
-		query = children
+		query = Society.where(id: descendants.map{|d| d.id})
 		query = query.left_outer_joins(taxes: [sequences: [statements: :status]])
 		params.filter query
 	end
@@ -131,7 +135,7 @@ class Society < ApplicationRecord
 	end
 
 	def path
-		self.ancestors.join('/')
+		self.ancestors.reverse.join('/')
 	end
 
 end

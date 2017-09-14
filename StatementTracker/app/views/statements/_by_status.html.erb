@@ -1,20 +1,15 @@
-<% if statements %>
-	<% read = statements.select{|s| s.status.code == StatementStatus::READ} %>
-	<% if read.any? %>
-		<%= render 'statements/read/checklist', statements: read, commit: commit, edit: edit %>
-	<% end %>
-	<br><% indexed = statements.select{|s| s.status.code == StatementStatus::INDEXED} %>
-	<% if indexed.any? %>
-		<%= render 'statements/indexed/checklist', statements: indexed, commit: commit, edit: edit %>
-	<% end %>
-	<br>
-	<% index_status = statements.select{|s| s.status.code == StatementStatus::INDEX} %>
-	<% if statements and index_status.any? %>
-		<%= render 'statements/index/checklist', statements: index_status, commit: commit, edit: edit %>
-	<% end %>
-	<br>
-	<% noticed = statements.select{|s| s.status.code == StatementStatus::NOTICED} %>
-	<% if statements and noticed.any? %>
-		<%= render 'statements/noticed/checklist', statements: noticed, commit: commit, edit: edit %>
+<% StatementStatus.group_by_status(statements).each do |status, statement_group| %>
+	<h2><%= status %></h2>
+	<%= form_tag batch_update_statements_path do %>
+	  <table>
+	    <%= render'statements/table_head', edit: edit %>
+	    <%= render'statements/table_body', statements: statement_group, edit: edit %>
+	  </table>
+	  <% if edit %>
+	    <%= submit_tag StatementsCommit::BATCH_UPDATE %>
+	  <% else %>
+	    <%= submit_tag StatementsCommit::UPGRADE unless status.archived? %>
+	    <%= submit_tag StatementsCommit::DOWNGRADE unless status.noticed? %>
+	  <% end %>
 	<% end %>
 <% end %>

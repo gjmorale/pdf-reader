@@ -3,8 +3,8 @@ class CreateTaxes < ActiveRecord::Migration[5.0]
     create_table :taxes do |t|
       t.belongs_to :bank, foreign_key: true
       t.belongs_to :society, foreign_key: true
-      t.integer :quantity
-      t.integer :optional
+      t.integer :quantity, default: 0
+      t.integer :optional, default: 0
       t.string :source_path
       t.string :periodicity
 

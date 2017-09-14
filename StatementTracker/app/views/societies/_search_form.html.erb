@@ -1,5 +1,5 @@
 <%= form_for search_params, url: filter_societies_url do |f| %>
-
+<div class="search-block">
   <div class="field">
     <%= f.label :date_from %><br>
     <%= f.number_field "date_from(1i)", in: 2010..Date.current.year, include_blank: true, value: search_params.date(:year_from) %>
@@ -13,7 +13,8 @@
     <%= f.number_field "date_to(2i)", in: 1..12, include_blank: true, value: search_params.date(:month_to) %>
     <%= f.number_field "date_to(3i)", in: 1..31, include_blank: true, value: search_params.date(:day_to) %>
   </div>
-  <br>
+</div>
+<div class="search-block">
   <div class="field">
     <%= f.label :periodicities, "Periodicidad" %> </br>
     <% Tax::PERIODICITIES.each do |per| %>
@@ -29,6 +30,8 @@
       <%= f.label :ifs, bank.name %> </br>
     <% end %> 
   </div>
+</div>
+<div class="search-block">
   <div class="field">
     <%= f.label :handlers, "Handlers" %> </br>
     <% Handler.all.each do |handler| %>
@@ -36,6 +39,7 @@
       <%= f.label :handler, handler.short_name %> </br>
     <% end %> 
   </div>
+  <br>
   <div class="field">
     <%= f.label :statuses, "Status" %> </br>
     <% StatementStatus.all.each do |status| %>
@@ -43,7 +47,7 @@
       <%= f.label :statuses, status.message %> </br>
     <% end %> 
   </div>
-  <br>
+<div>
   <div class="actions">
     <%= f.submit %>
   </div>

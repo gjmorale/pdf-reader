@@ -1,0 +1,18 @@
+<header>
+  <div class="container">
+    <%= link_to "TRACKER", '#', id: "logo" %>
+    <nav>
+      <ul class="header-options header-options-right">
+        <li><%= link_to "Cartolas", statements_path %></li>
+        <li><%= link_to "Sociedades", societies_path %></li>
+        <li><%= link_to "Guía", static_pages_guide_path %></li>
+        <% if current_user %>
+          <li><%= link_to "Perfil", current_user.role %></li>
+          <li><%= link_to "Salir", destroy_user_session_path, method: :delete %></li>
+        <% else %>
+          <li><%= link_to "Log In", new_user_session_path %></li>
+        <% end %>
+      </ul>
+    </nav>
+  </div>
+</header>

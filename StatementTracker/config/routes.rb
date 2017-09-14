@@ -1,10 +1,6 @@
 Rails.application.routes.draw do
-  resources :cover_prints
-  resources :meta_prints
   devise_for :users
   resources :users
-  resources :dictionary_elements
-  resources :dictionaries
 
   get "file_manager/index"
   get "file_manager/new"
@@ -12,6 +8,7 @@ Rails.application.routes.draw do
   get "file_manager/learn"
 
   get 'static_pages/test'
+  get 'static_pages/guide'
 
   root 'static_pages#home'
 
@@ -19,14 +16,12 @@ Rails.application.routes.draw do
     collection do
       post :filter, action: :filter
       post :reload
-      post :all, constraints: StatementsCommit.new(StatementsCommit::RELOAD), action: :reload_statements, controller: :handlers
-      post :all, constraints: StatementsCommit.new(StatementsCommit::AUTO), action: :auto_statements, controller: :handlers
-      post :all, constraints: StatementsCommit.new(StatementsCommit::INDEX), action: :index_statements, controller: :handlers
-      post :all, constraints: StatementsCommit.new(StatementsCommit::INDEXED), action: :fit_statements, controller: :handlers
-      post :all, constraints: StatementsCommit.new(StatementsCommit::READ), action: :read_statements, controller: :handlers
-      post :all, constraints: StatementsCommit.new(StatementsCommit::ASSIGN), action: :assign, controller: :handlers
-      post :all, constraints: StatementsCommit.new(StatementsCommit::UNASSIGN), action: :unassign, controller: :handlers
-      post :all, constraints: StatementsCommit.new(StatementsCommit::UPDATE), action: :update_statements, controller: :handlers
+      post :batch_update, constraints: StatementsCommit.new(StatementsCommit::BATCH_UPDATE), action: :batch_update
+      post :batch_update, constraints: StatementsCommit.new(StatementsCommit::UPGRADE), action: :upgrade
+      post :batch_update, constraints: StatementsCommit.new(StatementsCommit::DOWNGRADE), action: :downgrade
+  end
+    member do
+      get :assign
     end
   end
   resources :handlers do 

@@ -1,0 +1,9 @@
+
+<tbody>
+  <% statements.each do |statement| %>
+    <tr>
+      <%= render('statements/row_show', statement: statement) if !(edit) %>
+      <%= render('statements/row_edit', statement: statement) if (edit) %>
+    </tr>
+  <% end %>
+</tbody>

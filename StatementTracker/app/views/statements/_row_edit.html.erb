@@ -1,0 +1,42 @@
+<td><%= check_box_tag "statements[#{statement.id}][check]", 'true', true %></td>
+<td><div class="field-with-errors" data-errors="<%= statement.errors.include? :file_hash %>">
+	<%= text_field_tag "statements[#{statement.id}][file_name]", statement.file_name %>
+	<% if statement.errors and statement.errors.include? :file_hash %>
+		<div class="error-message">
+			<%= render 'static_pages/error_list', errors: statement.errors.messages[:file_hash] %>
+		</div>		
+	<% end %>
+</div></td>
+<td><div class="field-with-errors" data-errors="<%= statement.errors.include? :society %>">
+	<%= collection_select("statements[#{statement.id}]", :society_id, Society.leaves, :id, :name, selected: (statement.society ? statement.society.id : ""), prompt: true) %>
+	<% if statement.errors and statement.errors.include? :society %>
+		<div class="error-message">
+			<%= render 'static_pages/error_list', errors: statement.errors.messages[:society] %>
+		</div>		
+	<% end %>
+</div></td>
+<td><div class="field-with-errors" data-errors="<%= statement.errors.include? :bank %>">
+	<%= collection_select("statements[#{statement.id}]", :bank_id, Bank.all, :id, :name, selected: (statement.bank ? statement.bank.id : ""), prompt: true) %>
+	<% if statement.errors and statement.errors.include? :bank %>
+		<div class="error-message">
+			<%= render 'static_pages/error_list', errors: statement.errors.messages[:bank] %>
+		</div>		
+	<% end %>
+</div></td>
+<td><div class="field-with-errors" data-errors="<%= statement.errors.include? :sequence %>">
+	<%= date_select("statements[#{statement.id}]", :date, selected: statement.sequence.date ,end_year: Date.current.year, start_year: 2015 ) %>
+	<% if statement.errors and statement.errors.include? :sequence %>
+		<div class="error-message">
+			<%= render 'static_pages/error_list', errors: statement.errors.messages[:sequence] %>
+		</div>		
+	<% end %>
+</div></td>
+<td><div class="field-with-errors" data-errors="<%= statement.errors.include? :sequence %>">
+	<%= select("statements[#{statement.id}]", :periodicity, Tax::Periodicity::ALL.map{|v| [v,v]}, selected: statement.tax.periodicity ) %>
+	<% if statement.errors and statement.errors.include? :sequence %>
+		<div class="error-message">
+			<%= render 'static_pages/error_list', errors: statement.errors.messages[:sequence] %>
+		</div>		
+	<% end %>
+</div></td>
+<!--td><%= date_field_tag("statements[#{statement.id}][d_filed]", statement.d_filed) %></td-->

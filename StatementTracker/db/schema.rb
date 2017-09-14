@@ -32,13 +32,10 @@ ActiveRecord::Schema.define(version: 20170719164451) do
 
   create_table "sequences", force: :cascade do |t|
     t.integer  "tax_id"
-    t.integer  "year",       default: 0
-    t.integer  "month",      default: 0
-    t.integer  "week",       default: 0
-    t.integer  "day",        default: 0
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-    t.index ["tax_id", "year", "month", "week", "day"], name: "index_sequences_on_tax_id_and_year_and_month_and_week_and_day", unique: true
+    t.date     "date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tax_id", "date"], name: "index_sequences_on_tax_id_and_date", unique: true
     t.index ["tax_id"], name: "index_sequences_on_tax_id"
   end
 
@@ -80,12 +77,12 @@ ActiveRecord::Schema.define(version: 20170719164451) do
   create_table "taxes", force: :cascade do |t|
     t.integer  "bank_id"
     t.integer  "society_id"
-    t.integer  "quantity"
-    t.integer  "optional"
+    t.integer  "quantity",    default: 0
+    t.integer  "optional",    default: 0
     t.string   "source_path"
     t.string   "periodicity"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
     t.index ["bank_id"], name: "index_taxes_on_bank_id"
     t.index ["society_id", "bank_id"], name: "index_taxes_on_society_id_and_bank_id", unique: true
     t.index ["society_id"], name: "index_taxes_on_society_id"

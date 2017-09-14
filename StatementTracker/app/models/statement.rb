@@ -5,6 +5,9 @@ class Statement < ApplicationRecord
   belongs_to :handler, required: false
   belongs_to :status, class_name: "StatementStatus"
   belongs_to :sequence
+  has_one :tax, through: :sequence, inverse_of: :statements
+  has_one :bank, through: :tax
+  has_one :society, through: :tax
 
   validates :file_hash, presence: true, uniqueness: true
   validate :integrity
@@ -17,6 +20,46 @@ class Statement < ApplicationRecord
     statement.file_hash = FileManager.digest_this source_file
     statement.file_name = File.basename(source_file).gsub(/\..+$/,'')
     statement.d_filed = DateTime.now
+    statement
+  end
+
+  def update_from_form params
+    if params[:file_name] != file_name
+      file_name = params[:file_name]
+    end
+    target_bank = params[:bank_id] == bank.id.to_s ? nil : Bank.find(params[:bank_id].to_i)
+    target_society = params[:society_id] == society.id.to_s ? nil : Society.find(params[:society_id].to_i)
+    target_periodicity = params[:periodicity] == tax.periodicity ? nil : params[:periodicity]
+    target_tax = nil
+    if target_bank or target_society or target_periodicity
+      target_tax = Tax.find_by(
+        society: target_society || society, 
+        bank: target_bank || bank, 
+        periodicity: target_periodicity || periodicity
+      )
+    end
+    
+    target_date = Date.new(params["date(1i)"].to_i,params["date(2i)"].to_i,params["date(3i)"].to_i)
+    target_date = Tax.to_period_end target_date, target_periodicity || periodicity
+    target_date = nil if target_date == sequence.date
+    if target_tax or target_date
+      target_sequence = Sequence.where(
+        tax: target_tax || tax,
+        date: target_date || date
+      ).first_or_create
+    end
+    self.sequence = target_sequence if target_sequence
+    return self.save
+  end
+
+  def upgrade
+    self.status = StatementStatus.next_status self.status
+    self.save
+  end
+
+  def downgrade
+    self.status = StatementStatus.previews_status self.status
+    self.save
   end
 
   def assign_to value
@@ -26,29 +69,14 @@ class Statement < ApplicationRecord
 
   def unassign_handler
     self.handler = nil
-    raise
-    if FileManager.rm_raw raw_path
+    if FileManager.rm_raw raw_name
       return self.save
     end
     return false
   end
 
-  def self.unassigned
-    Statement.where(handler: nil)
-  end
-
-  def status? value
-    value = StatementStatus.from_sym value
-    !!(self.status.code == value)
-  end
-
-  def rank? value
-    value = StatementStatus.from_sym value
-    !!(self.status.code >= value)
-  end
-
   def periodicity
-    periodicity = Tax::MONTHLY
+    periodicity = tax.periodicity
   end
 
   def d_last
@@ -68,7 +96,6 @@ class Statement < ApplicationRecord
   end
 
   def file
-    raise
     real_file = FileManager.get_file path, file_hash
     if File.exist? real_file
       return real_file
@@ -84,22 +111,13 @@ class Statement < ApplicationRecord
     !!file
   end
 
+  def raw?
+    return true #DEBUG
+  end
+
   def set_raw
     raise
-    FileManager.get_raw file, raw_path
-  end
-
-  def delete_raw
-    raise
-    #Check to return true if there is no raw data
-    FileManager.rm_raw raw_path
-  end
-
-  def remove
-    #remove raw and destroy self, check dependents
-    raise
-    attrs = FileMeta.classify file if file?
-    return self.assign_attributes attrs
+    FileManager.get_raw file, raw_name
   end
 
   def progress
@@ -109,34 +127,33 @@ class Statement < ApplicationRecord
   private
 
     def default_status
-      self.status ||= StatementStatus.find_by(code: StatementStatus::NOTICED)
+      self.status ||= StatementStatus.noticed
     end
 
     def raw_name
-      raise # Set a more descriptive name
+    # Set a more descriptive name
       "#{self.file_hash[0..8]}"
     end
 
     def remove_raw_data
-      raise
-      delete_raw
+      return true #DEBUG
+      FileManager.rm_raw raw_path
     end
 
     def integrity
-      if rank? :noticed
+      if status.nil?
+        errors.add(:status, "No status")
+      else
         errors.add(:sequence, "Doesn't belong to a sequence") unless sequence
         errors.add(:sequence, "Sequence is full") unless accepting?
-        unless rank? :archived
-          errors.add(:file_hash, "Temp file not found") unless get_raw
+        unless status.archived?
+          errors.add(:file_hash, "Temp file not found") unless raw?
           errors.add(:path, "Original file not found") unless file?
         end
-      else
-        errors.add(:status, "No status")
       end
-      if rank? :archived
-        errors.add(:file_name, "Unable to delete temp data") unless delete_raw
+      if status.archived?
+        errors.add(:file_name, "Unable to delete temp data") unless remove_raw_data
       end
-      puts "STATEMENT #{self}\'s ERRORS: #{errors.messages}" if errors.any?
     end
 
     def accepting?

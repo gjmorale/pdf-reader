@@ -1,12 +1,12 @@
-<p>
-  <strong>Name:</strong>
+<h1>
   <%= @society.name %>
-</p>
-
+</h1>
+<% if @society.rut and not @society.rut.empty? %>
 <p>
   <strong>Rut:</strong>
   <%= @society.rut %>
 </p>
+<% end %>
 
 <% unless @society.root? %>
 <p>
@@ -17,12 +17,12 @@
 
 <p>
 
-<% if @society.leaf? or @society.root? %>
-  <strong>Taxes:</strong>
+<% if @society.leaf? or (@society.root? and @society.children.count == 0) %>
+  <h2>Taxes:</h2>
   <ul>
     <% @society.taxes.each do |tax| %>
       <li>
-        <%= tax.bank %>:
+        <strong><%= tax.bank %>:</strong>
         <%= pluralize(tax.quantity, "statement") %>
         <%= tax.periodicity %>
         <%= link_to "Edit", edit_tax_path(tax) %>
@@ -31,25 +31,31 @@
     <% end %>
   </ul>
 
-  <div>
+  <div class="nested-form">
     <strong>New Tax:</strong>
     <%= form_for @society do |f| %>
     <%= f.fields_for :taxes, @society.taxes.build do |t| %>
       <div class="field">
         <%= t.label :bank_id %>
         <%= t.collection_select(:bank_id, Bank.all, :id, :name) %>
+      </div>
+      <div class="field">
         <%= t.label :periodicity %>
         <%= t.select :periodicity, Tax::Periodicity::ALL.map{|p| [p,p]} %>
       </div>
       <div class="field">
         <%= t.label :quantity %>
         <%= t.number_field :quantity %>
+      </div>
+      <div class="field">
         <%= t.label :optional %>
         <%= t.number_field :optional %>
       </div>
       <div class="field">
         <%= t.label :source_path %>
-        <%= t.text_field :source_path, placeholder: @society.path %>
+      </div>
+      <div class="field xl-field">
+        <%= t.text_field :source_path, value: @society.path %>
       </div>
     <% end %>
     <div class="actions">
@@ -61,11 +67,11 @@
 
 <% if @society.taxes.count == 0 %>
   <% if @society.children.any? %>
-    <strong>Societies:</strong>
+    <h2>Sociedades</h2>
     <ul>
       <% @society.children.each do |child| %>
         <li>
-          <%= link_to child.name, child %>
+          <strong><%= link_to child.name, child %></strong>
           <%= child.rut %>
           <%= link_to 'X', child, method: :delete, data: { confirm: 'Are you sure?' } %>
         </li>
@@ -73,7 +79,7 @@
     </ul>
   <% end %>
 
-  <div>
+  <div class="nested-form">
     <strong>New Society:</strong>
     <%= form_for @society do |f| %>
     <%= f.fields_for :children, @society.children.build do |t| %>

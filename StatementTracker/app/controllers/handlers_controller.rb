@@ -12,7 +12,6 @@ class HandlersController < ApplicationController
   # GET /handlers/1
   # GET /handlers/1.json
   def show
-    @statements = Statement.unassigned
   end
 
   def assign
@@ -35,37 +34,6 @@ class HandlersController < ApplicationController
     end
     complete_statements
     render :edit
-  end
-
-  def auto_statements
-    @statements.each do |statement|
-      @handler.auto statement
-    end
-    complete_statements
-    render :edit
-  end
-
-  def index_statements
-    @statements.each do |statement|
-      @handler.index statement, 
-        params[:statements][statement.id.to_s][:bank_id]
-    end
-    complete_statements
-    render :edit
-  end
-
-  def fit_statements
-    @statements.each do |statement|
-      @handler.fit_in_seq statement, 
-        params[:statements][statement.id.to_s][:society_id],
-        params[:statements][statement.id.to_s][:d_open],
-        params[:statements][statement.id.to_s][:d_close]
-    end
-    complete_statements
-    render :edit
-  end
-
-  def archive_statements
   end
 
   # GET /handlers/new

@@ -1,0 +1,6 @@
+<td><%= check_box_tag "statements[#{statement.id}][check]", 'true', true %></td>
+<td><%= link_to statement.file_name, statement %></td>
+<td><%= link_to statement.tax.society %></td>
+<td><%= statement.bank %></td>
+<td><%= statement.sequence.date_path %></td>
+<td><%= statement.tax.periodicity %></td>

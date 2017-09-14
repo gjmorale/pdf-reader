@@ -1,0 +1,100 @@
+<div id="manual">
+<h1>MANUAL</h1>
+
+<div class="indice">
+<h2>Indice</h2>
+<ol>
+	<li><h3>Conexión</h3></li>
+	<li><h3>Log-In</h3></li>
+	<li><h3>Ver Progreso</h3></li>
+	<ul>
+		<li>Por Sociedad</li>
+		<li>Por IF</li>
+		<li>Por Período</li>
+	</ul>
+	<li><h3>Procesar</h3></li>
+	<ul>
+		<li>Crear Sociedad</li>
+		<li>Importar Cartolas</li>
+		<li>Tomar Cartolas</li>
+		<li>Gestionar Cartolas</li>
+		<li>Editar Cartolas</li>
+	</ul>
+	<li><h3>TO-DO</h3></li>
+</ol>
+</div>
+
+<h2>Conexión</h2>
+<p>
+	Ingresar a 192.168.1.179:3000 en el navegador
+</p>
+
+<p>
+	Para asegurar conexión siempre verificar que servidor esté activo y con IP válida
+</p>
+
+<h2>Log-In</h2>
+<p>
+	Hacer click en "Log In" o dirijirse a <i>IP:3000/users/sign_up</i>. Crear un usuario con email y clave.
+</p>
+<p>
+	Una vez creado debe solicitar al administrador del servidor que cree y asociee un perfil de gestor de cartolas.
+</p>
+
+<h2>Ver Progreso</h2>
+<p>Dirigirse a Cartolas o <i>IP:3000/statements/</i> donde encontrará una tabla de cartolas agrupada por criterios. Cuenta con un buscador que permite filtrar distintos parámetros. Importante notar que si no hay cartolas que cumplan con los filtros, no se mostrarán las sociedades</p>
+<ul>
+	<li><b>Por Sociedad</b>
+		<p>Cada sociedad muestra a la derecha la cantidad de cartolas, períodos e instituciones financieras que contienen sus decendientes. También muestra el progreso de las cartolas. Al hacer click en <i>\/</i> Se muestran subsociedades o cartolas si las hay.</p>
+	</li>
+	<li><b>Por IF</b>
+		<p>Las IF's indican cuántas cartolas de qué institución financiera se esperan cada cuánto tiempo para dicha sociedad. Al hacer click en <i>\/</i> Se muestran cartolas si las hay.</p>
+	</li>
+	<li><b>Por Período</b>
+		<p>Los períodos son instancias de tiempo en que una sociedad particular tiene cartolas de una institución financiera particular. Pueden ser de 1 año, 1 mes, 1 semana o 1 día. Al hacer click en <i>\/</i> Se muestran subsociedades o cartolas si las hay.</p>
+	</li>
+</ul>
+
+<h2>Procesar</h2>
+<p>A continuación se detallan los pasos a seguir para reflejar el proceso en el sistema</p>
+<ul>
+	<li><b>Crear Sequencia</b> (Opcional)
+		<p>Si la sociedad y/o institución financiera no se encuentran en el sistema, deben ser creadas. Para crear una sociedad debe buscar a que sociedad pertenece y ahí agregar la nueva sociedad ingresando el nombre y opcionalmente un rut (recomendado para sociedades con nombres genéricos o repetidos). Una vez creada la sociedad se puede entrar en ella y crear subsociedades o instituciones financieras asociadas. Para crear la IF se debe ingresar la cantidad de documentos que se consideran minimos y necesarios por período y la cantidad de posibles documentos adicionales que pueden llegar. Se debe ingresar la carpeta de donde se obtienen las cartolas como una ruta relativa a la raiz del repositorio (Ej: <i>Portfolio Capital (1)/Familia Farcas/Clarial/2017/Moneda</i>)</p>
+	</li>
+	<li><b>Importar Cartolas</b>
+		<p>Para importar cartolas dirigirse a Cartolas o <i>IP:3000/statements/</i> donde encontrará un botón para cargar cartolas con dos parámetros. Fecha Desde y Fecha Hasta delimitan qué cartolas se importan.</p>
+	</li>
+	<li><b>Tomar Cartolas</b>
+		<p>Desde la vista de Cartolas, puede filtrar y navegar tomando cartolas para procesar haciendo click en <i>Tomar</i>. Las cartolas adjudicadas ahora aparecen en su perfil y son suyas hasta que las suelte</p>
+	</li>
+	<li><b>Gestionar Cartolas</b>
+		<p>Las cartolas en su perfil pueden moverse entre una serie de categorías que representan el progreso de su proceso. Para mover cartolas debe seleccionarlas y hacer click en el botón correspondiente. Puede ver como al avanzar las cartolas se actualiza el progreso en la vista de cartolas.</p>
+	</li>
+	<li><b>Editar Cartolas</b>
+		<p>Las cartolas pueden editarse si no representan la realidad del archivo. Para esto haga click en <i>Editar</i> en su perfil y podrá modificar los detalles de las cartolas. En caso de haber errores el sistema se los informará.</p>
+	</li>
+</ul>
+
+
+
+<h3>TO-DO</h3>
+<ul>
+	<li>Devise eMail</li>
+	<li>Nested Handlers en Users</li>
+	<li>Hacer Header de Navegación</li>
+	<li>Link Cartolas PDF</li>
+	<li>Link Checkmovs XLSX</li>
+	<li>Cartolas Virtuales</li>
+	<li>Archivar Cartolas</li>
+	<li>Mostrar Estados sin Cartolas</li>
+	<li>Pintar</li>
+	<li>Mostrar sociedades raiz</li>
+	<li>Simplificar formularios</li>
+	<li>Interfaz de Navegacion</li>
+	<li>Mapper Carpetas</li>
+	<li>Mostrar recientes</li>
+	<li>Tiempo real</li>
+	<li>Filtrar por cliente</li>
+	<li>% Por IF en general</li>
+</ul>
+</div>

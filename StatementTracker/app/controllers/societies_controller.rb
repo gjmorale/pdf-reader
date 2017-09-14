@@ -6,7 +6,7 @@ class SocietiesController < ApplicationController
   # GET /societies
   # GET /societies.json
   def index
-    @societies = Society.all
+    @societies = Society.roots
   end
 
   def filter
@@ -20,10 +20,16 @@ class SocietiesController < ApplicationController
       format.html
       format.js do 
         @element = @society
-        @node_template = 'societies/node'
-        @children = @society.filter @search_params
-        @children = @society.treefy @children #TODO: Check and fix
-        render 'nodes/navigation'
+        if @element.leaf?        
+          @node_template = 'statements/node'
+          @children = @society.statement_nodes @search_params
+          render 'nodes/navigation'
+        else
+          @node_template = 'societies/node'
+          @children = @society.filter @search_params
+          @children = @society.treefy @children #TODO: Check and fix
+          render 'nodes/navigation'
+        end
       end
     end
   end

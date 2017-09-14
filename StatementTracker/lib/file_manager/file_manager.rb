@@ -1,3 +1,5 @@
+require 'fileutils'
+
 module FileManager
 
 	module FileFormats
@@ -12,15 +14,15 @@ module FileManager
 	end
 
 	def self.digest_this file
-		Digest::MD5.file(file).hexdigest
+		Digest::MD5.file(Paths::DROPBOX + file).hexdigest
 	end
 
 	def self.get_file path, hash
 		return false unless path and hash
-		name = File.basename path, '.pdf'
+		name = File.basename path
 		if File.exist?(file = Paths::DROPBOX + "#{path}")
 		#CASE: Path is right
-			digest = digest_this file
+			digest = digest_this path
 			if hash.eql? digest
 				#CASE: Hash matches
 				return file
@@ -38,7 +40,7 @@ module FileManager
 					return file
 				end
 			end
-			Dir[Paths::DROPBOX + "/**/#{name}.pdf"].each do |file|
+			Dir[Paths::DROPBOX + "/**/#{name}"].each do |file|
 				digest = Digest::MD5.file(file).hexdigest
 				if hash.eql? digest
 				#CASE: File moved but not renamed
@@ -60,20 +62,11 @@ module FileManager
 		return false
 	end
 
-	def self.get_raw_dir raw_path
-		file = FileManager.output(raw_path)
-		return file if Dir.exist? file
-		return nil
-	end
-
-	def self.output raw_path
-		Paths::RAW + "/#{raw_path}"
-	end
-
 	def self.get_raw file, raw_path
 		return false unless file and raw_path
 		unless raw_file = FileManager.get_raw_dir(raw_path)
-			return FileGhost.execute file, FileManager.output(raw_path)
+			FileManager.set_raw_dir
+			#return FileGhost.execute file, FileManager.output(raw_path)
 		end
 		return raw_file
 	end
@@ -92,6 +85,29 @@ module FileManager
 		files = Dir[dbox_path + "/**/*.{#{FileFormats::ALL.join(',')}}"]
 		files.select{|f| File.mtime(f) >= date_from and File.mtime(f) <= date_to }
 	end
+
+	private 
+
+		def self.set_raw_dir original_file, raw_path
+			raw_dir = FileManager.output(raw_path)
+			unless Dir.exist? raw_dir
+				Dir.mkdir(raw_dir)
+			end 
+			raw_file = raw_dir + "/" + File.basename(original_file)
+			unless File.exist? raw_file
+				FileUtils.copy_file original_file, "#{raw_dir}/temp", preserve = true
+			end
+		end
+
+		def self.get_raw_dir raw_path
+			file = FileManager.output(raw_path)
+			return file if Dir.exist? file
+			return nil
+		end
+
+		def self.output raw_path
+			Paths::RAW + "/#{raw_path}"
+		end
 
 end
 =begin

@@ -3,13 +3,15 @@
 <%= render 'search_form', search_params: @search_params %>
 
 <h1>Statements</h1>
+<div class="nested-container">
   <% @societies.each do |society| %>
     <%= render 'societies/node', element: society, scope: @search_params %>
   <% end %>
+</div>
 <br>
 
 <%= form_tag reload_statements_path, method: :post do %>
-	<%= date_field_tag :reload_from, Date.new(2017,6,1) %>
-	<%= date_field_tag :reload_to, Date.current %>
+	Desde: <%= date_select :reload_from, :date, selected: (Date.current-1.month).beginning_of_month, discard_day: true %>
+	Hasta: <%= date_select :reload_to, :date, selected: (Date.current-1.month).end_of_month, discard_day: true %>
 	<%= submit_tag 'Load Statements' %>
 <% end %>

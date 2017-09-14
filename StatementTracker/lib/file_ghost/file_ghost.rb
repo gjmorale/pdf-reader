@@ -5,16 +5,7 @@ module FileGhost
 	WILDCHAR = '¶'
 
 	def self.execute file, output
-		name = File.basename(file, '.pdf')
-		unless File.exist? File.dirname(output)
-			puts "CREANDO: #{File.dirname output}"
-			gets
-			Dir.mkdir File.dirname(output) 
-		end
-		print "|" #Back up after
-		unless File.exist? output
-			Dir.mkdir(output) 
-		end
+		return false unless output.include? Paths::RAW
 		begin
 			f_input = File.open(file, 'rb')
 			@reader = PDF::Reader.new(f_input)
@@ -42,6 +33,7 @@ module FileGhost
 	end
 
 	def self.delete output
+		return false unless output.include? Paths::RAW
 		FileUtils.rm_rf(output)
 	end
 

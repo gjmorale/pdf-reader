@@ -1,12 +1,14 @@
 class StatementsController < ApplicationController
-  before_action :set_statement, only: [:show, :edit, :update, :destroy]
+  before_action :set_statement, only: [:show, :edit, :update, :destroy, :assign]
   before_action :search_params, only: [:filter]
   before_action :set_search_params, only: [:index]
+  before_action :set_statements, only: [:batch_update, :upgrade, :downgrade]
 
   # GET /statements
   # GET /statements.json
   def index
-    @societies = Society.filter @search_params if @search_params
+    #@societies = Society.filter @search_params if @search_params
+    @societies = Society.all
     @societies = Society.treefy @societies
   end
 
@@ -15,6 +17,8 @@ class StatementsController < ApplicationController
   end
 
   def reload
+    date_from = Date.new(*(params[:reload_from].map{|k,v| v.to_i}))
+    date_to = Date.new(*(params[:reload_to].map{|k,v| v.to_i}))
     Tax.reload(params[:reload_from].to_date, params[:reload_to].to_date)
     redirect_to statements_path
   end
@@ -24,9 +28,26 @@ class StatementsController < ApplicationController
   def show
   end
 
+  def assign
+    if current_user and current_user.role.is_a? Handler
+      assigned = @statement.assign_to(current_user.role)
+      respond_to do |format|
+        format.html do 
+          redirect_to @statement
+        end
+        format.js do 
+          @targets = assigned ? [@statement] : []
+          @new_handler = @statement.handler.short_name
+          render 'nodes/update_statements'
+        end
+      end
+    else
+      redirect_to new_user_session_path
+    end
+  end
+
   def new
-    @noticed_statements = FileManager.read_new @client
-    render :index
+    #TODO?
   end
 
   # GET /statements/1/edit
@@ -45,6 +66,28 @@ class StatementsController < ApplicationController
         format.json { render json: @statement.errors, status: :unprocessable_entity }
       end
     end
+  end
+
+  def batch_update
+    @statements.each do |statement|
+      statement.update_from_form @statements_params[statement.id]
+    end
+    complete_statements
+    render 'handlers/edit'
+  end
+
+  def upgrade
+    @statements.each do |statement|
+      statement.upgrade
+    end
+    redirect_to @handler
+  end
+
+  def downgrade
+    @statements.each do |statement|
+      statement.downgrade
+    end
+    redirect_to @handler
   end
 
   # DELETE /statements/1
@@ -66,5 +109,33 @@ class StatementsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def statement_params
       params.require(:statement).permit(:file_name, :sequence_id, :bank_id, :handler_id, :d_filed, :d_open, :d_close, :d_read, :status)
+    end
+
+    def set_statements
+      redirect_to users_sign_in_path unless current_user and 
+        @handler = current_user.role and 
+        @handler.is_a? Handler
+
+      @statements = []
+      @statements_params = {}
+      if params[:statements]
+        params[:statements].each do |key, value|
+          if value[:check] and statement = Statement.find(key.to_i) and statement.handler == @handler
+            @statements << statement 
+            @statements_params[statement.id] = value.permit(
+              :file_name,
+              :society_id,
+              :bank_id,
+              :date,
+              :periodicity)
+          end
+        end
+      end
+    end
+
+    def complete_statements
+      ids = @statements.map{|s| s.id}
+      other_statements = @handler.statements.where.not(id: ids)
+      @statements += other_statements
     end
 end

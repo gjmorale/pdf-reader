@@ -25,15 +25,7 @@
 
 <h1>My Statements</h1>
 
-<%= render 'statements/by_status', statements: @handler.statements, commit: [StatementsCommit::UNASSIGN], edit: false %>
+<%= render 'statements/by_status', statements: @handler.statements, edit: false %>
 
 <br>
 <%= link_to 'Edit', edit_handler_path(@handler) %>
-
-<h1>Pick Statements</h1>
-
-<%= render 'statements/by_status', statements: @statements, commit: [StatementsCommit::ASSIGN], edit: false %>
-
-<br>
-
-<%= link_to 'Load New', new_statement_path %>

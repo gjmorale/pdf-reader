@@ -1,7 +1,7 @@
 
-<div class="nested-child" id=<%= element.js_id %> data-toggle="close" data-type="child">
+<div class="nested-child nested-statement" id=<%= element.js_id %> data-toggle="close" data-type="child">
   <span><%= element.file_name %></span>
-  <span><%= element.handler || "Tomar" %></span>
+  <span class="statement-handler"><%= element.handler || link_to("Tomar", assign_statement_path(element), remote: true) %></span>
   <span><%= element.status %></span>
   <span class="options-right"><%= element.progress %> %</span>
 </div>

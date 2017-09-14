@@ -4,7 +4,8 @@ class Sequence < ApplicationRecord
   has_one :bank, through: :tax
   has_many :statements, dependent: :destroy
 
-  validates_uniqueness_of :tax_id, scope: [:year,:month,:week,:day]
+  validates :date, presence: true
+  validates_uniqueness_of :tax_id, scope: :date
   accepts_nested_attributes_for :statements
 
   def periodicity
@@ -25,6 +26,17 @@ class Sequence < ApplicationRecord
     statements.joins(:status).sum("statement_statuses.progress")/capacity
   end
 
+  def date_path
+    date_s = "#{date.year}"
+    date_s << "-#{date.month}"
+    if periodicity == Tax::Periodicity::WEEKLY
+      date_s << " Temporal #{date.week}"
+    else
+      date_s << "-#{date.day}"
+    end
+    date_s
+  end
+
   def capacity
     total = statements.count
     if total < tax.quantity
@@ -34,6 +46,10 @@ class Sequence < ApplicationRecord
     else
       tax.quantity + tax.optional
     end
+  end
+
+  def self.clean_up
+    Self.all.joins(:statements).where(statements: {sequence_id: nil})
   end
 
 end

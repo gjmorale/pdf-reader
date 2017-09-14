@@ -15,6 +15,7 @@ class SearchParams
   def initialize(attributes = {})
   	SearchParams.date_from_attribute "date_from", attributes
   	SearchParams.date_from_attribute "date_to", attributes
+  	attributes[:date_to] ||= attributes[:date_from]
     attributes.each do |name, value|
       send("#{name}=", value) unless name =~ /\(*\)/
     end
@@ -22,17 +23,21 @@ class SearchParams
     @periodicities ||= []
     @handlers ||= []
     @statuses ||= []
-    puts @handlers.inspect
   end
 
   def self.date_from_attribute name, attributes
   	puts "DATE: #{attributes.inspect}"
-  	if year = attributes["#{name}(1i)"]
-  		unless year.empty?
-  			month = attributes["#{name}(2i)"]
-  			day = attributes["#{name}(3i)"]
-  			attributes["#{name}"] = "#{day}-#{month}-#{year}"
-  		end
+  	if attributes[name]
+  		attributes[name] = Date.parse attributes[name]
+  	else
+	  	if year = attributes["#{name}(1i)"]
+	  		unless year.empty?
+	  			month = attributes["#{name}(2i)"]
+	  			day = attributes["#{name}(3i)"]
+	  			checkdate = Date.new(year.to_i, month.to_i, -1)
+	  			attributes["#{name}"] = Date.new(year.to_i,month.to_i,[day.to_i,checkdate.day].min)
+	  		end
+	  	end
   	end
   end
 
@@ -54,11 +59,13 @@ class SearchParams
 		return SearchParams.new JSON.parse(string)
 	end
 
+	#MAkes the form helper think it's an instantiated resource
   def persisted?
     false
   end
 
   def date type
+  	raise #TODO: DELETE IF NOT RAISED
 		d_f = m_f = y_f = d_t = m_t = y_t = nil
 		d_f, m_f, y_f = date_from.split('-').map{|d| d.empty? ? nil : d} if date_from
 		d_t, m_t, y_t = date_to.split('-').map{|d| d.empty? ? nil : d} if date_to
@@ -88,20 +95,25 @@ class SearchParams
 		if ifs.any?
 			query = query.where("taxes.bank_id IN (?)", ifs)
 		end
-		if date_from
-			d_f, m_f, y_f = date_from.split('-').map{|d| d.to_i}
-			if d_f == 1
-				d_f = 0
-				m_f = 0 if m_f == 1
-			end
-			date = y_f*433+m_f*36+d_f
-			query = query.where("sequences.year*433+sequences.month*36+(sequences.week*7-sequences.week%7)+sequences.day >= ?", date)
-		end
 		if date_to
-			d_t, m_t, y_t = date_to.split('-').map{|d| d.to_i}
-			#TODO: Check border case ej: mar-31 -> (mar-35 or apr-0)
-			date = y_t*433+m_t*36+d_t
-			query = query.where("sequences.year*433+sequences.month*36+(sequences.week*7-sequences.week%7)+sequences.day <= ?", date)
+			query = query.where("sequences.date <= ?", date_to)
+		end
+		if date_from 
+			query_s = "("
+			query_p = []
+			query_s << "taxes.periodicity = '#{Tax::Periodicity::ANNUAL}' AND sequences.date >= ?"
+			query_p << date_from.beginning_of_year
+			query_s << " OR "
+			query_s << "taxes.periodicity = '#{Tax::Periodicity::MONTHLY}' AND sequences.date >= ?"
+			query_p << date_from.beginning_of_month
+			query_s << " OR "
+			query_s << "taxes.periodicity = '#{Tax::Periodicity::WEEKLY}' AND sequences.date >= ?"
+			query_p << date_from.beginning_of_week
+			query_s << " OR "
+			query_s << "taxes.periodicity = '#{Tax::Periodicity::DAILY}' AND sequences.date >= ?"
+			query_p << date_from
+			query_s << ")"
+			query = query.where(query_s, *query_p)
 		end
 		if handlers.any?
 			query = query.where("statements.handler_id IN (?)", handlers)
