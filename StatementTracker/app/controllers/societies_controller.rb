@@ -1,7 +1,7 @@
 class SocietiesController < ApplicationController
   before_action :set_society, only: [:show, :edit, :update, :destroy, :time_nodes, :if_nodes, :statement_nodes]
   before_action :search_params, only: [:filter]
-  before_action :set_search_params, only: [:show, :time_nodes, :if_nodes, :statement_nodes, :seed]
+  before_action :set_search_params, only: [:time_nodes, :if_nodes, :statement_nodes, :seed]
 
   # GET /societies
   # GET /societies.json
@@ -13,12 +13,18 @@ class SocietiesController < ApplicationController
     redirect_to societies_path
   end
 
+  def reload
+    FileManager.load_societies
+    redirect_to societies_url
+  end
+
   # GET /societies/1
   # GET /societies/1.json
   def show
     respond_to do |format|
       format.html
       format.js do 
+        set_search_params
         @element = @society
         if @element.leaf?        
           @node_template = 'statements/node'

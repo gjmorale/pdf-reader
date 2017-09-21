@@ -9,11 +9,26 @@ class Society < ApplicationRecord
   has_many :statements, through: :sequences
 
   validates :name, presence: true
+  validates_uniqueness_of :name, scope: :parent_id
 
   accepts_nested_attributes_for :children, allow_destroy: true
   accepts_nested_attributes_for :taxes, allow_destroy: true
 
   #validates_uniqueness_of :rut, scope: :name #DANGEROUS IN DEBUG
+
+  	def self.new_from_folder folder, parent
+  		soc = nil
+  		if not parent
+  			soc = self.find_by(name: folder, parent: nil)
+  			soc ||= Society.roots.first #DEBUG
+  		elsif parent.persisted?
+  			soc = parent.children.find_by(name: folder)
+  			soc ||= parent.children.build(name: folder)
+  		else
+  			soc = self.new(name: folder)
+  		end
+  		soc
+  	end
 
 	def to_s
 		name
@@ -135,7 +150,7 @@ class Society < ApplicationRecord
 	end
 
 	def path
-		self.ancestors.reverse.join('/')
+		self.self_and_ancestors.reverse.join('/')
 	end
 
 end

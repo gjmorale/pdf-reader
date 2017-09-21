@@ -13,6 +13,25 @@ module FileManager
 		].flatten
 	end
 
+	module FileDates
+		NUMBER_DATE = /^(( +|-)+[0-9]+)*20[0-9]{2}(( +|-)+[0-9]+)*$/i
+		module Months
+			JAN = [/^[0-9]*\s*(ENE(RO)?|JAN(UARY)?)\s*[0-9]*$/i, 1]
+			FEB = [/^[0-9]*\s*(FEB(rero)?(bruary)?)\s*[0-9]*$/i, 2]
+			MAR = [/^[0-9]*\s*(MAR(ZO)?(CH)?)\s*[0-9]*$/i, 3]
+			APR = [/^[0-9]*\s*(ABR(IL)?|APR(IL)?)\s*[0-9]*$/i, 4]
+			MAY = [/^[0-9]*\s*(MAY(O)?)\s*[0-9]*$/i, 5]
+			JUN = [/^[0-9]*\s*(JUN(IO)?(E)?)\s*[0-9]*$/i, 6]
+			JUL = [/^[0-9]*\s*(JUL(IO)?(Y)?)\s*[0-9]*$/i, 7]
+			AUG = [/^[0-9]*\s*(AGO(STO)?|AUG(OST)?)\s*[0-9]*$/i, 8]
+			SEP = [/^[0-9]*\s*(SEP(T(IEMBRE)?)?|SEP(T(EMBER)?)?)\s*[0-9]*$/i, 9]
+			OCT = [/^[0-9]*\s*(OCT(UBRE)?(OBER)?)\s*[0-9]*$/i, 10]
+			NOV = [/^[0-9]*\s*(NOV(IEMBRE)?(EMBER)?)\s*[0-9]*$/i, 11]
+			DEC = [/^[0-9]*\s*(DIC(IEMBRE)?|DEC(EMBER)?)\s*[0-9]*$/i, 12]
+			ALL = [JAN,FEB,MAR,APR,MAY,JUN,JUL,AUG,SEP,OCT,NOV,DEC]
+		end
+	end
+
 	def self.digest_this file
 		Digest::MD5.file(Paths::DROPBOX + file).hexdigest
 	end
@@ -86,7 +105,89 @@ module FileManager
 		files.select{|f| File.mtime(f) >= date_from and File.mtime(f) <= date_to }
 	end
 
+	def self.load_societies
+		dirs = Dir[Paths::DROPBOX + "/**/"].map{|f| f.gsub(Paths::DROPBOX,'')}
+		known_paths = []
+		dirs.each do |f|
+			date_found = bank_found = false
+			society_found = true
+			last_node = nil
+			bank = quantity = optional = nil
+			societies = []
+			path = full_path = ""
+			f.split('/').each do |folder|
+				next if folder == ""
+				path << "#{folder}/" unless bank_found
+				full_path << "#{folder}/"
+				if is_date folder
+					date_found = true
+				elsif is_bank folder
+					bank_found = true
+					bank = Bank.find_bank folder
+				elsif not date_found and not bank_found
+					last_node = Society.new_from_folder folder, last_node
+					unless last_node
+						society_found = false
+						break
+					else
+						societies << last_node
+					end
+				end
+				if bank_found and date_found and society_found
+					min, max = get_quantities(full_path)
+					quantity = min
+					optional = max - min
+					break
+				end
+			end
+			if bank_found and date_found and society_found
+				unless known_paths.include? path
+					known_paths << path
+					parent = nil
+					societies.each do |soc|
+						if parent and not soc.persisted?
+							soc.parent = parent
+							soc.save
+						end
+						parent = soc
+					end
+					if bank 
+						tax = societies.last.taxes.build(
+							bank: bank, 
+							source_path: path[0..-2], 
+							quantity: quantity, 
+							optional: optional, 
+							periodicity: Tax::Periodicity::MONTHLY)
+						tax.save
+					end
+				end
+			end
+		end
+		#puts known_paths
+	end
+
 	private 
+
+		def self.is_date str
+			return !!(str =~ FileDates::NUMBER_DATE)
+		end
+
+		def self.get_quantities path
+			files = Dir[Paths::DROPBOX + "/" + path + "**/*.{#{FileFormats::ALL.join(',')}}"]
+			min_q = max_q = nil
+			FileDates::Months::ALL.each do |month|
+				q = files.select{|f| f =~ month[0]}.size
+				min_q ||= q
+				max_q ||= q
+				min_q = [min_q, q].min
+				max_q = [max_q, q].max
+			end
+			[min_q, max_q]
+		end
+
+		def self.is_bank str
+			Bank.dictionary str
+		end
 
 		def self.set_raw_dir original_file, raw_path
 			raw_dir = FileManager.output(raw_path)

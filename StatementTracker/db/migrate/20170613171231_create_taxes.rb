@@ -10,7 +10,6 @@ class CreateTaxes < ActiveRecord::Migration[5.0]
 
       t.timestamps
     end
-    add_index :taxes, ["society_id", "bank_id"], unique: true
     add_index :taxes, :source_path, unique: true
   end
 end

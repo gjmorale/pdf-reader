@@ -8,39 +8,34 @@
 
 #StatementStatus
 noticed_status = StatementStatus.where(
-	code: StatementStatus::NOTICED, 
-	progress: 25,
-	message: "Identificado en BD"
+	code: 100, 
+	progress: 20,
+	message: "Recibido"
 	).first_or_create
 index_status = StatementStatus.where(
-	code: StatementStatus::INDEX, 
-	progress: 50,
-	message: "Listo para indexar"
-	).first_or_create
-indexed_status = StatementStatus.where(
-	code: StatementStatus::INDEXED, 
-	progress: 75,
-	message: "Indexado según sociedad"
-	).first_or_create
-StatementStatus.where(
-	code: StatementStatus::READ, 
-	progress: 100,
+	code: 110, 
+	progress: 60,
 	message: "Leído"
 	).first_or_create
-StatementStatus.where(
-	code: StatementStatus::STAGE, 
+indexed_status = StatementStatus.where(
+	code: 120, 
+	progress: 70,
+	message: "Subido"
+	).first_or_create
+indexed_status = StatementStatus.where(
+	code: 130, 
 	progress: 80,
-	message: "Leído e indexado correctamente"
+	message: "Conciliado"
+	).first_or_create
+indexed_status = StatementStatus.where(
+	code: 140, 
+	progress: 99,
+	message: "Procesado"
 	).first_or_create
 StatementStatus.where(
-	code: StatementStatus::UPLOAD, 
-	progress: 90,
-	message: "Lectura ha sido validada en el servidor"
-	).first_or_create
-StatementStatus.where(
-	code: StatementStatus::ARCHIVED, 
+	code: 200, 
 	progress: 100,
-	message: "Almacenado en sistema de archivos"
+	message: "Archivado"
 	).first_or_create
 
 #BANKs
@@ -91,6 +86,34 @@ handler = Handler.where(
 	repo_path: "/home/finantecdeveloper/gmo/Sandbox/Dropbox",
 	local_path: "/Clientes"
 	).first_or_create
+
+Synonym.where(label: 'JP', listable: nil).first_or_create
+Synonym.where(label: 'JP Morgan', listable: nil).first_or_create
+Synonym.where(label: 'JPMorgan', listable: nil).first_or_create
+Synonym.where(label: 'JPM', listable: nil).first_or_create
+Synonym.where(label: 'Itau', listable: nil).first_or_create
+Synonym.where(label: 'MBI', listable: nil).first_or_create
+Synonym.where(label: 'LV', listable: nil).first_or_create
+Synonym.where(label: 'Larrain Vial', listable: nil).first_or_create
+Synonym.where(label: 'BTG', listable: nil).first_or_create
+Synonym.where(label: 'BTG Pactual', listable: nil).first_or_create
+Synonym.where(label: 'Santander', listable: nil).first_or_create
+Synonym.where(label: 'Cruz Del Sur', listable: nil).first_or_create
+Synonym.where(label: 'CDS', listable: nil).first_or_create
+Synonym.where(label: 'Euroamerica', listable: nil).first_or_create
+Synonym.where(label: 'EA', listable: nil).first_or_create
+Synonym.where(label: 'BCI', listable: nil).first_or_create
+Synonym.where(label: 'Citi', listable: nil).first_or_create
+Synonym.where(label: 'ML', listable: nil).first_or_create
+Synonym.where(label: 'Merryl Lynch', listable: nil).first_or_create
+Synonym.where(label: 'Volcom', listable: nil).first_or_create
+Synonym.where(label: 'Acceso Partner', listable: nil).first_or_create
+Synonym.where(label: 'BICE', listable: nil).first_or_create
+Synonym.where(label: 'UBS', listable: nil).first_or_create
+Synonym.where(label: 'Goldman Sachs', listable: nil).first_or_create
+Synonym.where(label: 'GS', listable: nil).first_or_create
+Synonym.where(label: 'Celfin', listable: nil).first_or_create
+Synonym.where(label: 'Fidelity', listable: nil).first_or_create
 
 =begin
 

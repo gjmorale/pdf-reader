@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170719164451) do
+ActiveRecord::Schema.define(version: 20170921182347) do
 
   create_table "banks", force: :cascade do |t|
     t.string   "name"
@@ -45,7 +45,7 @@ ActiveRecord::Schema.define(version: 20170719164451) do
     t.integer  "parent_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name", "rut"], name: "index_societies_on_name_and_rut", unique: true
+    t.index ["name", "parent_id"], name: "index_societies_on_name_and_parent_id", unique: true
     t.index ["parent_id"], name: "index_societies_on_parent_id"
   end
 
@@ -74,6 +74,16 @@ ActiveRecord::Schema.define(version: 20170719164451) do
     t.index ["status_id"], name: "index_statements_on_status_id"
   end
 
+  create_table "synonyms", force: :cascade do |t|
+    t.string   "listable_type"
+    t.integer  "listable_id"
+    t.string   "label"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.index ["listable_type", "label"], name: "index_synonyms_on_listable_type_and_label"
+    t.index ["listable_type", "listable_id"], name: "index_synonyms_on_listable_type_and_listable_id"
+  end
+
   create_table "taxes", force: :cascade do |t|
     t.integer  "bank_id"
     t.integer  "society_id"
@@ -84,7 +94,6 @@ ActiveRecord::Schema.define(version: 20170719164451) do
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
     t.index ["bank_id"], name: "index_taxes_on_bank_id"
-    t.index ["society_id", "bank_id"], name: "index_taxes_on_society_id_and_bank_id", unique: true
     t.index ["society_id"], name: "index_taxes_on_society_id"
     t.index ["source_path"], name: "index_taxes_on_source_path", unique: true
   end

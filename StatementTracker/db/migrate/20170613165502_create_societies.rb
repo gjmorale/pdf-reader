@@ -8,6 +8,6 @@ class CreateSocieties < ActiveRecord::Migration[5.0]
       t.timestamps
     end
     add_foreign_key :societies, :societies, column: :parent_id
-    add_index :societies, [:name, :rut], unique: true
+    add_index :societies, [:name, :parent_id], unique: true
   end
 end

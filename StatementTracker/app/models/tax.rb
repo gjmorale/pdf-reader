@@ -23,8 +23,6 @@ class Tax < ApplicationRecord
   validates :source_path, presence: true, uniqueness: true
   validate :source_path_exists
 
-  validates_uniqueness_of :society_id, scope: :bank_id
-
   def self.to_period_end date, periodicity
     case periodicity
     when Periodicity::ANNUAL

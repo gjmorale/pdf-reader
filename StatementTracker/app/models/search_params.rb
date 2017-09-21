@@ -15,7 +15,7 @@ class SearchParams
   def initialize(attributes = {})
   	SearchParams.date_from_attribute "date_from", attributes
   	SearchParams.date_from_attribute "date_to", attributes
-  	attributes[:date_to] ||= attributes[:date_from]
+  	attributes[:date_to] ||= attributes[:date_from].end_of_month if attributes[:date_from]
     attributes.each do |name, value|
       send("#{name}=", value) unless name =~ /\(*\)/
     end
@@ -26,7 +26,6 @@ class SearchParams
   end
 
   def self.date_from_attribute name, attributes
-  	puts "DATE: #{attributes.inspect}"
   	if attributes[name]
   		attributes[name] = Date.parse attributes[name]
   	else

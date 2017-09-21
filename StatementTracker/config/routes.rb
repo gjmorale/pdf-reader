@@ -48,6 +48,9 @@ Rails.application.routes.draw do
       get :ifs, action: :if_nodes
       get :statements, action: :statement_nodes
     end
+    collection do
+      post :reload
+    end
   end
   resources :banks
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
