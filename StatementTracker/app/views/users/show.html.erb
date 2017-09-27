@@ -1,14 +1,16 @@
-<p id="notice"><%= notice %></p>
+<% if @role %>
+	<p>
+	  <strong>Name:</strong>
+	  <%= @role.short_name %>
+	</p>
+	<%= link_to 'Editar Perfil', edit_user_path(@user) %> |
+<% else %>
+	<p>
+	  <strong>Debe crear un perfil para continuar</strong>
+	</p>
+	<p>
+	  <%= link_to "Crear Perfil", edit_user_path(@user) %>
+	</p>
+<% end %>
 
-<p>
-  <strong>Name:</strong>
-  <%= @user.name %>
-</p>
-
-<p>
-  <strong>Role:</strong>
-  <%= @user.role %>
-</p>
-
-<%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', users_path %>

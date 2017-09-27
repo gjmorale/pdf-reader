@@ -1,6 +1,4 @@
 class Tax < ApplicationRecord
-	has_many :sequences, dependent: :destroy
-  has_many :statements, through: :sequences, inverse_of: :tax
 
   module Periodicity
   	ANNUAL = "Annual"
@@ -16,12 +14,20 @@ class Tax < ApplicationRecord
   	]
   end
 
+  has_many :sequences, dependent: :destroy
+  has_many :statements, through: :sequences, inverse_of: :tax
+  has_many :source_paths, dependent: :destroy, inverse_of: :tax
+
   belongs_to :bank
   belongs_to :society
 
   validates :periodicity, presence: true
-  validates :source_path, presence: true, uniqueness: true
-  validate :source_path_exists
+  validates :source_paths, :length => { :minimum => 1 }
+  accepts_nested_attributes_for :source_paths, allow_destroy: true
+
+  def to_s
+    "#{bank} - #{society}"
+  end
 
   def self.to_period_end date, periodicity
     case periodicity
@@ -52,7 +58,6 @@ class Tax < ApplicationRecord
   def filter params
     query = statements
     query = query.joins(sequence: [tax: :society])
-    puts query
     params.filter query
   end
 
@@ -74,7 +79,29 @@ class Tax < ApplicationRecord
     end
   end
 
-  def reload date_from = Date.new(2017,4,1), date_to = Date.current
+  def dated_statements date_params
+    seq = date_params.filter(self.sequences.joins(:statements, :tax)).take
+    seq ? seq.statements : self.class.none
+  end
+
+  def expected date_params
+    seq = date_params.filter(self.sequences.joins(:statements, :tax)).take
+    raise
+    seq ? seq.quantity : tax.quantity
+  end
+
+  def recieved date_params
+    dated_statements(date_params).size
+  end
+
+  def period_progress date_params
+    ds = dated_statements(date_params)
+    n = ds.size
+    return 0 if n == 0
+    ds.sum(&:progress)*1.0 / expected(date_params)
+  end
+
+  def reload date_from = Date.current.beginning_of_month, date_to = Date.current.end_of_month
     case periodicity
     when Periodicity::ANNUAL
       date_from = date_from.beginning_of_year + 6.month
@@ -85,37 +112,33 @@ class Tax < ApplicationRecord
     when Periodicity::WEEKLY
       date_from = date_from.end_of_week
       date_to = date_to.end_of_week + 4.day
-    when Periodicity::WEEKLY
-      date_from = date_from + 1.day
-      date_to = date_from + 1.day
+    when Periodicity::DAILY
+      date_from = date_from
+      date_to = date_to
     end
 
-    if files = FileManager.load_from(source_path, date_from, date_to)
-      files.each do |file|
-        date = File.mtime(file).to_date
-        case periodicity
-        when Periodicity::ANNUAL
-          q_date = date.month <= 10 ? date.beginning_of_year - 1.day : date.end_of_year
-        when Periodicity::MONTHLY
-          q_date = date.day < 22 ? date.beginning_of_month - 1.day : date.end_of_month
-        when Periodicity::WEEKLY
-          q_date = date.wday <= 6 ? date.beginning_of_week - 1.day : date.end_of_week
-        else
-          q_date = date - 1.day
-        end
-        if seq = sequences.where(date: q_date).first_or_create
-          statement = Statement.new_from_file file.gsub(Paths::DROPBOX,'')
-          seq.statements << statement
-          seq.save
+    source_paths.each do |source_path|
+      if files = FileManager.load_from(source_path.path, date_from, date_to)
+        files.each do |file|
+          date = file[1]
+          case periodicity
+          when Periodicity::ANNUAL
+            q_date = date.month <= 10 ? date.beginning_of_year - 1.day : date.end_of_year
+          when Periodicity::MONTHLY
+            q_date = date.day < 22 ? date.beginning_of_month - 1.day : date.end_of_month
+          when Periodicity::WEEKLY
+            q_date = date.wday <= 6 ? date.beginning_of_week - 1.day : date.end_of_week
+          else
+            q_date = date
+          end
+          if seq = sequences.where(date: q_date).first_or_create
+            statement = Statement.new_from_file file[0]
+            seq.statements << statement
+            seq.save
+          end
         end
       end
     end
   end
-
-  private
-
-    def source_path_exists
-      errors.add(:source_path, "Invalid source path") unless Dir.exist? Paths::DROPBOX + "/" + source_path
-    end
 
 end

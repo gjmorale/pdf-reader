@@ -113,6 +113,7 @@ class Society < ApplicationRecord
 	end
 
 	def self_progress params
+		#DEPRECATED
 	    means = time_nodes(params).group("taxes.id", "sequences.id").sum("statement_statuses.progress")
 	    return "0" unless means.any?
 	    q = p = 0

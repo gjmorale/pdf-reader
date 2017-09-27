@@ -1,24 +1,28 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Bank:</strong>
-  <%= @tax.bank %>
-</p>
+<h1>
+  <%= link_to @tax.bank, @tax.bank %> - <%= link_to @tax.society, @tax.society %>
+</h1>
 
-<p>
-  <strong>Society:</strong>
-  <%= @tax.society %>
-</p>
+<h4>Espera <%= @tax.quantity %> cartolas al <%= @tax.periodicity %></h4>
 
-<p>
-  <strong>Quantity:</strong>
-  <%= @tax.quantity %>
-</p>
+<h2>Fuentes:</h2>
+<ul>
+<% @tax.source_paths.each do |source_path| %>
+  <li>
+    <%= source_path %>
+  </li>
+<% end %>
+</ul>
 
-<p>
-  <strong>Periodicity:</strong>
-  <%= @tax.periodicity %>
-</p>
+<h2>Períodos:</h2>
+<ul>
+<% @tax.sequences.each do |sequence| %>
+  <li>
+    <%= link_to "#{sequence.date.to_s} (#{sequence.statements.size})", sequence %>
+  </li>
+<% end %>
+</ul>
 
 <%= link_to 'Edit', edit_tax_path(@tax) %> |
 <%= link_to 'Back', taxes_path %>

@@ -1,6 +1,7 @@
 class TaxesController < ApplicationController
-  before_action :set_tax, only: [:show, :edit, :update, :destroy, :time_nodes]
+  before_action :set_tax, only: [:show, :edit, :update, :destroy, :time_nodes, :progress]
   before_action :set_search_params, only: [:show, :time_nodes]
+  before_action :set_date_params, only: [:progress]
 
   # GET /taxes
   # GET /taxes.json
@@ -20,6 +21,11 @@ class TaxesController < ApplicationController
         render 'nodes/navigation'
       end
     end
+  end
+
+  def progress
+    @tax
+    @statements = @tax.dated_statements @date_params
   end
 
   def time_nodes

@@ -2,7 +2,7 @@ class Synonym < ApplicationRecord
   belongs_to :listable, polymorphic: true, required: false
 
   validates :label, presence: true
-  validates_uniqueness_of :label, scope: :listable
+  validates_uniqueness_of :label, scope: :listable_type
   validate :valid_label
 
   private

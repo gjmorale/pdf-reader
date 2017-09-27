@@ -1,13 +1,20 @@
-<h1>TRACKER</h1>
-<%= link_to "MIS CARTOLAS", statements_path %>
-<%= link_to "CARTOLAS", statements_path %>
-
-<% if user_signed_in? %>
-  <li>
-  <%= link_to('Logout', destroy_user_session_path, method: :delete) %>        
-  </li>
-<% else %>
-  <li>
-  <%= link_to('Login', new_user_session_path)  %>  
-  </li>
-<% end %>
+<div class="home-container">
+	<h1>TRACKER</h1>
+	<p>Bienvenido a la aplicación de seguimiento de cartolas</p>
+	<% if user_signed_in? %>
+      <p>Ver progreso según</p>
+	  <span>
+	  <%= link_to('Sociedades', progress_societies_path) %>        
+	  </span>
+	  <span>
+	  <%= link_to('I. Financieras', progress_banks_path) %>        
+	  </span>
+	<% else %>
+	  <span>
+	  <%= link_to('Log In', new_user_session_path)  %>  
+	  </span>
+	  <span>
+	  <%= link_to('Sign Up', new_user_registration_path)  %>  
+	  </span>
+	<% end %>
+<div>

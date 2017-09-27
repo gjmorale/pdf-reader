@@ -7,5 +7,6 @@ class CreateHandlers < ActiveRecord::Migration[5.0]
 
       t.timestamps
     end
+    add_index :handlers, :short_name, unique: true
   end
 end

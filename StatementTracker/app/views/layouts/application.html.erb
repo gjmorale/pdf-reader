@@ -13,8 +13,10 @@
 
   <body>
     <%= render 'layouts/header' %>
-    <p id="notice" class="notice"><%= notice %></p>
-    <p id="alert" class="alert"><%= alert %></p>
+    <div class="flash-container">
+      <p id="notice" class="notice"><%= notice %></p>
+      <p id="alert" class="alert"><%= alert %></p>
+    </div>
     <div id="main-container" ><%= yield %></div>
   </body>
 </html>

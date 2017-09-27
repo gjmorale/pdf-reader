@@ -1,32 +1,33 @@
-<p id="notice"><%= notice %></p>
-
-<p>
-  <strong>File name:</strong>
+<h1>
   <%= @statement.file_name %>
-</p>
+</h1>
 
-<p>
-  <strong>Sequence:</strong>
-  <%= @statement.sequence %>
-</p>
+<h2>
+  <%= link_to @statement.sequence.date.to_s, @statement.sequence %>
+</h2>
 
 <p>
   <strong>Bank:</strong>
-  <%= @statement.bank %>
+  <%= link_to @statement.bank %>
+</p>
+
+<p>
+  <strong>Sociedad:</strong>
+  <%= link_to @statement.society %>
 </p>
 
 <p>
   <strong>Handler:</strong>
-  <%= @statement.handler %>
+  <%= @statement.handler ? link_to(@statement.handler) : "Sin Asignar" %>
 </p>
 
 <p>
-  <strong>D filed:</strong>
+  <strong>Fecha Ingreso:</strong>
   <%= @statement.d_filed %>
 </p>
 
 <p>
-  <strong>Status:</strong>
+  <strong>Estado:</strong>
   <%= @statement.status %>
 </p>
 

@@ -7,7 +7,7 @@ class StatementsController < ApplicationController
   # GET /statements
   # GET /statements.json
   def index
-    #@societies = Society.filter @search_params if @search_params
+    @societies = Society.filter @search_params if @search_params
     @societies = Society.all
     @societies = Society.treefy @societies
   end
@@ -19,7 +19,7 @@ class StatementsController < ApplicationController
   def reload
     date_from = Date.new(*(params[:reload_from].map{|k,v| v.to_i}))
     date_to = Date.new(*(params[:reload_to].map{|k,v| v.to_i}))
-    Tax.reload(params[:reload_from].to_date, params[:reload_to].to_date)
+    Tax.reload(date_from, date_to)
     redirect_to statements_path
   end
 

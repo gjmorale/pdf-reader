@@ -22,7 +22,7 @@
   <ul>
     <% @society.taxes.each do |tax| %>
       <li>
-        <strong><%= tax.bank %>:</strong>
+        <strong><%= link_to tax.bank, tax_path(tax) %>:</strong>
         <%= pluralize(tax.quantity, "statement") %>
         <%= tax.periodicity %>
         <%= link_to "Edit", edit_tax_path(tax) %>
@@ -65,7 +65,7 @@
   </div>
 <% end %> 
 
-<% if @society.taxes.count == 0 %>
+<% if @society.taxes.size == 0 %>
   <% if @society.children.any? %>
     <h2>Sociedades</h2>
     <ul>

@@ -1,0 +1,10 @@
+<%= form_for date_params, url: filter_sequences_url do |f| %>
+
+  <div class="search-block">
+    <div class="field">
+      <%= f.submit "Filtrar" %>
+      <%= f.select :periodicity, Tax::Periodicity::ALL.map{|p| [p,p]}, selected: date_params.periodicity %>
+      <%= f.date_select :date, discard_day: true, selected: date_params.date, start_year: 2015, end_year: Date.current.year %>
+    </div>
+  </div>
+<% end %>

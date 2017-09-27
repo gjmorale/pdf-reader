@@ -63,27 +63,6 @@ class SearchParams
     false
   end
 
-  def date type
-  	raise #TODO: DELETE IF NOT RAISED
-		d_f = m_f = y_f = d_t = m_t = y_t = nil
-		d_f, m_f, y_f = date_from.split('-').map{|d| d.empty? ? nil : d} if date_from
-		d_t, m_t, y_t = date_to.split('-').map{|d| d.empty? ? nil : d} if date_to
-  	case type
-  	when :year_from
-  		return y_f
-  	when :month_from
-  		return m_f
-  	when :day_from
-  		return d_f
-  	when :year_to
-  		return y_t
-  	when :month_to
-  		return m_t
-  	when :day_to
-  		return d_t
-  	end
-  end
-
   def filter query
 		if name
 			query = query.where("societies.name LIKE ?", "%#{name}%")
@@ -102,13 +81,13 @@ class SearchParams
 			query_p = []
 			query_s << "taxes.periodicity = '#{Tax::Periodicity::ANNUAL}' AND sequences.date >= ?"
 			query_p << date_from.beginning_of_year
-			query_s << " OR "
+			query_s << ") OR ("
 			query_s << "taxes.periodicity = '#{Tax::Periodicity::MONTHLY}' AND sequences.date >= ?"
 			query_p << date_from.beginning_of_month
-			query_s << " OR "
+			query_s << ") OR ("
 			query_s << "taxes.periodicity = '#{Tax::Periodicity::WEEKLY}' AND sequences.date >= ?"
 			query_p << date_from.beginning_of_week
-			query_s << " OR "
+			query_s << ") OR ("
 			query_s << "taxes.periodicity = '#{Tax::Periodicity::DAILY}' AND sequences.date >= ?"
 			query_p << date_from
 			query_s << ")"

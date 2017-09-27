@@ -1,29 +1,19 @@
 <p id="notice"><%= notice %></p>
 
-<p>
-  <strong>Tax:</strong>
-  <%= @sequence.tax %>
-</p>
+<h1>
+  Recibidos al <%= @sequence.date.to_s %>
+</h1>
 
-<p>
-  <strong>Year:</strong>
-  <%= @sequence.year %>
-</p>
+<h2>
+  <%= link_to "#{@sequence.tax.bank} - #{@sequence.tax.society}", @sequence.tax %> 
+</h2>
 
-<p>
-  <strong>Month:</strong>
-  <%= @sequence.month %>
-</p>
-
-<p>
-  <strong>Week:</strong>
-  <%= @sequence.week %>
-</p>
-
-<p>
-  <strong>Day:</strong>
-  <%= @sequence.day %>
-</p>
+<h2>Cartolas (<%= @sequence.statements.size %>/<%= @sequence.quantity %>):</h2>
+<ul>
+  <% @sequence.statements.each do |statement| %>
+    <li><%= link_to statement.file_name, statement %></li>
+  <% end %>
+</ul>
 
 <%= link_to 'Edit', edit_sequence_path(@sequence) %> |
 <%= link_to 'Back', sequences_path %>

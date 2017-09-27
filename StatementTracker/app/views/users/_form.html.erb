@@ -1,27 +1,40 @@
-<%= form_for(user) do |f| %>
-  <% if user.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
+<div class="nested-form">
+  <%= form_for(user) do |f| %>
+    <% if user.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(user.errors.count, "error") %> prohibited this user from being saved:</h2>
 
-      <ul>
-      <% user.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
+        <ul>
+        <% user.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= f.fields_for :role, @role do |t| %>
+      <div class="field">
+        <%= t.label :short_name %>
+      </div>
+      <div class="field">
+        <%= t.text_field :short_name, value: @role.short_name %>
+      </div>
+      <div class="field">
+        <%= t.label :repo_path %>
+      </div>
+      <div class="field xl-field">
+        <%= t.text_field :repo_path, value: @role.repo_path || "/home/finantecdeveloper3/gmo/FakeBox" %>
+      </div>
+      <div class="field">
+        <%= t.label :local_path %>
+      </div>
+      <div class="field xl-field">
+        <%= t.text_field :local_path, value: @role.local_path || "/CC-JA" %>
+      </div>
+    <% end %> 
+
+    <div class="actions">
+      <%= f.submit %>
     </div>
   <% end %>
-
-  <div class="field">
-    <%= f.label :name %>
-    <%= f.text_field :name %>
-  </div>
-
-  <div class="field">
-    <%= f.label :role_id %>
-    <%= f.text_field :role_id %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
-<% end %>
+</div>

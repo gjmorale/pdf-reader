@@ -1,0 +1,52 @@
+<h1>
+	<% if @society %>
+		<% if @society.parent %>
+			<%= link_to(@society.parent,progress_society_path(@society.parent)) %>
+		<% else %>
+			<%= link_to("Todos",progress_societies_path) %>
+		<% end %>
+		<%= " - " %>
+		<%= @society.name %>
+	<% else %>
+		<%= "Progreso por sociedad" %>
+	<% end %>
+</h1>
+<h2>Algo %</h2>
+
+<% if @society and @society.leaf? %>
+<table>
+	<thead>
+		<th>IF</th>
+		<th>Cartolas Recibidas</th>
+		<th>Cartolas Esperadas</th>
+		<th>Progreso</th>
+	</thead>
+	<tbody>
+	  <% @taxes.each do |tax| %>
+	    <tr>
+	    	<td><%= link_to tax, progress_tax_path(tax) %></td>
+	    	<td><%= tax.recieved @date_params %></td>
+	    	<td><%= tax.expected @date_params %></td>
+	    	<td><%= tax.period_progress @date_params %></td>
+	    </tr>
+	  <% end %>
+	</tbody>
+</table>
+<% else %>
+<table>
+	<thead>
+		<th>Sociedad</th>
+		<th>IFs</th>
+		<th>Cartolas Recibidas</th>
+		<th>Cartolas Esperadas</th>
+		<th>Progreso</th>
+	</thead>
+	<tbody>
+	  <% @societies.each do |society| %>
+	    <tr>
+	    	<td><%= link_to society.name, progress_society_path(society) %></td>
+	    </tr>
+	  <% end %>
+	</tbody>
+</table>
+<% end %>

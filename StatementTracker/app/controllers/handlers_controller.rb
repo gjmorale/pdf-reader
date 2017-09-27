@@ -112,7 +112,7 @@ class HandlersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def handler_params
-      params.require(:handler).permit(:repo_path, :local_path, :short_name, eq_societies_attributes: [:id, :society_id, :text])
+      params.require(:handler).permit(:repo_path, :local_path, :short_name)
     end
 
     def eq_societies_params

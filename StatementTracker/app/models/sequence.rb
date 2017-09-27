@@ -4,7 +4,9 @@ class Sequence < ApplicationRecord
   has_one :bank, through: :tax
   has_many :statements, dependent: :destroy
 
+  before_validation :default_quantities
   validates :date, presence: true
+  validates :quantity, presence: true
   validates_uniqueness_of :tax_id, scope: :date
   accepts_nested_attributes_for :statements
 
@@ -51,5 +53,12 @@ class Sequence < ApplicationRecord
   def self.clean_up
     Self.all.joins(:statements).where(statements: {sequence_id: nil})
   end
+
+  private
+
+    def default_quantities
+      self.quantity ||= tax.quantity
+      self.optional ||= tax.optional
+    end
 
 end

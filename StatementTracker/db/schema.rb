@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170921182347) do
+ActiveRecord::Schema.define(version: 20170926133657) do
 
   create_table "banks", force: :cascade do |t|
     t.string   "name"
@@ -33,6 +33,8 @@ ActiveRecord::Schema.define(version: 20170921182347) do
   create_table "sequences", force: :cascade do |t|
     t.integer  "tax_id"
     t.date     "date"
+    t.integer  "quantity"
+    t.integer  "optional"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["tax_id", "date"], name: "index_sequences_on_tax_id_and_date", unique: true
@@ -47,6 +49,15 @@ ActiveRecord::Schema.define(version: 20170921182347) do
     t.datetime "updated_at", null: false
     t.index ["name", "parent_id"], name: "index_societies_on_name_and_parent_id", unique: true
     t.index ["parent_id"], name: "index_societies_on_parent_id"
+  end
+
+  create_table "source_paths", force: :cascade do |t|
+    t.string   "path"
+    t.integer  "tax_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["path"], name: "index_source_paths_on_path", unique: true
+    t.index ["tax_id"], name: "index_source_paths_on_tax_id"
   end
 
   create_table "statement_statuses", force: :cascade do |t|
@@ -80,7 +91,7 @@ ActiveRecord::Schema.define(version: 20170921182347) do
     t.string   "label"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
-    t.index ["listable_type", "label"], name: "index_synonyms_on_listable_type_and_label"
+    t.index ["listable_type", "label"], name: "index_synonyms_on_listable_type_and_label", unique: true
     t.index ["listable_type", "listable_id"], name: "index_synonyms_on_listable_type_and_listable_id"
   end
 
@@ -89,13 +100,11 @@ ActiveRecord::Schema.define(version: 20170921182347) do
     t.integer  "society_id"
     t.integer  "quantity",    default: 0
     t.integer  "optional",    default: 0
-    t.string   "source_path"
     t.string   "periodicity"
     t.datetime "created_at",              null: false
     t.datetime "updated_at",              null: false
     t.index ["bank_id"], name: "index_taxes_on_bank_id"
     t.index ["society_id"], name: "index_taxes_on_society_id"
-    t.index ["source_path"], name: "index_taxes_on_source_path", unique: true
   end
 
   create_table "users", force: :cascade do |t|

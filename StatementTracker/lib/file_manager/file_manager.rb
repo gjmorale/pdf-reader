@@ -14,32 +14,37 @@ module FileManager
 	end
 
 	module FileDates
-		NUMBER_DATE = /^(( +|-)+[0-9]+)*20[0-9]{2}(( +|-)+[0-9]+)*$/i
+		NUMBER_DATE = /(?<=\/|^)(20\d\d|(?<= )[1-9]\d)(?=$|\/)/i
+		ALT_YEAR_DATE = /20[1-9]\d/i
 		module Months
-			JAN = [/^[0-9]*\s*(ENE(RO)?|JAN(UARY)?)\s*[0-9]*$/i, 1]
-			FEB = [/^[0-9]*\s*(FEB(rero)?(bruary)?)\s*[0-9]*$/i, 2]
-			MAR = [/^[0-9]*\s*(MAR(ZO)?(CH)?)\s*[0-9]*$/i, 3]
-			APR = [/^[0-9]*\s*(ABR(IL)?|APR(IL)?)\s*[0-9]*$/i, 4]
-			MAY = [/^[0-9]*\s*(MAY(O)?)\s*[0-9]*$/i, 5]
-			JUN = [/^[0-9]*\s*(JUN(IO)?(E)?)\s*[0-9]*$/i, 6]
-			JUL = [/^[0-9]*\s*(JUL(IO)?(Y)?)\s*[0-9]*$/i, 7]
-			AUG = [/^[0-9]*\s*(AGO(STO)?|AUG(OST)?)\s*[0-9]*$/i, 8]
-			SEP = [/^[0-9]*\s*(SEP(T(IEMBRE)?)?|SEP(T(EMBER)?)?)\s*[0-9]*$/i, 9]
-			OCT = [/^[0-9]*\s*(OCT(UBRE)?(OBER)?)\s*[0-9]*$/i, 10]
-			NOV = [/^[0-9]*\s*(NOV(IEMBRE)?(EMBER)?)\s*[0-9]*$/i, 11]
-			DEC = [/^[0-9]*\s*(DIC(IEMBRE)?|DEC(EMBER)?)\s*[0-9]*$/i, 12]
+			JAN = [/(\/|^)([0-9]{1,2} )?(ENE(RO)?|JAN(UARY)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 1]
+			FEB = [/(\/|^)([0-9]{1,2} )?(FEB(rero)?(bruary)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 2]
+			MAR = [/(\/|^)([0-9]{1,2} )?(MAR(ZO)?(CH)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 3]
+			APR = [/(\/|^)([0-9]{1,2} )?(ABR(IL)?|APR(IL)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 4]
+			MAY = [/(\/|^)([0-9]{1,2} )?(MAY(O)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 5]
+			JUN = [/(\/|^)([0-9]{1,2} )?(JUN(IO)?(E)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 6]
+			JUL = [/(\/|^)([0-9]{1,2} )?(JUL(IO)?(Y)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 7]
+			AUG = [/(\/|^)([0-9]{1,2} )?(AGO(STO)?|AUG(OST)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 8]
+			SEP = [/(\/|^)([0-9]{1,2} )?(SEP(T(IEMBRE)?)?|SEP(T(EMBER)?)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 9]
+			OCT = [/(\/|^)([0-9]{1,2} )?(OCT(UBRE)?(OBER)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 10]
+			NOV = [/(\/|^)([0-9]{1,2} )?(NOV(IEMBRE)?(EMBER)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 11]
+			DEC = [/(\/|^)([0-9]{1,2} )?(DIC(IEMBRE)?|DEC(EMBER)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 12]
 			ALL = [JAN,FEB,MAR,APR,MAY,JUN,JUL,AUG,SEP,OCT,NOV,DEC]
 		end
 	end
 
+	def self.exist? path
+		Dir.exist? Paths::DROPBOX + '/' + path
+	end
+
 	def self.digest_this file
-		Digest::MD5.file(Paths::DROPBOX + file).hexdigest
+		Digest::MD5.file(Paths::DROPBOX + '/' + file).hexdigest
 	end
 
 	def self.get_file path, hash
 		return false unless path and hash
 		name = File.basename path
-		if File.exist?(file = Paths::DROPBOX + "#{path}")
+		if File.exist?(file = Paths::DROPBOX + "/#{path}")
 		#CASE: Path is right
 			digest = digest_this path
 			if hash.eql? digest
@@ -52,7 +57,7 @@ module FileManager
 		else
 		#CASE: Path is wrong
 			original_dir = File.dirname path
-			Dir[Paths::DROPBOX + "#{original_dir}/*.pdf"].each do |file|
+			Dir[Paths::DROPBOX + "/#{original_dir}/*.pdf"].each do |file|
 				digest = Digest::MD5.file(file).hexdigest
 				if hash.eql? digest
 				#CASE: File renamed but not moved
@@ -101,8 +106,23 @@ module FileManager
 	def self.load_from path, date_from, date_to
 		dbox_path = Paths::DROPBOX + '/' + path
 		return false unless Dir.exist? dbox_path
-		files = Dir[dbox_path + "/**/*.{#{FileFormats::ALL.join(',')}}"]
-		files.select{|f| File.mtime(f) >= date_from and File.mtime(f) <= date_to }
+		files = Dir[dbox_path + "**/*.{#{FileFormats::ALL.join(',')}}"]
+		files_with_dates = []
+		files.each do |f|
+			year = get_year f
+			month = get_month f
+			if year and month
+				date = Date.new(year, month, -1)
+			else
+				date = File.mtime(f)
+			end
+			if date >= date_from and date <= date_to
+				files_with_dates << [f.sub(Paths::DROPBOX+'/',''),date] 
+			else
+				puts "#{date_from} < #{date} < #{date_to}"
+			end
+		end
+		files_with_dates
 	end
 
 	def self.load_societies
@@ -112,15 +132,23 @@ module FileManager
 			date_found = bank_found = false
 			society_found = true
 			last_node = nil
-			bank = quantity = optional = nil
+			bank = year = month = nil
 			societies = []
-			path = full_path = ""
+			path = ""
+			full_path = ""
+			puts f
 			f.split('/').each do |folder|
 				next if folder == ""
 				path << "#{folder}/" unless bank_found
 				full_path << "#{folder}/"
 				if is_date folder
 					date_found = true
+					year = get_year folder
+				elsif is_month folder
+					date_found = true
+					month = get_month folder
+					year ||= get_year folder
+					raise if bank and bank.id != 8
 				elsif is_bank folder
 					bank_found = true
 					bank = Bank.find_bank folder
@@ -133,37 +161,45 @@ module FileManager
 						societies << last_node
 					end
 				end
-				if bank_found and date_found and society_found
-					min, max = get_quantities(full_path)
-					quantity = min
-					optional = max - min
-					break
-				end
+				break if month and bank_found
 			end
-			if bank_found and date_found and society_found
-				unless known_paths.include? path
-					known_paths << path
-					parent = nil
-					societies.each do |soc|
-						if parent and not soc.persisted?
-							soc.parent = parent
-							soc.save
-						end
-						parent = soc
+			#TODO: Refactor dividing this two sections
+			if bank and society_found
+				tax = nil
+				parent = nil
+				quantity = month ? get_quantities(full_path) : 1
+				optional = 0
+				societies.each do |soc|
+					if parent and not soc.persisted?
+						soc.parent = parent
+						soc.save
 					end
-					if bank 
+					parent = soc
+				end
+				if bank and date_found and societies.last.leaf?
+					if tax = societies.last.taxes.find_by(bank: bank)
+						tax.source_paths.where(path: path).first_or_create
+					else
 						tax = societies.last.taxes.build(
-							bank: bank, 
-							source_path: path[0..-2], 
+							bank: bank,
 							quantity: quantity, 
 							optional: optional, 
 							periodicity: Tax::Periodicity::MONTHLY)
+						tax.source_paths.build(path: path)
+						tax.save
+					end
+					if tax and month and year
+						tax.quantity = [tax.quantity,quantity].max
+						seq = tax.sequences.build(
+							date: Date.new(year,month,-1),
+							quantity: quantity,
+							optional: [0,quantity-tax.quantity].max
+						)
 						tax.save
 					end
 				end
 			end
 		end
-		#puts known_paths
 	end
 
 	private 
@@ -172,17 +208,32 @@ module FileManager
 			return !!(str =~ FileDates::NUMBER_DATE)
 		end
 
-		def self.get_quantities path
-			files = Dir[Paths::DROPBOX + "/" + path + "**/*.{#{FileFormats::ALL.join(',')}}"]
-			min_q = max_q = nil
-			FileDates::Months::ALL.each do |month|
-				q = files.select{|f| f =~ month[0]}.size
-				min_q ||= q
-				max_q ||= q
-				min_q = [min_q, q].min
-				max_q = [max_q, q].max
+		def self.get_year str
+			year = str[FileDates::NUMBER_DATE,0]
+			year ||= str[FileDates::ALT_YEAR_DATE,0]
+			if year
+				year = year.to_i if year
+				year += 2000 if year < 1999
 			end
-			[min_q, max_q]
+			year
+		end
+
+		def self.is_month str
+			FileDates::Months::ALL.each do |month|
+				return true if str =~ month[0]
+			end
+			return nil
+		end
+
+		def self.get_month str
+			FileDates::Months::ALL.each do |month|
+				return month[1] if str =~ month[0]
+			end
+			return nil
+		end
+
+		def self.get_quantities path
+			Dir[Paths::DROPBOX + "/" + path + "**/*.{#{FileFormats::ALL.join(',')}}"].size
 		end
 
 		def self.is_bank str

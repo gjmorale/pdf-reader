@@ -1,8 +1,7 @@
 <h1>Editing Handler</h1>
 
 <%= render 'handlers/form', handler: @handler %>
-<%= link_to 'Show', @handler %> |
-<%= link_to 'Back', handlers_path %>
+<%= link_to 'Show', @handler %>
 <br>
 <h3>CARTOLAS</h3>
 <%= render 'statements/by_status', statements: @statements, commit: [], edit: true %>

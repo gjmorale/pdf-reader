@@ -12,27 +12,27 @@ noticed_status = StatementStatus.where(
 	progress: 20,
 	message: "Recibido"
 	).first_or_create
-index_status = StatementStatus.where(
+read_status = StatementStatus.where(
 	code: 110, 
 	progress: 60,
 	message: "Leído"
 	).first_or_create
-indexed_status = StatementStatus.where(
+uploaded_status = StatementStatus.where(
 	code: 120, 
 	progress: 70,
 	message: "Subido"
 	).first_or_create
-indexed_status = StatementStatus.where(
+balanced_status = StatementStatus.where(
 	code: 130, 
 	progress: 80,
 	message: "Conciliado"
 	).first_or_create
-indexed_status = StatementStatus.where(
+processed_status = StatementStatus.where(
 	code: 140, 
 	progress: 99,
 	message: "Procesado"
 	).first_or_create
-StatementStatus.where(
+archived_status = StatementStatus.where(
 	code: 200, 
 	progress: 100,
 	message: "Archivado"
@@ -74,6 +74,11 @@ bc = Bank.where(
 	code_name: "BC",
 	folder_name: "BC"
 	).first_or_create
+gs = Bank.where(
+	name: "Goldman Sachs",
+	code_name: "GS",
+	folder_name: "GS"
+	).first_or_create
 blank = Bank.where(
 	name: "Blank",
 	code_name: "BLANK",
@@ -87,33 +92,46 @@ handler = Handler.where(
 	local_path: "/Clientes"
 	).first_or_create
 
-Synonym.where(label: 'JP', listable: nil).first_or_create
-Synonym.where(label: 'JP Morgan', listable: nil).first_or_create
-Synonym.where(label: 'JPMorgan', listable: nil).first_or_create
-Synonym.where(label: 'JPM', listable: nil).first_or_create
-Synonym.where(label: 'Itau', listable: nil).first_or_create
-Synonym.where(label: 'MBI', listable: nil).first_or_create
-Synonym.where(label: 'LV', listable: nil).first_or_create
-Synonym.where(label: 'Larrain Vial', listable: nil).first_or_create
-Synonym.where(label: 'BTG', listable: nil).first_or_create
-Synonym.where(label: 'BTG Pactual', listable: nil).first_or_create
-Synonym.where(label: 'Santander', listable: nil).first_or_create
-Synonym.where(label: 'Cruz Del Sur', listable: nil).first_or_create
-Synonym.where(label: 'CDS', listable: nil).first_or_create
-Synonym.where(label: 'Euroamerica', listable: nil).first_or_create
-Synonym.where(label: 'EA', listable: nil).first_or_create
-Synonym.where(label: 'BCI', listable: nil).first_or_create
-Synonym.where(label: 'Citi', listable: nil).first_or_create
-Synonym.where(label: 'ML', listable: nil).first_or_create
-Synonym.where(label: 'Merryl Lynch', listable: nil).first_or_create
-Synonym.where(label: 'Volcom', listable: nil).first_or_create
-Synonym.where(label: 'Acceso Partner', listable: nil).first_or_create
-Synonym.where(label: 'BICE', listable: nil).first_or_create
-Synonym.where(label: 'UBS', listable: nil).first_or_create
-Synonym.where(label: 'Goldman Sachs', listable: nil).first_or_create
-Synonym.where(label: 'GS', listable: nil).first_or_create
-Synonym.where(label: 'Celfin', listable: nil).first_or_create
-Synonym.where(label: 'Fidelity', listable: nil).first_or_create
+Society.where(name: "Portfolio Capital (1)").first_or_create
+
+Synonym.where(label: "Mstanley".strip.titleize, listable: ms).first_or_create
+Synonym.where(label: "M Stanley".strip.titleize, listable: ms).first_or_create
+Synonym.where(label: "Morgan S".strip.titleize, listable: ms).first_or_create
+Synonym.where(label: "Hsbc".strip.titleize, listable: hsbc).first_or_create
+Synonym.where(label: "Security".strip.titleize, listable: sec).first_or_create
+Synonym.where(label: "CrediCorp".strip.titleize, listable: corp).first_or_create
+Synonym.where(label: "Moneda".strip.titleize, listable: mon).first_or_create
+Synonym.where(label: "Pershing".strip.titleize, listable: per).first_or_create
+Synonym.where(label: "Persh".strip.titleize, listable: per).first_or_create
+Synonym.where(label: "Banchile".strip.titleize, listable: bc).first_or_create
+Synonym.where(label: "Bch".strip.titleize, listable: bc).first_or_create
+Synonym.where(label: 'Goldman'.strip.titleize, listable: gs).first_or_create
+Synonym.where(label: 'Sachs'.strip.titleize, listable: gs).first_or_create
+Synonym.where(label: 'JP'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'JP Morgan'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'JPMorgan'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'JPM'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'Itau'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'MBI'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'LV'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'Larrain Vial'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'BTG'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'BTG Pactual'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'Santander'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'Cruz Del Sur'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'CDS'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'Euroamerica'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'EA'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'BCI'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'Citi'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'ML'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'Merryl Lynch'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'Volcom'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'Acceso Partner'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'BICE'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'UBS'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'Celfin'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'Fidelity'.strip.titleize, listable: nil).first_or_create
 
 =begin
 

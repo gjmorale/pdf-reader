@@ -130,6 +130,7 @@ body {
 #main-container {
 	margin-left: 40px;
 	margin-right: 40px;
+	margin-top: 40px;
 }
 
 .search-block {
@@ -153,4 +154,55 @@ body {
 
 .nested-form {
 	width: 450px;
+}
+
+.home-container {
+	padding: 60px;
+	background-color: #EEE;
+	text-align: center;
+
+	h1 {
+		font-size: 55px;
+	}
+
+	p {
+		color: #777;
+		font-size: 20px;
+		padding-top: 25px;
+	}
+
+	span {
+		padding: 10px;
+		margin: 10px;
+		background-color: #CCC;
+		display: inline-block;
+		width: 100px;
+		border-width: 1px;
+		border-style: solid;
+		border-color: #DDD #BBB #BBB #DDD;
+		a {
+			text-decoration: none;
+			color: black;
+		}
+	}
+}
+
+.flash-container {
+	height: 0px;
+	position: relative;
+	z-index: 100;
+	p {
+		padding-left: 5%;
+		float: top;
+		margin: 0px;
+		width: 95%;
+	}
+	.notice {
+		color: green;
+		background-color: rgba(200,250,200,0.5);
+	}
+	.alert {
+		color: red;
+		background-color: rgba(250,200,200,0.5);
+	}
 }

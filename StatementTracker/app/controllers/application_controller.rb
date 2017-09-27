@@ -9,11 +9,24 @@ class ApplicationController < ActionController::Base
 
     def search_params
       @search_params = SearchParams.new(params[:search_params])
-      cookies[:search] = {value: @search_params.serialize, expires: 10.hours.from_now}
+      cookies[:search] = {value: @search_params.serialize, expires: 20.hours.from_now}
     end
 
-	protected
-	
+    def set_date_params
+      @date_params ||= DateParams.deserialize cookies[:date]
+    end
+
+    def date_params
+      @date_params = DateParams.new(params[:date_params])
+      cookies[:date] = {value: @date_params.serialize, expires: 20.hours.from_now}
+    end
+
+  protected
+
+    def after_sign_in_path_for(resource)
+      current_user
+    end
+  
 		def configure_permitted_parameters
 		  devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :password, :password_confirmation])
 		end

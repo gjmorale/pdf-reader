@@ -1,23 +1,9 @@
 <p id="notice"><%= notice %></p>
 
+<h1><%= @handler.short_name %></h1>
 <p>
-  <strong>Repo path:</strong>
-  <%= @handler.repo_path %>
-</p>
-
-<p>
-  <strong>Local path:</strong>
-  <%= @handler.local_path %>
-</p>
-
-<p>
-  <strong>Short name:</strong>
-  <%= @handler.short_name %>
-</p>
-
-<p>
-  <strong>Name:</strong>
-  <%= @handler.name %>
+  <strong>Local Path:</strong>
+  <%= @handler.repo_path+@handler.local_path %>
 </p>
 
 <%= link_to 'Edit', edit_handler_path(@handler) %> |

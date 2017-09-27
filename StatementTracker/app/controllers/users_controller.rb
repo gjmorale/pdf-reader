@@ -10,7 +10,7 @@ class UsersController < ApplicationController
   # GET /users/1
   # GET /users/1.json
   def show
-    redirect_to @user.role
+    @role = @user.role
   end
 
   # GET /users/new
@@ -20,6 +20,7 @@ class UsersController < ApplicationController
 
   # GET /users/1/edit
   def edit
+    @role = @user.role || Handler.new
   end
 
   # POST /users
@@ -41,8 +42,9 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1
   # PATCH/PUT /users/1.json
   def update
+    @user.role = Handler.new(user_params[:role])
     respond_to do |format|
-      if @user.update(user_params)
+      if @user.save
         format.html { redirect_to @user, notice: 'User was successfully updated.' }
         format.json { render :show, status: :ok, location: @user }
       else
@@ -70,6 +72,12 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:name, :role_id, :role_type)
+      params.require(:user).permit(role: [
+          :id,
+          :repo_path, 
+          :local_path, 
+          :short_name
+        ]
+      )
     end
 end

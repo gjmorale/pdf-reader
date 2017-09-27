@@ -36,9 +36,14 @@ Rails.application.routes.draw do
       post :edit, constraints: StatementsCommit.new(StatementsCommit::UPDATE), action: :update_statements
     end
   end
-  resources :sequences
+  resources :sequences do
+    collection do
+      post :filter
+    end
+  end
   resources :taxes do
     member do
+      get :progress
       get :times, action: :time_nodes
     end
   end
@@ -47,11 +52,20 @@ Rails.application.routes.draw do
       get :times, action: :time_nodes
       get :ifs, action: :if_nodes
       get :statements, action: :statement_nodes
+      get :progress
     end
     collection do
       post :reload
+      get :progress
     end
   end
-  resources :banks
+  resources :banks do 
+    member do
+      get :progress
+    end
+    collection do
+      get :progress
+    end
+  end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

@@ -1,6 +1,7 @@
 class SequencesController < ApplicationController
   before_action :set_sequence, only: [:show, :edit, :update, :destroy]
   before_action :set_search_params, only: [:show]
+  before_action :date_params, only: [:filter]
 
   # GET /sequences
   # GET /sequences.json
@@ -29,6 +30,10 @@ class SequencesController < ApplicationController
 
   # GET /sequences/1/edit
   def edit
+  end
+
+  def filter
+    redirect_back(fallback_location: root_url)
   end
 
   # POST /sequences

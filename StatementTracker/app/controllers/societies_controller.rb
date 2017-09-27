@@ -2,6 +2,7 @@ class SocietiesController < ApplicationController
   before_action :set_society, only: [:show, :edit, :update, :destroy, :time_nodes, :if_nodes, :statement_nodes]
   before_action :search_params, only: [:filter]
   before_action :set_search_params, only: [:time_nodes, :if_nodes, :statement_nodes, :seed]
+  before_action :set_date_params, only: [:progress]
 
   # GET /societies
   # GET /societies.json
@@ -16,6 +17,12 @@ class SocietiesController < ApplicationController
   def reload
     FileManager.load_societies
     redirect_to societies_url
+  end
+
+  def progress
+    set_society if params[:id]
+    @societies = @society ? @society.children : Society.roots
+    @taxes = @society.taxes if @society and @society.leaf?
   end
 
   # GET /societies/1
@@ -46,7 +53,7 @@ class SocietiesController < ApplicationController
       format.js do 
         @element = @society
         @node_template = 'sequences/node'
-        @children = @society.time_nodes @search_params
+        @children = @society.all_times @search_params
         @auto_open = true
         render 'nodes/navigation'
       end
@@ -59,7 +66,7 @@ class SocietiesController < ApplicationController
       format.js do 
         @element = @society
         @node_template = 'taxes/node'
-        @children = @society.if_nodes @search_params
+        @children = @society.all_ifs @search_params
         @auto_open = true
         render 'nodes/navigation'
       end
@@ -72,7 +79,7 @@ class SocietiesController < ApplicationController
       format.js do 
         @element = @society
         @node_template = 'statements/node'
-        @children = @society.statement_nodes @search_params
+        @children = @society.all_statements @search_params
         #@progress = StatementStatus.progress @children.average("statement_statuses.code")
         @auto_open = true
         render 'nodes/navigation'
@@ -142,7 +149,6 @@ class SocietiesController < ApplicationController
                           :periodicity, 
                           :quantity, 
                           :optional, 
-                          :source_path, 
                           :id, 
                           :_destroy],
         children_attributes: [:name,

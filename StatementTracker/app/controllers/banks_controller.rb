@@ -12,6 +12,15 @@ class BanksController < ApplicationController
   def show
   end
 
+  def progress
+    set_bank if params[:id]
+    if @bank
+      @societies = Society.joins(:taxes).where(Tax.arel_table[:bank_id].eq(@bank.id))
+    else
+      @banks = Bank.all
+    end
+  end
+
   # GET /banks/new
   def new
     @bank = Bank.new

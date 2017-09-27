@@ -12,17 +12,22 @@ class Bank < ApplicationRecord
 		BLANK = "BLANK"
 	end
 
-	has_many :synonyms, as: :listable
+	has_many :synonyms, as: :listable, dependent: :destroy
+	has_many :taxes, dependent: :destroy
 
 	validates :code_name, presence: true, uniqueness: true
 	validates :folder_name, presence: true, uniqueness: true
 
 	after_create :default_synonyms
 
-  accepts_nested_attributes_for :synonyms, allow_destroy: true
+  	accepts_nested_attributes_for :synonyms, allow_destroy: true
 
 	def to_s
 		name
+	end
+
+	def blank?
+		return !!(code_name == Format::BLANK)
 	end
 
 	def index path
@@ -71,8 +76,8 @@ class Bank < ApplicationRecord
 	private
 
 		def default_synonyms
-			self.synonyms.where(label: self.code_name).first_or_create
-			self.synonyms.where(label: self.name).first_or_create
-			self.synonyms.where(label: self.folder_name).first_or_create
+			self.synonyms.where(label: self.code_name.strip.titleize).first_or_create
+			self.synonyms.where(label: self.name.strip.titleize).first_or_create
+			self.synonyms.where(label: self.folder_name.strip.titleize).first_or_create
 		end
 end

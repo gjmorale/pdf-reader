@@ -1,0 +1,24 @@
+<%= render 'filter_params/date_params', date_params: @date_params %>
+
+<h1><%= link_to @tax.society, progress_society_path(@tax.society) %> - <%= link_to @tax.bank, progress_bank_path(@tax.bank) %></h1>
+<h2>Algo %</h2>
+
+<h2>Cartolas:</h2>
+<table>
+	<thead>
+		<th>Nombre</th>
+		<th>Estado</th>
+		<th>Encargado</th>
+		<th>Progreso</th>
+	</thead>
+	<tbody>
+	  <% @statements.each do |statement| %>
+	    <tr>
+	    	<td><%= link_to statement.file_name, statement_path(statement) %></td>
+	    	<td><%= statement.status %></td>
+	    	<td><%= statement.handler || "-" %></td>
+	    	<td><%= statement.progress %> %</td>
+	    </tr>
+	  <% end %>
+	</tbody>
+</table>
