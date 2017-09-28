@@ -1,3 +1,5 @@
+<%= render 'filter_params/date_params', date_params: @date_params %>
+
 <h1>
 	<% if @society %>
 		<% if @society.parent %>
@@ -6,7 +8,7 @@
 			<%= link_to("Todos",progress_societies_path) %>
 		<% end %>
 		<%= " - " %>
-		<%= @society.name %>
+		<%= link_to @society.name, society_path(@society) %>
 	<% else %>
 		<%= "Progreso por sociedad" %>
 	<% end %>
@@ -14,7 +16,7 @@
 <h2>Algo %</h2>
 
 <% if @society and @society.leaf? %>
-<table>
+<table class="progress-table">
 	<thead>
 		<th>IF</th>
 		<th>Cartolas Recibidas</th>
@@ -24,16 +26,16 @@
 	<tbody>
 	  <% @taxes.each do |tax| %>
 	    <tr>
-	    	<td><%= link_to tax, progress_tax_path(tax) %></td>
+	    	<td><%= link_to tax.bank, progress_tax_path(tax) %></td>
 	    	<td><%= tax.recieved @date_params %></td>
 	    	<td><%= tax.expected @date_params %></td>
-	    	<td><%= tax.period_progress @date_params %></td>
+	    	<td><%= tax.period_progress(@date_params).to_i %> %</td>
 	    </tr>
 	  <% end %>
 	</tbody>
 </table>
 <% else %>
-<table>
+<table class="progress-table">
 	<thead>
 		<th>Sociedad</th>
 		<th>IFs</th>
@@ -45,6 +47,10 @@
 	  <% @societies.each do |society| %>
 	    <tr>
 	    	<td><%= link_to society.name, progress_society_path(society) %></td>
+	    	<td><%= society.inherited_ifs %>
+	    	<td><%= society.recieved @date_params %></td>
+	    	<td><%= society.expected @date_params %></td>
+	    	<td><%= society.period_progress(@date_params).to_i %> %</td>
 	    </tr>
 	  <% end %>
 	</tbody>

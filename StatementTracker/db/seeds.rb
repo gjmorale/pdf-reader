@@ -79,6 +79,21 @@ gs = Bank.where(
 	code_name: "GS",
 	folder_name: "GS"
 	).first_or_create
+jp = Bank.where(
+	name: "JP Morgan",
+	code_name: "JPM",
+	folder_name: "JPM"
+	).first_or_create
+itau = Bank.where(
+	name: "Itau",
+	code_name: "ITAU",
+	folder_name: "ITAU"
+	).first_or_create
+mbi = Bank.where(
+	name: "MBI",
+	code_name: "MBI",
+	folder_name: "MBI"
+	).first_or_create
 blank = Bank.where(
 	name: "Blank",
 	code_name: "BLANK",
@@ -107,12 +122,9 @@ Synonym.where(label: "Banchile".strip.titleize, listable: bc).first_or_create
 Synonym.where(label: "Bch".strip.titleize, listable: bc).first_or_create
 Synonym.where(label: 'Goldman'.strip.titleize, listable: gs).first_or_create
 Synonym.where(label: 'Sachs'.strip.titleize, listable: gs).first_or_create
-Synonym.where(label: 'JP'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'JP Morgan'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'JPMorgan'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'JPM'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'Itau'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'MBI'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'JP'.strip.titleize, listable: jp).first_or_create
+Synonym.where(label: 'JPMorgan'.strip.titleize, listable: jp).first_or_create
+Synonym.where(label: 'Itau'.strip.titleize, listable: itau).first_or_create
 Synonym.where(label: 'LV'.strip.titleize, listable: nil).first_or_create
 Synonym.where(label: 'Larrain Vial'.strip.titleize, listable: nil).first_or_create
 Synonym.where(label: 'BTG'.strip.titleize, listable: nil).first_or_create

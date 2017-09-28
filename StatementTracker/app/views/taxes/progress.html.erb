@@ -4,7 +4,7 @@
 <h2>Algo %</h2>
 
 <h2>Cartolas:</h2>
-<table>
+<table class="progress-table">
 	<thead>
 		<th>Nombre</th>
 		<th>Estado</th>
@@ -17,7 +17,7 @@
 	    	<td><%= link_to statement.file_name, statement_path(statement) %></td>
 	    	<td><%= statement.status %></td>
 	    	<td><%= statement.handler || "-" %></td>
-	    	<td><%= statement.progress %> %</td>
+	    	<td><%= statement.progress.to_i.to_s %> %</td>
 	    </tr>
 	  <% end %>
 	</tbody>

@@ -49,7 +49,32 @@ class Bank < ApplicationRecord
 		return syn.listable
 	end
 
+	def recieved date_params
+		targets = taxes
+		targets = targets.joins(sequences: :statements)
+		query = date_params.filter targets, distinct: false
+		query.size
+	end
+
+	def expected date_params
+		targets = taxes
+		date_params.filter_quantity targets
+		targets.sum(&:quantity)
+	end
+
+	def period_progress date_params
+		n = expected(date_params)
+		return 0 if n == 0
+		targets = taxes
+		targets = targets.joins(sequences: {statements: :status})	
+		status = StatementStatus.arel_table	
+		query = date_params.filter targets, distinct: false
+		query = query.select(status[:progress].as("status_progress"))
+		query.sum(&:status_progress)/n
+	end
+
 	def reader_bank
+		raise
 		puts "FOLDER: #{self.folder_name}"
 		case self.folder_name
 		when Format::HSBC

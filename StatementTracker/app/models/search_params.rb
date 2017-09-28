@@ -13,9 +13,10 @@ class SearchParams
 	attr_accessor :statuses
 
   def initialize(attributes = {})
-  	SearchParams.date_from_attribute "date_from", attributes
-  	SearchParams.date_from_attribute "date_to", attributes
-  	attributes[:date_to] ||= attributes[:date_from].end_of_month if attributes[:date_from]
+  	SearchParams.attribute_to_date "date_from", attributes
+  	SearchParams.attribute_to_date "date_to", attributes
+  	attributes["date_to"] ||= attributes["date_from"]
+  	attributes["date_to"] = attributes["date_to"].end_of_month if attributes["date_to"]
     attributes.each do |name, value|
       send("#{name}=", value) unless name =~ /\(*\)/
     end
@@ -25,7 +26,7 @@ class SearchParams
     @statuses ||= []
   end
 
-  def self.date_from_attribute name, attributes
+  def self.attribute_to_date name, attributes
   	if attributes[name]
   		attributes[name] = Date.parse attributes[name]
   	else
@@ -58,7 +59,7 @@ class SearchParams
 		return SearchParams.new JSON.parse(string)
 	end
 
-	#MAkes the form helper think it's an instantiated resource
+	#Makes the form helper think it's an instantiated resource
   def persisted?
     false
   end

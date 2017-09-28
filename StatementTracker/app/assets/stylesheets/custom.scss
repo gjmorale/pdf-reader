@@ -206,3 +206,19 @@ body {
 		background-color: rgba(250,200,200,0.5);
 	}
 }
+
+table.progress-table {
+	border-collapse: collapse;
+	th {
+	 	border-bottom: 1px solid #BBB;
+	 	height: 40px;
+	}
+	 td {
+	 	border-bottom: 1px solid #DDD;
+	 	vertical-align: center;
+	 	padding: 5px;
+	}
+	tbody tr:hover {
+		background-color: #F3F3F9;
+	}
+}

@@ -1,5 +1,6 @@
 class BanksController < ApplicationController
   before_action :set_bank, only: [:show, :edit, :update, :destroy]
+  before_action :set_date_params, only: [:progress]
 
   # GET /banks
   # GET /banks.json
@@ -15,7 +16,7 @@ class BanksController < ApplicationController
   def progress
     set_bank if params[:id]
     if @bank
-      @societies = Society.joins(:taxes).where(Tax.arel_table[:bank_id].eq(@bank.id))
+      @taxes = @bank.taxes
     else
       @banks = Bank.all
     end

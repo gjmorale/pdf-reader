@@ -22,8 +22,8 @@ class Tax < ApplicationRecord
   belongs_to :society
 
   validates :periodicity, presence: true
-  validates :source_paths, :length => { :minimum => 1 }
   accepts_nested_attributes_for :source_paths, allow_destroy: true
+  validates :source_paths, :length => { :minimum => 1 }
 
   def to_s
     "#{bank} - #{society}"
@@ -86,8 +86,7 @@ class Tax < ApplicationRecord
 
   def expected date_params
     seq = date_params.filter(self.sequences.joins(:statements, :tax)).take
-    raise
-    seq ? seq.quantity : tax.quantity
+    seq ? seq.quantity : self.quantity
   end
 
   def recieved date_params

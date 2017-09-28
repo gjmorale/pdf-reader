@@ -34,7 +34,7 @@
   <div class="nested-form">
     <strong>New Tax:</strong>
     <%= form_for @society do |f| %>
-    <%= f.fields_for :taxes, @society.taxes.build do |t| %>
+    <%= f.fields_for :taxes, (tax = @society.taxes.build) do |t| %>
       <div class="field">
         <%= t.label :bank_id %>
         <%= t.collection_select(:bank_id, Bank.all, :id, :name) %>
@@ -51,12 +51,14 @@
         <%= t.label :optional %>
         <%= t.number_field :optional %>
       </div>
-      <div class="field">
-        <%= t.label :source_path %>
-      </div>
-      <div class="field xl-field">
-        <%= t.text_field :source_path, value: @society.path %>
-      </div>
+      <%= t.fields_for :source_paths, SourcePath.new do |s| %>
+        <div class="field">
+          <%= s.label :path %>
+        </div>
+        <div class="field xl-field">
+          <%= s.text_field :path, value: @society.path %>
+        </div>
+      <% end %>
     <% end %>
     <div class="actions">
       <%= f.submit "Create Tax" %>
@@ -64,7 +66,7 @@
     <% end %>    
   </div>
 <% end %> 
-
+<% @society.reload %>
 <% if @society.taxes.size == 0 %>
   <% if @society.children.any? %>
     <h2>Sociedades</h2>

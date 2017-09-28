@@ -154,6 +154,34 @@ class Society < ApplicationRecord
 		self.self_and_ancestors.reverse.join('/')
 	end
 
+	def expected date_params
+		targets = Tax.where(society_id: descendant_ids)
+		date_params.filter_quantity targets
+		targets.sum(&:quantity)
+	end
+
+	def recieved date_params
+		targets = Society.where(id: descendant_ids)
+		targets = targets.joins(taxes: {sequences: :statements})
+		query = date_params.filter targets, distinct: false
+		query.size
+	end
+
+	def period_progress date_params
+		n = expected(date_params)
+		return 0 if n == 0
+		targets = Society.where(id: descendant_ids)
+		targets = targets.joins(taxes: {sequences: {statements: :status}})	
+		status = StatementStatus.arel_table	
+		query = date_params.filter targets, distinct: false
+		query = query.select(status[:progress].as("status_progress"))
+		query.sum(&:status_progress)/n
+	end
+
+	def inherited_ifs
+		targets = Tax.where(society_id: descendant_ids).size
+	end
+
 end
 =begin RECURSIVENESS REQUIRES sql3driver >= 3.8.1
   def descendents

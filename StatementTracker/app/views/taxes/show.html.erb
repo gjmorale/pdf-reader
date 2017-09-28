@@ -1,5 +1,3 @@
-<p id="notice"><%= notice %></p>
-
 <h1>
   <%= link_to @tax.bank, @tax.bank %> - <%= link_to @tax.society, @tax.society %>
 </h1>
@@ -14,6 +12,19 @@
   </li>
 <% end %>
 </ul>
+<h3>Nueva fuente</h3>
+<%= form_for(@tax) do |f| %>
+	<div class="nested-form">
+		<%= f.fields_for :source_paths, @tax.source_paths.build do |s| %>
+	    <div class="field xl-field">
+	      <%= s.text_field :path, value: @tax.society.path %>
+	    </div>
+		<% end %>
+	</div>
+	<div class="actions">
+		<%= f.submit "Agregar Ruta" %>
+	</div>
+<% end %>
 
 <h2>Períodos:</h2>
 <ul>

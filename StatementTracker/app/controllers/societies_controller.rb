@@ -149,8 +149,10 @@ class SocietiesController < ApplicationController
                           :periodicity, 
                           :quantity, 
                           :optional, 
+                          :_destroy,
                           :id, 
-                          :_destroy],
+                          source_paths_attributes: [:id, :path]
+                          ],
         children_attributes: [:name,
                               :rut,
                               :id,

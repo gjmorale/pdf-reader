@@ -7,7 +7,7 @@ class DateParams
 	attr_accessor :periodicity
 
   def initialize(attributes = {})
-  	SearchParams.date_from_attribute "date", attributes
+  	self.class.date_from_attribute "date", attributes
     attributes.each do |name, value|
       send("#{name}=", value) unless name =~ /\(*\)/
     end
@@ -57,7 +57,7 @@ class DateParams
     false
   end
 
-  def filter query
+  def filter query, distinct: true
 		query = query.where("taxes.periodicity = ?", periodicity)
 		query = query.where("sequences.date <= ?", date)
 		case periodicity
@@ -70,7 +70,25 @@ class DateParams
 		when Tax::Periodicity::DAILY
 			query = query.where("sequences.date >= ?", date)
 		end
-		query.distinct
+		query = query.distinct if distinct
+		query
+  end
+
+  def filter_quantity query
+		seq_join = "LEFT JOIN sequences ON sequences.tax_id = taxes.id AND "
+		case periodicity
+		when Tax::Periodicity::ANNUAL
+			seq_join << "sequences.date >= #{date.beginning_of_year}"
+		when Tax::Periodicity::MONTHLY
+			seq_join << "sequences.date >= #{date.beginning_of_month}"
+		when Tax::Periodicity::WEEKLY
+			seq_join << "sequences.date >= #{date.beginning_of_week}"
+		when Tax::Periodicity::DAILY
+			seq_join << "sequences.date >= #{date}"
+		end
+		query.joins(seq_join)
+		query.select('taxes.id, IFNULL(sequences.quantity,taxes.quantity)')
+		query.where('sequences.periodicity = ?', periodicity)
   end
 
 end
