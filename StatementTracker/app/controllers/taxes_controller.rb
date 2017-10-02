@@ -107,9 +107,10 @@ class TaxesController < ApplicationController
   # DELETE /taxes/1
   # DELETE /taxes/1.json
   def destroy
+    soc = @tax.society
     @tax.destroy
     respond_to do |format|
-      format.html { redirect_to taxes_url, notice: 'Tax was successfully destroyed.' }
+      format.html { redirect_to society_url(soc), notice: 'Tax was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
