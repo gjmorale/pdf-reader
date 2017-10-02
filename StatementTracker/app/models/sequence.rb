@@ -14,10 +14,6 @@ class Sequence < ApplicationRecord
   	tax.periodicity
   end
 
-  def accepting?
-    statements.count < tax.quantity + tax.optional
-  end
-
   def filter params
     query = statements
     query = query.joins(sequence: [tax: :society])
@@ -48,10 +44,6 @@ class Sequence < ApplicationRecord
     else
       tax.quantity + tax.optional
     end
-  end
-
-  def self.clean_up
-    Self.all.joins(:statements).where(statements: {sequence_id: nil})
   end
 
   private

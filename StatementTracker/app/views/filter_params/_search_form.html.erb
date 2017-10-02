@@ -1,13 +1,15 @@
 <%= form_for search_params, url: filter_statements_url do |f| %>
 
 <div class="search-block">
+  <%= f.submit "Filtrar" %>
   <div class="field">
     <%= f.label "Desde:" %><br>
     <%= f.date_select :date_from, discard_day: true, selected: search_params.date_from, start_year: 2015, end_year: Date.current.year %>
+
   </div>
 
-  <div>
-    <span class="toggle-on-click" data-toggle="close">Opciones Avanzadas</span>
+  <div class="advanced-options">
+    <span class="toggle-on-click" data-toggle="close">Opciones Avanzadas (F5)</span>
     <div class="field show-on-click">
       <%= f.label "Hasta:" %><br>
       <%= f.date_select :date_to, discard_day: true, include_blank: true, selected: nil, start_year: 2015, end_year: Date.current.year %>
@@ -24,6 +26,8 @@
     <div class="show-on-click">
       <span class="toggle-on-click" data-toggle="close">Operadores</span>
       <div class="field show-on-click">
+        <%= check_box_tag "search_params[handlers][]", nil, (search_params.handlers and search_params.handlers.include?(nil)) %>
+        <%= f.label :handler, "Sin Encargado" %> </br>
         <% Handler.all.each do |handler| %>
           <%= check_box_tag "search_params[handlers][]", handler.id, (search_params.handlers and search_params.handlers.include?(handler.id.to_s)) %>
           <%= f.label :handler, handler.short_name %> </br>
@@ -48,9 +52,6 @@
         <%= f.label :statuses, status.message %> </br>
       <% end %> 
     </div>
-  </div>
-  <div class="actions">
-    <%= f.submit "Filtrar" %>
   </div>
 </div>
 <% end %>

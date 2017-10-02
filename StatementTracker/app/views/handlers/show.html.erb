@@ -1,11 +1,9 @@
-<h1><%= @handler.short_name %></h1>
+<h1><%= @handler.short_name %><small> (<%= link_to 'edit', edit_handler_path(@handler) %>)</small></h1>
 <p>
   <strong>Local Path:</strong>
-  <%= @handler.repo_path+@handler.local_path %>
+  <a href="<%= "f://#{@handler.repo_path}#{@handler.local_path}" %>"><%= "#{@handler.repo_path}#{@handler.local_path}" %></a>
 </p>
 
-<%= link_to 'Edit', edit_handler_path(@handler) %> |
-<%= link_to 'Back', handlers_path %>
 
 <h1>My Statements</h1>
 

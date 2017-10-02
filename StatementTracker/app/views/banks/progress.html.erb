@@ -3,28 +3,28 @@
 <h1>
 	<% if @bank %>
 		<%= link_to("Todos",progress_banks_path) %>
-		<%= " - " %>
-		<%= link_to @bank.name, bank_path(@bank) %>
+		 - 
+		<%= link_to @bank.name, bank_path(@bank) %> 
+		(<%= to_percentage @bank.recieved(@date_params), @bank.expected(@date_params)%> %)
 	<% else %>
 		<%= "Progreso por I. Financiera" %>
 	<% end %>
 </h1>
-<h2>Algo %</h2>
 
 <% if @bank %>
 	<table class="progress-table">
 		<thead>
 			<th>Sociedad</th>
 			<th>Cartolas Recibidas</th>
-			<th>Cartolas Esperadas</th>
+			<th>% Recibido</th>
 			<th>Progreso</th>
 		</thead>
 		<tbody>
 		  <% @taxes.each do |tax| %>
 		    <tr>
 		    	<td><%= link_to tax.society.name, progress_tax_path(tax) %></td>
-		    	<td><%= tax.recieved @date_params %></td>
-		    	<td><%= tax.expected @date_params %></td>
+		    	<td><%= r = tax.recieved @date_params %> de <%= e = tax.expected @date_params %></td>
+	    		<td><%= to_percentage r, e %> %</td>
 		    	<td><%= tax.period_progress(@date_params).to_i %> %</td>
 		    </tr>
 		  <% end %>
@@ -36,7 +36,7 @@
 			<th>IF</th>
 			<th>Sociedades</th>
 			<th>Cartolas Recibidas</th>
-			<th>Cartolas Esperadas</th>
+			<th>% Recibido</th>
 			<th>Progreso</th>
 		</thead>
 		<tbody>
@@ -44,8 +44,8 @@
 		    <tr>
 		    	<td><%= link_to bank.name, progress_bank_path(bank) %></td>
 		    	<td><%= bank.taxes.size %></td>
-		    	<td><%= bank.recieved @date_params %></td>
-		    	<td><%= bank.expected @date_params %></td>
+		    	<td><%= r = bank.recieved @date_params %> de <%= e = bank.expected @date_params %></td>
+	    		<td><%= to_percentage r, e %> %</td>
 		    	<td><%= bank.period_progress @date_params %> %</td>
 		    </tr>
 		  <% end %>

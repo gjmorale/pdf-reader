@@ -9,3 +9,6 @@ Transactions
 CashMovements
  - From scratch
  
+
+Extension for local file link opening
+ https://chrome.google.com/webstore/detail/enable-local-file-links/nikfmfgobenbhmocjaaboihbeocackld?hl=en

@@ -1,7 +1,7 @@
 class TaxesController < ApplicationController
-  before_action :set_tax, only: [:show, :edit, :update, :destroy, :time_nodes, :progress]
+  before_action :set_tax, only: [:show, :edit, :update, :destroy, :time_nodes, :progress, :adjust, :close]
   before_action :set_search_params, only: [:show, :time_nodes]
-  before_action :set_date_params, only: [:progress]
+  before_action :set_date_params, only: [:progress, :adjust, :close]
 
   # GET /taxes
   # GET /taxes.json
@@ -39,6 +39,30 @@ class TaxesController < ApplicationController
         render 'nodes/navigation'
       end
     end
+  end
+
+  def adjust
+    seq = @tax.sequence(@date_params)
+    seq ||= Sequence.new(date: @date_params.date, tax: @tax)
+    seq.quantity = seq.statements.size
+    if seq.save
+      flash[:notice] = "Cuenta #{@tax.bank} de #{@tax.society} al #{seq.date} ajustada a #{seq.quantity} documentos"
+    else
+      flash[:alert] = "Cuenta #{@tax.bank} de #{@tax.society} al #{seq.date} no se pudo ajustar"
+    end
+    redirect_back(fallback_location: progress_society_url(@tax.society))
+  end
+
+  def close
+    @tax.quantity = 0
+    @tax.save
+    if seq = @tax.sequence(@date_params)
+      seq.quantity = seq.statements.size
+      seq.save
+    end
+    flash[:notice] = "Cuenta #{@tax.bank} de #{@tax.society} cerrada"
+    flash[:notice] << " al #{seq.date}" if seq
+    redirect_back(fallback_location: progress_society_url(@tax.society))
   end
 
   # GET /taxes/new

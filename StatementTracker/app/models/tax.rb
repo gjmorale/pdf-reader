@@ -73,19 +73,17 @@ class Tax < ApplicationRecord
     (means.map{|m| m[1].to_f}.inject{|t, m| t+(m)}/(quantity*means.size)).to_i
   end
 
-  def self.reload date_from = nil, date_to = nil
-    self.all.each do |tax|
-      tax.reload date_from, date_to
-    end
+  def sequence date_params
+    date_params.filter(self.sequences.joins(:statements, :tax)).take
   end
 
   def dated_statements date_params
-    seq = date_params.filter(self.sequences.joins(:statements, :tax)).take
+    seq = sequence date_params
     seq ? seq.statements : self.class.none
   end
 
   def expected date_params
-    seq = date_params.filter(self.sequences.joins(:statements, :tax)).take
+    seq = sequence date_params
     seq ? seq.quantity : self.quantity
   end
 
@@ -95,9 +93,15 @@ class Tax < ApplicationRecord
 
   def period_progress date_params
     ds = dated_statements(date_params)
-    n = ds.size
-    return 0 if n == 0
+    n = expected(date_params)
+    return 100 if n == 0
     ds.sum(&:progress)*1.0 / expected(date_params)
+  end
+
+  def self.reload date_from = nil, date_to = nil
+    self.all.each do |tax|
+      tax.reload date_from, date_to
+    end
   end
 
   def reload date_from = Date.current.beginning_of_month, date_to = Date.current.end_of_month
@@ -138,6 +142,21 @@ class Tax < ApplicationRecord
         end
       end
     end
+  end
+
+  def adjust
+    q = self.quantity
+    self.sequences.each do |seq|
+      p = seq.quantity
+      r = seq.statements.size
+      if r > p
+        seq.quantity = r
+        seq.save
+      end
+      q = [p,r,q].max
+    end
+    self.quantity = q
+    self.save
   end
 
 end

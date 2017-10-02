@@ -94,17 +94,77 @@ mbi = Bank.where(
 	code_name: "MBI",
 	folder_name: "MBI"
 	).first_or_create
-blank = Bank.where(
-	name: "Blank",
-	code_name: "BLANK",
-	folder_name: "BLANK"
+lv = Bank.where(
+	name: "Larraín Vial",
+	code_name: "LV",
+	folder_name: "LV"
+	).first_or_create
+btg = Bank.where(
+	name: "BTG Pactual",
+	code_name: "BTG",
+	folder_name: "BTG"
+	).first_or_create
+san = Bank.where(
+	name: "Santander",
+	code_name: "SANT",
+	folder_name: "SANT"
+	).first_or_create
+cds = Bank.where(
+	name: "Cruz del Sur",
+	code_name: "CDS",
+	folder_name: "CDS"
+	).first_or_create
+ea = Bank.where(
+	name: "Euroamérica",
+	code_name: "EA",
+	folder_name: "EA"
+	).first_or_create
+bci = Bank.where(
+	name: "BCI",
+	code_name: "BCI",
+	folder_name: "BCI"
+	).first_or_create
+citi = Bank.where(
+	name: "Citi",
+	code_name: "CITI",
+	folder_name: "CITI"
+	).first_or_create
+ml = Bank.where(
+	name: "Merryl Lynch",
+	code_name: "ML",
+	folder_name: "ML"
+	).first_or_create
+volcom = Bank.where(
+	name: "Volcom",
+	code_name: "Volcom",
+	folder_name: "Volcom"
+	).first_or_create
+ap = Bank.where(
+	name: "Acceso Partners",
+	code_name: "AP",
+	folder_name: "AP"
+	).first_or_create
+bice = Bank.where(
+	name: "BICE",
+	code_name: "BICE",
+	folder_name: "BICE"
 	).first_or_create
 
-#Handlers
-handler = Handler.where(
-	short_name: "Guille",
-	repo_path: "/home/finantecdeveloper/gmo/Sandbox/Dropbox",
-	local_path: "/Clientes"
+
+ubs = Bank.where(
+	name: 'UBS',
+	code_name: 'UBS',
+	folder_name: 'UBS'
+	).first_or_create
+celf = Bank.where(
+	name: 'Celfin',
+	code_name: 'CELF',
+	folder_name: 'CELF'
+	).first_or_create
+fid = Bank.where(
+	name: 'Fidelity',
+	code_name: 'FID',
+	folder_name: 'FID'
 	).first_or_create
 
 Society.where(name: "Portfolio Capital (1)").first_or_create
@@ -125,25 +185,9 @@ Synonym.where(label: 'Sachs'.strip.titleize, listable: gs).first_or_create
 Synonym.where(label: 'JP'.strip.titleize, listable: jp).first_or_create
 Synonym.where(label: 'JPMorgan'.strip.titleize, listable: jp).first_or_create
 Synonym.where(label: 'Itau'.strip.titleize, listable: itau).first_or_create
-Synonym.where(label: 'LV'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'Larrain Vial'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'BTG'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'BTG Pactual'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'Santander'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'Cruz Del Sur'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'CDS'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'Euroamerica'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'EA'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'BCI'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'Citi'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'ML'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'Merryl Lynch'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'Volcom'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'Acceso Partner'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'BICE'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'UBS'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'Celfin'.strip.titleize, listable: nil).first_or_create
-Synonym.where(label: 'Fidelity'.strip.titleize, listable: nil).first_or_create
+Synonym.where(label: 'Larrain Vial'.strip.titleize, listable: lv).first_or_create
+Synonym.where(label: 'Euroamerica'.strip.titleize, listable: ea).first_or_create
+Synonym.where(label: 'Acceso Partner'.strip.titleize, listable: ap).first_or_create
 
 =begin
 

@@ -1,7 +1,8 @@
 <%= render 'filter_params/date_params', date_params: @date_params %>
 
-<h1><%= link_to @tax.society, progress_society_path(@tax.society) %> - <%= link_to @tax.bank, progress_bank_path(@tax.bank) %></h1>
-<h2>Algo %</h2>
+<h1>
+<%= link_to @tax.society, progress_society_path(@tax.society) %> - <%= link_to @tax.bank, progress_bank_path(@tax.bank) %> (<%= to_percentage @tax.recieved(@date_params),@tax.expected(@date_params) %> %)
+</h1>
 
 <h2>Cartolas:</h2>
 <table class="progress-table">
@@ -18,7 +19,13 @@
 	    	<td><%= statement.status %></td>
 	    	<td><%= statement.handler || "-" %></td>
 	    	<td><%= statement.progress.to_i.to_s %> %</td>
+	    	<td><a href="<%= statement.chrome_path current_user %>">Abrir</a></td>
 	    </tr>
 	  <% end %>
 	</tbody>
 </table>
+<p>
+<% if sequence = @tax.sequence(@date_params) %>
+	<%= link_to "Editar", edit_sequence_path(sequence) %>
+<% end %>
+</p>

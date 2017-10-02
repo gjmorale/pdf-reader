@@ -169,7 +169,7 @@ class Society < ApplicationRecord
 
 	def period_progress date_params
 		n = expected(date_params)
-		return 0 if n == 0
+		return 100 if n == 0
 		targets = Society.where(id: descendant_ids)
 		targets = targets.joins(taxes: {sequences: {statements: :status}})	
 		status = StatementStatus.arel_table	

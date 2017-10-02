@@ -9,6 +9,7 @@ Rails.application.routes.draw do
 
   get 'static_pages/test'
   get 'static_pages/guide'
+  get 'static_pages/activity'
 
   root 'static_pages#home'
 
@@ -21,20 +22,12 @@ Rails.application.routes.draw do
       post :batch_update, constraints: StatementsCommit.new(StatementsCommit::DOWNGRADE), action: :downgrade
   end
     member do
+      get :open
       get :assign
+      get :unassign
     end
   end
   resources :handlers do 
-    member do
-      post :edit, constraints: StatementsCommit.new(StatementsCommit::RELOAD), action: :reload_statements
-      post :edit, constraints: StatementsCommit.new(StatementsCommit::AUTO), action: :auto_statements
-      post :edit, constraints: StatementsCommit.new(StatementsCommit::INDEX), action: :index_statements
-      post :edit, constraints: StatementsCommit.new(StatementsCommit::INDEXED), action: :fit_statements
-      post :edit, constraints: StatementsCommit.new(StatementsCommit::READ), action: :read_statements
-      post :edit, constraints: StatementsCommit.new(StatementsCommit::ASSIGN), action: :assign
-      post :edit, constraints: StatementsCommit.new(StatementsCommit::UNASSIGN), action: :unassign
-      post :edit, constraints: StatementsCommit.new(StatementsCommit::UPDATE), action: :update_statements
-    end
   end
   resources :sequences do
     collection do
@@ -45,6 +38,8 @@ Rails.application.routes.draw do
     member do
       get :progress
       get :times, action: :time_nodes
+      get :adjust
+      get :close
     end
   end
   resources :societies do 

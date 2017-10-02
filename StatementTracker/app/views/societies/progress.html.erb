@@ -7,8 +7,9 @@
 		<% else %>
 			<%= link_to("Todos",progress_societies_path) %>
 		<% end %>
-		<%= " - " %>
-		<%= link_to @society.name, society_path(@society) %>
+		 - 
+		<%= link_to @society.name, society_path(@society) %> 
+		(<%= to_percentage @society.recieved(@date_params), @society.expected(@date_params)%> %)
 	<% else %>
 		<%= "Progreso por sociedad" %>
 	<% end %>
@@ -20,16 +21,19 @@
 	<thead>
 		<th>IF</th>
 		<th>Cartolas Recibidas</th>
-		<th>Cartolas Esperadas</th>
+		<th>% Recibido</th>
 		<th>Progreso</th>
+		<th colspan="2">Opciones</th>
 	</thead>
 	<tbody>
 	  <% @taxes.each do |tax| %>
 	    <tr>
 	    	<td><%= link_to tax.bank, progress_tax_path(tax) %></td>
-	    	<td><%= tax.recieved @date_params %></td>
-	    	<td><%= tax.expected @date_params %></td>
+	    	<td><%= r = tax.recieved @date_params %> de <%= e = tax.expected @date_params %></td>
+	    	<td><%= to_percentage r, e %> %</td>
 	    	<td><%= tax.period_progress(@date_params).to_i %> %</td>
+	    	<td><%= link_to "Ajustar", adjust_tax_path(tax) %></td>
+	    	<td><%= link_to "Cerrar", close_tax_path(tax) %></td>
 	    </tr>
 	  <% end %>
 	</tbody>
@@ -40,7 +44,7 @@
 		<th>Sociedad</th>
 		<th>IFs</th>
 		<th>Cartolas Recibidas</th>
-		<th>Cartolas Esperadas</th>
+		<th>% Recibido</th>
 		<th>Progreso</th>
 	</thead>
 	<tbody>
@@ -48,8 +52,8 @@
 	    <tr>
 	    	<td><%= link_to society.name, progress_society_path(society) %></td>
 	    	<td><%= society.inherited_ifs %>
-	    	<td><%= society.recieved @date_params %></td>
-	    	<td><%= society.expected @date_params %></td>
+	    	<td><%= r = society.recieved @date_params %> de <%= e = society.expected @date_params %></td>
+	    	<td><%= to_percentage r, e %> %</td>
 	    	<td><%= society.period_progress(@date_params).to_i %> %</td>
 	    </tr>
 	  <% end %>

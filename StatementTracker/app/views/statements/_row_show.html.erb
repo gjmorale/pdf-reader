@@ -4,3 +4,5 @@
 <td><%= statement.bank %></td>
 <td><%= statement.sequence.date_path %></td>
 <td><%= statement.tax.periodicity %></td>
+<td><a href="<%= "file://#{current_user.role.repo_path}/#{statement.path}" %>"  >Abrir</a></td>
+<td><%= link_to "Soltar", unassign_statement_path(statement) %></td>

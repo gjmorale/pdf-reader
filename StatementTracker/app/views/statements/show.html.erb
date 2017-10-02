@@ -3,17 +3,16 @@
 </h1>
 
 <h2>
-  <%= link_to @statement.sequence.date.to_s, @statement.sequence %>
+  <%= link_to @statement.bank, @statement.bank %> - <%= link_to @statement.society, @statement.society %>
 </h2>
 
-<p>
-  <strong>Bank:</strong>
-  <%= link_to @statement.bank %>
-</p>
+<h3>
+  <%= link_to @statement.sequence.date.to_s, @statement.sequence %>
+</h3>
 
 <p>
-  <strong>Sociedad:</strong>
-  <%= link_to @statement.society %>
+  <strong>Estado:</strong>
+  <%= @statement.status %>
 </p>
 
 <p>
@@ -27,9 +26,9 @@
 </p>
 
 <p>
-  <strong>Estado:</strong>
-  <%= @statement.status %>
+  <a href="<%= @statement.chrome_path current_user %>">Abrir Archivo Original</a>
 </p>
+
 
 <%= link_to 'Edit', edit_statement_path(@statement) %> |
 <%= link_to 'Back', statements_path %>

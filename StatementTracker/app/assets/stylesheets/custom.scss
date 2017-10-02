@@ -1,23 +1,22 @@
 .nested-container {
-	background-color: rgba(0,0,0,0.1);
 	a {
 		color: black;
 	}
 }
 
 .nested-statement:hover {
-	background-color: rgba(200,200,200,1);	
+	background-color: rgba(250,250,255,1);	
 }
 
 .nested-root {
-	background-color: rgba(0,0,0,0.1);
+	background-color: rgba(150,180,200,0.1);
 }
 
 .nested-child {
 	padding-left: 10px;	
 	padding-bottom: 2px;	
 	display: none;
-	background-color: rgba(20,20,0,0.1);
+	background-color: rgba(150,200,200,0.1);
 }
 
 .animate-remove {
@@ -133,11 +132,6 @@ body {
 	margin-top: 40px;
 }
 
-.search-block {
-	display: inline-block;
-	width: 30%;
-}
-
 .show-on-click {
 	display: none;
 }
@@ -207,7 +201,7 @@ body {
 	}
 }
 
-table.progress-table {
+table {
 	border-collapse: collapse;
 	th {
 	 	border-bottom: 1px solid #BBB;
@@ -221,4 +215,12 @@ table.progress-table {
 	tbody tr:hover {
 		background-color: #F3F3F9;
 	}
+}
+
+td.cell-align-right {
+	text-align: left;
+}
+
+.advanced-options {
+	background-color: #F0F3F9;
 }

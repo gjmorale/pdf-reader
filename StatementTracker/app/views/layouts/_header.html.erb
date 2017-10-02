@@ -5,7 +5,8 @@
       <ul class="header-options header-options-right">
         <li><%= link_to "Cartolas", statements_path %></li>
         <li><%= link_to "Sociedades", societies_path %></li>
-        <li><%= link_to "Guía", static_pages_guide_path %></li>
+        <li><%= link_to "Actividad", static_pages_activity_path %></li>
+        <!--li>Pasar a un footer <%= link_to "Guía", static_pages_guide_path %></li-->
         <% if current_user %>
           <li><%= link_to "Perfil", current_user.role %></li>
           <li><%= link_to "Salir", destroy_user_session_path, method: :delete %></li>

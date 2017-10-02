@@ -9,7 +9,6 @@ class Bank < ApplicationRecord
 		MON = "MON"
 		CORP = "CORP"
 		PER = "PER"
-		BLANK = "BLANK"
 	end
 
 	has_many :synonyms, as: :listable, dependent: :destroy
@@ -24,10 +23,6 @@ class Bank < ApplicationRecord
 
 	def to_s
 		name
-	end
-
-	def blank?
-		return !!(code_name == Format::BLANK)
 	end
 
 	def index path
@@ -64,38 +59,13 @@ class Bank < ApplicationRecord
 
 	def period_progress date_params
 		n = expected(date_params)
-		return 0 if n == 0
+		return 100 if n == 0
 		targets = taxes
 		targets = targets.joins(sequences: {statements: :status})	
 		status = StatementStatus.arel_table	
 		query = date_params.filter targets, distinct: false
 		query = query.select(status[:progress].as("status_progress"))
 		query.sum(&:status_progress)/n
-	end
-
-	def reader_bank
-		raise
-		puts "FOLDER: #{self.folder_name}"
-		case self.folder_name
-		when Format::HSBC
-			return HSBC.new()
-		when Format::MS
-			return MS.new()
-		when Format::SEC
-			return SEC.new()
-		when Format::BC
-			return BC.new()
-		when Format::MON
-			return MON.new()
-		when Format::CORP
-			return CrediCorp.new()
-		when Format::PER
-			return PER.new()
-		when Format::BLANK
-			return BLANK.new()
-		else
-			return nil
-		end
 	end
 
 	private

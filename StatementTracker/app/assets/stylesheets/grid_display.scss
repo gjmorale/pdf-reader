@@ -1,0 +1,25 @@
+.grid-row {
+	display: block;
+	width: 100%;
+}
+
+.grid-row-cell {
+	vertical-align: top;
+	display: inline-block;
+}
+
+.cell-s {
+	width: 33%;
+}
+.cell-m {
+	width: 50%;
+}
+.cell-l {
+	width: 66%;
+}
+.cell-xl {
+	width: 75%;
+}
+.cell-full {
+	width: 100%;
+}

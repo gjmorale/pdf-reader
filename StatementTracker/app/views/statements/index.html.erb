@@ -1,15 +1,22 @@
-<%= render 'filter_params/search_form', search_params: @search_params %>
-
+<div class="grid-row">
+	<div class="grid-row-cell cell-s">
+		<h2>Actualizar</h2>
+		<%= form_tag reload_statements_path, method: :post do %>
+			<div><%= submit_tag 'Actualizar' %></div>
+    		<%= label_tag "Desde:" %><br>
+    		<%= date_select :reload_from, :date, selected: (Date.current-1.month).beginning_of_month, discard_day: true %>
+    		<br><%= label_tag "Hasta:" %><br>
+    		<%= date_select :reload_to, :date, selected: (Date.current-1.month).end_of_month, discard_day: true %>
+		<% end %>
+	</div>
+	<div class="grid-row-cell cell-s">
+		<h2>Filtrar</h2>
+		<%= render 'filter_params/search_form', search_params: @search_params %>
+	</div>
+</div>
 <h1>Statements</h1>
 <div class="nested-container">
   <% @societies.each do |society| %>
     <%= render 'societies/node', element: society, scope: @search_params %>
   <% end %>
 </div>
-<br>
-
-<%= form_tag reload_statements_path, method: :post do %>
-	Desde: <%= date_select :reload_from, :date, selected: (Date.current-1.month).beginning_of_month, discard_day: true %>
-	Hasta: <%= date_select :reload_to, :date, selected: (Date.current-1.month).end_of_month, discard_day: true %>
-	<%= submit_tag 'Load Statements' %>
-<% end %>

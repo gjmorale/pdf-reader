@@ -80,7 +80,6 @@ class SocietiesController < ApplicationController
         @element = @society
         @node_template = 'statements/node'
         @children = @society.all_statements @search_params
-        #@progress = StatementStatus.progress @children.average("statement_statuses.code")
         @auto_open = true
         render 'nodes/navigation'
       end

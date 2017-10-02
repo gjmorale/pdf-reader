@@ -12,6 +12,8 @@ class HandlersController < ApplicationController
   # GET /handlers/1
   # GET /handlers/1.json
   def show
+    repo = Paths::DROPBOX + @handler.local_path
+    @local_files = Dir[repo + "/**/*.*"].map{|f| f.sub(Paths::DROPBOX,'')}
   end
 
   def assign

@@ -1,3 +1,3 @@
-FileReader
+#FileReader
 
-ActiveRecord::Base.logger.level = 1
+#ActiveRecord::Base.logger.level = 1

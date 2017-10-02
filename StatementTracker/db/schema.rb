@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 20170926133657) do
     t.string   "local_path"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["short_name"], name: "index_handlers_on_short_name", unique: true
   end
 
   create_table "sequences", force: :cascade do |t|

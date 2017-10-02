@@ -1,25 +1,27 @@
-<%= form_for(sequence) do |f| %>
-  <% if sequence.errors.any? %>
+<%= form_for(tax = sequence.tax) do |f| %>
+  <% if tax.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(sequence.errors.count, "error") %> prohibited this sequence from being saved:</h2>
+      <h2><%= pluralize(tax.errors.count, "error") %> prohibited this sequence from being saved:</h2>
 
       <ul>
-      <% sequence.errors.full_messages.each do |message| %>
+      <% tax.errors.full_messages.each do |message| %>
         <li><%= message %></li>
       <% end %>
       </ul>
     </div>
   <% end %>
 
+  <h3>Cantidad de archivos esperados todos los meses para <%= tax.society %> de <%= tax.bank %>:</h3>
   <div class="field">
-    <%= f.label :date %>
-    <%= f.date_field :date %>
-  </div>
-
-  <div class="field">
-    <%= f.label :quantity %>
     <%= f.number_field :quantity %>
   </div>
+
+  <%= f.fields_for(:sequences, sequence) do |s| %>
+    <h3>Cantidad de archivos esperados al <%= sequence.date.month %>° mes de <%= sequence.date.year %> para <%= tax.society %> de <%= tax.bank %>:</h3>
+    <div class="field">
+      <%= s.number_field :quantity %>
+    </div>
+  <% end %>
 
   <div class="actions">
     <%= f.submit %>

@@ -49,7 +49,7 @@ module FileManager
 			digest = digest_this path
 			if hash.eql? digest
 				#CASE: Hash matches
-				return file
+				return path
 			else
 				#CASE: File modified
 				return nil
@@ -61,7 +61,7 @@ module FileManager
 				digest = Digest::MD5.file(file).hexdigest
 				if hash.eql? digest
 				#CASE: File renamed but not moved
-					return file
+					return path
 				end
 			end
 			Dir[Paths::DROPBOX + "/**/#{name}"].each do |file|
@@ -69,7 +69,7 @@ module FileManager
 				if hash.eql? digest
 				#CASE: File moved but not renamed
 					raise IOError, "Unhandled File Location for File: #{path}"
-					return file
+					return nil
 				end
 			end
 			Dir[Paths::DROPBOX + "/**/*.pdf"].each do |file|
@@ -77,7 +77,7 @@ module FileManager
 				if hash.eql? digest
 				#CASE: File was moved and renamed
 					raise IOError, "Unhandled File Location for File: #{path}"
-					return file
+					return nil
 				end
 			end
 		end
@@ -96,6 +96,7 @@ module FileManager
 	end
 
 	def self.rm_raw raw_path
+		return true #Don't modify anything yet
 		return false unless raw_path
 		if raw_file = FileManager.get_raw_dir(raw_path)
 			return FileGhost.delete raw_file
@@ -118,8 +119,6 @@ module FileManager
 			end
 			if date >= date_from and date <= date_to
 				files_with_dates << [f.sub(Paths::DROPBOX+'/',''),date] 
-			else
-				puts "#{date_from} < #{date} < #{date_to}"
 			end
 		end
 		files_with_dates
@@ -127,8 +126,8 @@ module FileManager
 
 	def self.load_societies
 		dirs = Dir[Paths::DROPBOX + "/**/"].map{|f| f.gsub(Paths::DROPBOX,'')}
-		known_paths = []
 		dirs.each do |f|
+			next unless path_contains_root? f
 			date_found = bank_found = false
 			society_found = true
 			last_node = nil
@@ -136,7 +135,6 @@ module FileManager
 			societies = []
 			path = ""
 			full_path = ""
-			puts f
 			f.split('/').each do |folder|
 				next if folder == ""
 				path << "#{folder}/" unless bank_found
@@ -148,7 +146,6 @@ module FileManager
 					date_found = true
 					month = get_month folder
 					year ||= get_year folder
-					raise if bank and bank.id != 8
 				elsif is_bank folder
 					bank_found = true
 					bank = Bank.find_bank folder
@@ -204,13 +201,17 @@ module FileManager
 
 	private 
 
+		def self.path_contains_root? path
+			Society.roots.any?{|root| path[Regexp.new(Regexp.escape(root.name))]}
+		end
+
 		def self.is_date str
 			return !!(str =~ FileDates::NUMBER_DATE)
 		end
 
 		def self.get_year str
-			year = str[FileDates::NUMBER_DATE,0]
-			year ||= str[FileDates::ALT_YEAR_DATE,0]
+			year = str[FileDates::NUMBER_DATE]
+			year ||= str[FileDates::ALT_YEAR_DATE]
 			if year
 				year = year.to_i if year
 				year += 2000 if year < 1999
@@ -241,6 +242,7 @@ module FileManager
 		end
 
 		def self.set_raw_dir original_file, raw_path
+			return true #Dont modify anything yet
 			raw_dir = FileManager.output(raw_path)
 			unless Dir.exist? raw_dir
 				Dir.mkdir(raw_dir)

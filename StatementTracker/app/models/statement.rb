@@ -97,14 +97,18 @@ class Statement < ApplicationRecord
 
   def file
     real_file = FileManager.get_file path, file_hash
-    if File.exist? real_file
-      return real_file
-    else
-      if real_file
-        raise IOError, "FILE WAS MOVED! IMPLEMENT CONTROL FOR THIS"
-      end
+    if real_file and real_file != self.path
+      self.path = real_file
+      self.save
+      self.reload
     end
-    return nil
+    return self.path
+  end
+
+  def chrome_path user
+    return '#' unless file?
+    esc_file = self.file.sub('#','%23')
+    return "file://#{user.role.repo_path}/#{esc_file}"
   end
 
   def file?
@@ -145,7 +149,6 @@ class Statement < ApplicationRecord
         errors.add(:status, "No status")
       else
         errors.add(:sequence, "Doesn't belong to a sequence") unless sequence
-        errors.add(:sequence, "Sequence is full") unless accepting?
         unless status.archived?
           errors.add(:file_hash, "Temp file not found") unless raw?
           errors.add(:path, "Original file not found") unless file?
@@ -155,12 +158,5 @@ class Statement < ApplicationRecord
         errors.add(:file_name, "Unable to delete temp data") unless remove_raw_data
       end
     end
-
-    def accepting?
-      return false unless sequence
-      !!(sequence.accepting? or sequence.statements.include? self)
-    end
-
-
 
 end

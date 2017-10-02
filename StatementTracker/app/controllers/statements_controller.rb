@@ -1,5 +1,5 @@
 class StatementsController < ApplicationController
-  before_action :set_statement, only: [:show, :edit, :update, :destroy, :assign]
+  before_action :set_statement, only: [:show, :edit, :update, :destroy, :assign, :unassign, :open]
   before_action :search_params, only: [:filter]
   before_action :set_search_params, only: [:index]
   before_action :set_statements, only: [:batch_update, :upgrade, :downgrade]
@@ -13,14 +13,14 @@ class StatementsController < ApplicationController
   end
 
   def filter
-    redirect_to statements_path
+    redirect_back(fallback_location: statements_path)
   end
 
   def reload
     date_from = Date.new(*(params[:reload_from].map{|k,v| v.to_i}))
     date_to = Date.new(*(params[:reload_to].map{|k,v| v.to_i}))
     Tax.reload(date_from, date_to)
-    redirect_to statements_path
+    redirect_back(fallback_location: statements_path)
   end
 
   # GET /statements/1
@@ -28,12 +28,18 @@ class StatementsController < ApplicationController
   def show
   end
 
+  def open
+    path = "#{current_user.role.repo_path}/#{@statement.path}"
+    redirect_to path
+  end
+
   def assign
     if current_user and current_user.role.is_a? Handler
       assigned = @statement.assign_to(current_user.role)
       respond_to do |format|
         format.html do 
-          redirect_to @statement
+          flash[:notice] = "Cartola asignada a #{current_user.role.short_name}"
+          redirect_back(fallback_location: statement_path(@statement))
         end
         format.js do 
           @targets = assigned ? [@statement] : []
@@ -41,6 +47,22 @@ class StatementsController < ApplicationController
           render 'nodes/update_statements'
         end
       end
+    else
+      redirect_to new_user_session_path
+    end
+  end
+
+  def unassign
+    if current_user and current_user.role.is_a? Handler
+      assigned = @statement.handler
+      if assigned and assigned == current_user.role
+        @statement.handler = nil
+        @statement.save
+        flash[:notice] = "Cartola liberada"
+      else
+        flash[:alert] = "No se pudo liberar la cartola"
+      end
+      redirect_back(fallback_location: handler_path(current_user.role))
     else
       redirect_to new_user_session_path
     end

@@ -23,6 +23,7 @@ class SearchParams
     @ifs ||= []
     @periodicities ||= []
     @handlers ||= []
+    @handlers = @handlers.map{|h| h == "on" ? nil : h}
     @statuses ||= []
   end
 
@@ -94,8 +95,13 @@ class SearchParams
 			query_s << ")"
 			query = query.where(query_s, *query_p)
 		end
-		if handlers.any?
-			query = query.where("statements.handler_id IN (?)", handlers)
+		if handlers.size > 0
+			if handlers.any? {|h| h.nil?}
+				ids = handlers.select{|h| !!h}
+				query = query.where("statements.handler_id IN (?) OR statements.handler_id IS NULL", ids)
+			else
+				query = query.where("statements.handler_id IN (?)", handlers)
+			end
 		end
 		if statuses.any?
 			query = query.where("statements.status_id IN (?)", statuses)

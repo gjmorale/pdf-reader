@@ -1,0 +1,48 @@
+<h1>Actividad</h1>
+<div class="grid-row">
+	<div class="grid-row-cell cell-s">
+		<h2>Actualizar</h2>
+		<%= form_tag reload_statements_path, method: :post do %>
+			<div><%= submit_tag 'Actualizar' %></div>
+    		<%= label_tag "Desde:" %><br>
+    		<%= date_select :reload_from, :date, selected: (Date.current-1.month).beginning_of_month, discard_day: true %>
+    		<br><%= label_tag "Hasta:" %><br>
+    		<%= date_select :reload_to, :date, selected: (Date.current-1.month).end_of_month, discard_day: true %>
+		<% end %>
+	</div>
+	<div class="grid-row-cell cell-s">
+		<h2>Filtrar</h2>
+		<%= render 'filter_params/search_form', search_params: @search_params %>
+	</div>
+</div>
+<% if @statements.any? %>
+	<h2>Lo último en llegar</h2>
+	<table>
+		<thead>
+			<th>Recibido</th>
+			<th>Cartola</th>
+			<th>Sociedad</th>
+			<th>IF</th>
+			<th>Encargado</th>
+		</thead>
+		<tbody>
+			<% @statements.each do |statement| %>
+				<tr>
+					<td><%= statement.created_at.strftime("%Y-%m-%d %H:%M:%S") %></td>
+					<td><%= link_to statement.file_name, statement_path(statement) %></td>
+					<td><%= link_to statement.society, progress_society_path(statement.society) %></td>
+					<td><%= link_to statement.bank, progress_bank_path(statement.bank) %></td>
+					<td>
+						<% if statement.handler %>
+							<%= link_to statement.handler, statement.handler %>
+						<% else %>
+							<%= link_to("Tomar", assign_statement_path(statement)) %>
+						<% end %>
+					</td>
+					<td class="cell-align-right">
+					<a href="<%= statement.chrome_path current_user %>"  >Abrir</a></td>
+				</tr>
+			<% end %>
+		</tbody>
+	</table>
+<% end %>
