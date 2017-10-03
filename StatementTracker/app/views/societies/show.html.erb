@@ -37,7 +37,9 @@
   </ul>
 
   <div class="nested-form">
-    <strong>New Tax:</strong>
+    <div class="nested-form-head">
+      <h2>Nueva Institución Financiera</h2>
+    </div>
     <%= form_for @society do |f| %>
       <%= f.fields_for :taxes, (tax = @society.taxes.build) do |t| %>
         <div class="field">
@@ -83,15 +85,17 @@
   <% end %>
 
   <div class="nested-form">
-    <strong>New Society:</strong>
+    <div class="nested-form-head">
+      <h2>Nueva Sociedad</h2>
+    </div>
     <%= form_for @society do |f| %>
       <%= f.fields_for :children, @society.children.build do |t| %>
         <div class="field">
-          <%= t.label :name %>
+          NOMBRE:
           <%= t.text_field :name %>
         </div>
         <div class="field">
-          <%= t.label :rut %>
+          RUT:
           <%= t.text_field :rut %>
         </div>
       <% end %>
@@ -103,6 +107,6 @@
 <% end %>
 
 <div class="actions">
-  <%= link_to 'Edit', edit_society_path(@society), {class: "button"} %>
-  <%= link_to 'Back', societies_path, {class: "button"} %>
+  <%= link_to 'Editar', edit_society_path(@society), {class: "button"} %>
+  <%= link_to 'Volver', societies_path, {class: "button"} %>
 </div>
