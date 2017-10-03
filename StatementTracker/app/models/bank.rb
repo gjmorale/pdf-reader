@@ -53,8 +53,17 @@ class Bank < ApplicationRecord
 
 	def expected date_params
 		targets = taxes
-		date_params.filter_quantity targets
-		targets.sum(&:quantity)
+		targets = date_params.filter_quantities(targets)
+		targets.sum(&:q_expected)
+	end
+
+	def recieved_progress date_params
+		targets = taxes
+		targets = date_params.filter_quantities targets
+		total = targets.sum(&:q_expected)
+		real_recieved = targets.map{|r| [r.q_recieved,r.q_expected].min}.reduce(:+)
+		return 100 if total == 0
+		real_recieved*100/total
 	end
 
 	def period_progress date_params

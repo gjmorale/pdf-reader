@@ -48,6 +48,7 @@ Rails.application.routes.draw do
       get :ifs, action: :if_nodes
       get :statements, action: :statement_nodes
       get :progress
+      get :close
     end
     collection do
       post :reload

@@ -156,8 +156,8 @@ class Society < ApplicationRecord
 
 	def expected date_params
 		targets = Tax.where(society_id: descendant_ids)
-		date_params.filter_quantity targets
-		targets.sum(&:quantity)
+		targets = date_params.filter_quantities targets
+		targets.sum(&:q_expected)
 	end
 
 	def recieved date_params
@@ -165,6 +165,15 @@ class Society < ApplicationRecord
 		targets = targets.joins(taxes: {sequences: :statements})
 		query = date_params.filter targets, distinct: false
 		query.size
+	end
+
+	def recieved_progress date_params
+		targets = Tax.where(society_id: descendant_ids)
+		targets = date_params.filter_quantities targets
+		total = targets.sum(&:q_expected)
+		real_recieved = targets.map{|r| [r.q_recieved,r.q_expected].min}.reduce(:+)
+		return 100 if total == 0
+		real_recieved*100/total
 	end
 
 	def period_progress date_params
@@ -180,6 +189,14 @@ class Society < ApplicationRecord
 
 	def inherited_ifs
 		targets = Tax.where(society_id: descendant_ids).size
+	end
+
+	def close date_params
+		if self.leaf?
+			taxes.each do |tax|
+				tax.close date_params
+			end
+		end
 	end
 
 end

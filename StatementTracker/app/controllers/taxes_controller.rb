@@ -54,14 +54,8 @@ class TaxesController < ApplicationController
   end
 
   def close
-    @tax.quantity = 0
-    @tax.save
-    if seq = @tax.sequence(@date_params)
-      seq.quantity = seq.statements.size
-      seq.save
-    end
+    @tax.close @date_params
     flash[:notice] = "Cuenta #{@tax.bank} de #{@tax.society} cerrada"
-    flash[:notice] << " al #{seq.date}" if seq
     redirect_back(fallback_location: progress_society_url(@tax.society))
   end
 

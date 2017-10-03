@@ -14,7 +14,6 @@
 		<%= "Progreso por sociedad" %>
 	<% end %>
 </h1>
-<h2>Algo %</h2>
 
 <% if @society and @society.leaf? %>
 <table class="progress-table">
@@ -33,7 +32,7 @@
 	    	<td><%= to_percentage r, e %> %</td>
 	    	<td><%= tax.period_progress(@date_params).to_i %> %</td>
 	    	<td><%= link_to "Ajustar", adjust_tax_path(tax) %></td>
-	    	<td><%= link_to "Cerrar", close_tax_path(tax) %></td>
+	    	<td><%= link_to "Cerrar", close_tax_path(tax), data: { confirm: "Seguro que quiere cerrar la cuenta #{tax}" } %></td>
 	    </tr>
 	  <% end %>
 	</tbody>
@@ -46,6 +45,7 @@
 		<th>Cartolas Recibidas</th>
 		<th>% Recibido</th>
 		<th>Progreso</th>
+		<th>Opciones</th>
 	</thead>
 	<tbody>
 	  <% @societies.each do |society| %>
@@ -55,6 +55,7 @@
 	    	<td><%= r = society.recieved @date_params %> de <%= e = society.expected @date_params %></td>
 	    	<td><%= to_percentage r, e %> %</td>
 	    	<td><%= society.period_progress(@date_params).to_i %> %</td>
+	    	<td><%= link_to "Cerrar", close_society_path(society), data: { confirm: "Seguro que quiere cerrar la cuenta #{society}" } %></td>
 	    </tr>
 	  <% end %>
 	</tbody>

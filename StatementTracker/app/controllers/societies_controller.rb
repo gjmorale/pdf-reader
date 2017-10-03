@@ -1,8 +1,8 @@
 class SocietiesController < ApplicationController
-  before_action :set_society, only: [:show, :edit, :update, :destroy, :time_nodes, :if_nodes, :statement_nodes]
+  before_action :set_society, only: [:show, :edit, :update, :destroy, :time_nodes, :if_nodes, :statement_nodes, :close]
   before_action :search_params, only: [:filter]
   before_action :set_search_params, only: [:time_nodes, :if_nodes, :statement_nodes, :seed]
-  before_action :set_date_params, only: [:progress]
+  before_action :set_date_params, only: [:progress, :close]
 
   # GET /societies
   # GET /societies.json
@@ -93,6 +93,13 @@ class SocietiesController < ApplicationController
 
   # GET /societies/1/edit
   def edit
+  end
+
+  def close
+    @society.close @date_params
+    flash[:notice] = "Cuentas de #{@society.name} cerradas"
+    fallback = @society.parent ? progress_society_url(@society.parent) : progress_societies_url
+    redirect_back(fallback_location: fallback)
   end
 
   # POST /societies
