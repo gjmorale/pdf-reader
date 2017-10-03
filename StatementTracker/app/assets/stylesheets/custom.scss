@@ -164,21 +164,6 @@ body {
 		font-size: 20px;
 		padding-top: 25px;
 	}
-
-	span {
-		padding: 10px;
-		margin: 10px;
-		background-color: #CCC;
-		display: inline-block;
-		width: 100px;
-		border-width: 1px;
-		border-style: solid;
-		border-color: #DDD #BBB #BBB #DDD;
-		a {
-			text-decoration: none;
-			color: black;
-		}
-	}
 }
 
 .flash-container {
@@ -223,4 +208,56 @@ td.cell-align-right {
 
 .advanced-options {
 	background-color: #F0F3F9;
+	width: 300px;
+}
+
+
+.field {
+	width: 300px;
+	select, input[type="text"] {
+		float: right;
+	}
+}
+
+.actions {
+	margin-top: 15px;
+	input[type="submit"], .button {
+	    background-color: #3090FF; 
+	    background-color: #FF8000; 
+	    border: none;
+	    color: white;
+	    padding: 5px 30px;
+	    text-align: center;
+	    text-decoration: none;
+	    display: inline-block;
+	    font-size: 12px;
+	    margin-right: 10px;
+	    text-transform: uppercase;
+	    font-weight: bold;
+	    letter-spacing: 2px;
+	    width: 250px;
+	    line-height: 12px;
+	    box-shadow: 1px 1px 1px rgba(0, 0, 0, .6);
+	    &.button-s {
+	    	width: 30px;
+	    	padding: 5px 5px;
+	    	letter-spacing: 0px;
+	    }
+	    &.button-l {
+	    	width: 514px;
+	    }
+	    &.button-field {
+	    	width: 300px;
+	    }
+    }
+    .button {
+    	width: 190px;
+    }
+}
+
+a {
+	color: inherit;
+	&:hover {
+		text-shadow: 1px 1.4px #AAA;
+	}
 }

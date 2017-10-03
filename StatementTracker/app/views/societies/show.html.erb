@@ -15,8 +15,6 @@
 </p>
 <% end %>
 
-<p>
-
 <% if @society.leaf? or (@society.root? and @society.children.count == 0) %>
   <h2>Checkmovs:</h2>
   <ul>
@@ -41,35 +39,31 @@
   <div class="nested-form">
     <strong>New Tax:</strong>
     <%= form_for @society do |f| %>
-    <%= f.fields_for :taxes, (tax = @society.taxes.build) do |t| %>
-      <div class="field">
-        <%= t.label :bank_id %>
-        <%= t.collection_select(:bank_id, Bank.all, :id, :name) %>
-      </div>
-      <div class="field">
-        <%= t.label :periodicity %>
-        <%= t.select :periodicity, Tax::Periodicity::ALL.map{|p| [p,p]} %>
-      </div>
-      <div class="field">
-        <%= t.label :quantity %>
-        <%= t.number_field :quantity %>
-      </div>
-      <div class="field">
-        <%= t.label :optional %>
-        <%= t.number_field :optional %>
-      </div>
-      <%= t.fields_for :source_paths, SourcePath.new do |s| %>
+      <%= f.fields_for :taxes, (tax = @society.taxes.build) do |t| %>
         <div class="field">
-          <%= s.label :path %>
+          Inst Financiera:
+          <%= t.collection_select(:bank_id, Bank.all, :id, :name) %>
         </div>
-        <div class="field xl-field">
-          <%= s.text_field :path, value: @society.path %>
+        <div class="field">
+          Periodicidad:
+          <%= t.select :periodicity, Tax::Periodicity::ALL.map{|p| [p,p]} %>
         </div>
+        <div class="field">
+          Cantidad Esperada:
+          <%= t.select :quantity, (0..30) %>
+        </div>
+        <%= t.fields_for :source_paths, SourcePath.new do |s| %>
+          <div class="field">
+            Directorio Origen de Cartolas:
+          </div>
+          <div class="xl-field">
+            <%= s.text_field :path, value: @society.path %>
+          </div>
+        <% end %>
       <% end %>
-    <% end %>
-    <div class="actions">
-      <%= f.submit "Create Tax" %>
-    </div>
+      <div class="actions">
+        <%= f.submit "Agregar IF" %>
+      </div>
     <% end %>    
   </div>
 <% end %> 
@@ -91,26 +85,24 @@
   <div class="nested-form">
     <strong>New Society:</strong>
     <%= form_for @society do |f| %>
-    <%= f.fields_for :children, @society.children.build do |t| %>
-      <div class="field">
-        <%= t.label :name %>
-        <%= t.text_field :name %>
+      <%= f.fields_for :children, @society.children.build do |t| %>
+        <div class="field">
+          <%= t.label :name %>
+          <%= t.text_field :name %>
+        </div>
+        <div class="field">
+          <%= t.label :rut %>
+          <%= t.text_field :rut %>
+        </div>
+      <% end %>
+      <div class="actions">
+        <%= f.submit "Agregar Sub-Sociedad", {class: "button-l"} %>
       </div>
-      <div class="field">
-        <%= t.label :rut %>
-        <%= t.text_field :rut %>
-      </div>
-    <% end %>
-    <div class="actions">
-      <%= f.submit "Create Society" %>
-    </div>
     <% end %>
   </div>
-<% end %> 
+<% end %>
 
-</p>
-
-
-
-<%= link_to 'Edit', edit_society_path(@society) %> |
-<%= link_to 'Back', societies_path %>
+<div class="actions">
+  <%= link_to 'Edit', edit_society_path(@society), {class: "button"} %>
+  <%= link_to 'Back', societies_path, {class: "button"} %>
+</div>

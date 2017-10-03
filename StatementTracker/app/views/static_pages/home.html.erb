@@ -2,19 +2,23 @@
 	<h1>TRACKER</h1>
 	<p>Bienvenido a la aplicación de seguimiento de cartolas</p>
 	<% if user_signed_in? %>
-      <p>Ver progreso según</p>
-	  <span>
-	  <%= link_to('Sociedades', progress_societies_path) %>        
-	  </span>
-	  <span>
-	  <%= link_to('I. Financieras', progress_banks_path) %>        
-	  </span>
+    <p>Ver progreso según</p>
+    <div class="actions">
+		  <span>
+		  <%= link_to('Sociedades', progress_societies_path, {class: "button"}) %>        
+		  </span>
+		  <span>
+		  <%= link_to('I. Financieras', progress_banks_path, {class: "button"}) %>        
+		  </span>
+	  </div>
 	<% else %>
-	  <span>
-	  <%= link_to('Log In', new_user_session_path)  %>  
-	  </span>
-	  <span>
-	  <%= link_to('Sign Up', new_user_registration_path)  %>  
-	  </span>
+		<div class="actions">
+		  <span>
+		  <%= link_to('Log In', new_user_session_path, {class: "button"})  %>  
+		  </span>
+		  <span>
+		  <%= link_to('Sign Up', new_user_registration_path, {class: "button"})  %>  
+		  </span>
+	  </div>
 	<% end %>
 <div>

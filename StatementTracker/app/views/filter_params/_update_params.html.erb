@@ -1,0 +1,14 @@
+
+<%= form_tag reload_statements_path, method: :post do %>
+	<div class="field">
+		<%= label_tag "Desde:" %>
+		<%= date_select :reload_from, :date, selected: (Date.current-1.month).beginning_of_month, discard_day: true %>
+	</div>
+	<div class="field">
+		<%= label_tag "Hasta:" %>
+		<%= date_select :reload_to, :date, selected: (Date.current-1.month).end_of_month, discard_day: true %>
+	</div>
+	<div class="actions">
+		<%= submit_tag 'Actualizar', {class: "button-field"} %>
+	</div>
+<% end %>

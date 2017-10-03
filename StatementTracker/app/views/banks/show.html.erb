@@ -13,12 +13,13 @@
 </p>
 
 
-
 <h2>Sinónimos:</h2>
 <% @bank.synonyms.each do |syn| %>
 	<%= syn.label %> 
     <%= link_to 'X', synonym_path("#{syn.id}"), method: :delete %><br>
 <% end %>
 
-<%= link_to 'Edit', edit_bank_path(@bank) %> |
-<%= link_to 'Back', banks_path %>
+<div class="actions">
+	<%= link_to 'Edit', edit_bank_path(@bank), {class: "button"} %>
+	<%= link_to 'Back', banks_path, {class: "button"} %>
+</div>

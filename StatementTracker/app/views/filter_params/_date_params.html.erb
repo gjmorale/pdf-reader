@@ -2,9 +2,15 @@
 
   <div class="search-block">
     <div class="field">
-      <%= f.submit "Filtrar" %>
+    	Periodicidad:
       <%= f.select :periodicity, Tax::Periodicity::ALL.map{|p| [p,p]}, selected: date_params.periodicity %>
+    </div>
+    <div class="field">
+    	Fecha:
       <%= f.date_select :date, discard_day: true, selected: date_params.date, start_year: 2015, end_year: Date.current.year %>
+    </div>
+    <div class="actions">
+      <%= f.submit "Filtrar", {class: "button-field"} %>
     </div>
   </div>
 <% end %>

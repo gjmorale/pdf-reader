@@ -10,7 +10,9 @@
 
 <br>
 
-<%= link_to 'New Society', new_society_path %>
 <%= form_tag reload_societies_path, method: :post do %>
-	<%= submit_tag 'Load From Files' %>
+	<div class="actions">
+		<%= link_to 'New Society', new_society_path, {class: "button"} %>
+		<%= submit_tag 'Load From Files' %>
+	</div>
 <% end %>

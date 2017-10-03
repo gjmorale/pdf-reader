@@ -5,11 +5,13 @@
 	    <%= render'statements/table_head', edit: edit %>
 	    <%= render'statements/table_body', statements: statement_group, edit: edit %>
 	  </table>
-	  <% if edit %>
-	    <%= submit_tag StatementsCommit::BATCH_UPDATE %>
-	  <% else %>
-	    <%= submit_tag StatementsCommit::UPGRADE unless status.archived? %>
-	    <%= submit_tag StatementsCommit::DOWNGRADE unless status.noticed? %>
-	  <% end %>
+	  <div class="actions">
+		  <% if edit %>
+		    <%= submit_tag StatementsCommit::BATCH_UPDATE %>
+		  <% else %>
+		    <%= submit_tag StatementsCommit::UPGRADE, {class: "button-s"} unless status.archived? %>
+		    <%= submit_tag StatementsCommit::DOWNGRADE, {class: "button-s"} unless status.noticed? %>
+		  <% end %>
+	  </div>
 	<% end %>
 <% end %>
