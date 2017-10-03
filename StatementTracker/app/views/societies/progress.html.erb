@@ -9,7 +9,7 @@
 		<% end %>
 		 - 
 		<%= link_to @society.name, society_path(@society) %> 
-		(<%= to_percentage @society.recieved(@date_params), @society.expected(@date_params)%> %)
+		(<%= @society.recieved_progress @date_params%> %)
 	<% else %>
 		<%= "Progreso por sociedad" %>
 	<% end %>
@@ -53,7 +53,7 @@
 	    	<td><%= link_to society.name, progress_society_path(society) %></td>
 	    	<td><%= society.inherited_ifs %>
 	    	<td><%= r = society.recieved @date_params %> de <%= e = society.expected @date_params %></td>
-	    	<td><%= to_percentage r, e %> %</td>
+	    	<td><%= society.recieved_progress @date_params %> %</td>
 	    	<td><%= society.period_progress(@date_params).to_i %> %</td>
 	    	<td><%= link_to "Cerrar", close_society_path(society), data: { confirm: "Seguro que quiere cerrar la cuenta #{society}" } %></td>
 	    </tr>
