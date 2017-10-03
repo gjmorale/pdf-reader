@@ -21,7 +21,39 @@
     <%= f.text_field :rut %>
   </div>
 
+  <% if society.taxes.any? %>
+    <h2>Nuevo Checkmov:</h2>
+    <%= f.fields_for(:checkmovs, Checkmov.new) do |c| %>
+      <div class="field">
+        <%= c.label :path %>
+        <%= c.text_field :path %>
+      </div>
+    <% end %>
+  <% end %>
+
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit "Editar Sociedad" %>
   </div>
+<% end %>
+
+<% if society.taxes.any? %>
+  <%= form_for(society) do |f| %>
+
+    <% if society.checkmovs.any? %>
+      <h2>Checkmovs:</h2>
+      <% society.checkmovs.each do |check| %>
+        <%= f.fields_for(:checkmovs, check) do |c| %>
+          <div class="field">
+            <%= c.label :path %>
+            <%= c.text_field :path %>
+            <%= c.label :destroy %>
+            <%= c.check_box :_destroy %>
+          </div>
+        <% end %>
+      <% end %>
+    <% end %>
+    <div class="actions">
+      <%= f.submit "Editar Checkmovs" %>
+    </div>
+  <% end %>
 <% end %>

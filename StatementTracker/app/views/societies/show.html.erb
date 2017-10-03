@@ -18,6 +18,13 @@
 <p>
 
 <% if @society.leaf? or (@society.root? and @society.children.count == 0) %>
+  <h2>Checkmovs:</h2>
+  <ul>
+    <% @society.checkmovs.each do |check| %>
+      <li><a href="<%= check.chrome_path current_user %>"><%= check.path %></a></li>
+    <% end %>
+  </ul>
+
   <h2>Taxes:</h2>
   <ul>
     <% @society.taxes.each do |tax| %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170926133657) do
+ActiveRecord::Schema.define(version: 20171003180441) do
 
   create_table "banks", force: :cascade do |t|
     t.string   "name"
@@ -20,6 +20,14 @@ ActiveRecord::Schema.define(version: 20170926133657) do
     t.datetime "updated_at",  null: false
     t.index ["code_name"], name: "index_banks_on_code_name", unique: true
     t.index ["folder_name"], name: "index_banks_on_folder_name", unique: true
+  end
+
+  create_table "checkmovs", force: :cascade do |t|
+    t.string   "path"
+    t.integer  "society_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["society_id"], name: "index_checkmovs_on_society_id"
   end
 
   create_table "handlers", force: :cascade do |t|

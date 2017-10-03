@@ -33,8 +33,8 @@ module FileManager
 		end
 	end
 
-	def self.exist? path
-		Dir.exist? Paths::DROPBOX + '/' + path
+	def self.exist? path, base_path: Path::DROPBOX
+		File.exist? base_path + '/' + path
 	end
 
 	def self.digest_this file

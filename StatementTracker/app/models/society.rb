@@ -7,12 +7,14 @@ class Society < ApplicationRecord
   has_many :banks, through: :taxes
   has_many :sequences, through: :taxes
   has_many :statements, through: :sequences
+  has_many :checkmovs, inverse_of: :society
 
   validates :name, presence: true
   validates_uniqueness_of :name, scope: :parent_id
 
   accepts_nested_attributes_for :children, allow_destroy: true
   accepts_nested_attributes_for :taxes, allow_destroy: true
+  accepts_nested_attributes_for :checkmovs, allow_destroy: true
 
   #validates_uniqueness_of :rut, scope: :name #DANGEROUS IN DEBUG
 

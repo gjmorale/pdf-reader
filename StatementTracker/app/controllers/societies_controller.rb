@@ -162,6 +162,10 @@ class SocietiesController < ApplicationController
         children_attributes: [:name,
                               :rut,
                               :id,
-                              :_destroy])
+                              :_destroy],
+        checkmovs_attributes: [:path,
+                               :id,
+                               :_destroy]
+                              )
     end
 end
