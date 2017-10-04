@@ -1,16 +1,19 @@
-<%= form_for date_params, url: filter_sequences_url do |f| %>
-
-  <div class="search-block">
-    <div class="field">
-    	Periodicidad:
-      <%= f.select :periodicity, Tax::Periodicity::ALL.map{|p| [p,p]}, selected: date_params.periodicity %>
-    </div>
-    <div class="field">
-    	Fecha:
-      <%= f.date_select :date, discard_day: true, selected: date_params.date, start_year: 2015, end_year: Date.current.year %>
-    </div>
-    <div class="actions">
-      <%= f.submit "Filtrar", {class: "button-field"} %>
-    </div>
+<div class="grid-row">
+  <div class="grid-row-cell cell-s">
+    <%= form_for date_params, url: filter_sequences_url do |f| %>
+      <div class="search-block">
+        <div class="field">
+        	Periodicidad:
+          <%= f.select :periodicity, Tax::Periodicity::ALL.map{|p| [p,p]}, selected: date_params.periodicity %>
+        </div>
+        <div class="field">
+        	Fecha:
+          <%= f.date_select :date, discard_day: true, selected: date_params.date, start_year: 2015, end_year: Date.current.year %>
+        </div>
+        <div class="actions">
+          <%= f.submit "Filtrar", {class: "button-l"} %>
+        </div>
+      </div>
+    <% end %>
   </div>
-<% end %>
+</div>

@@ -38,7 +38,7 @@
 	text-align: center;
 	//display: none;
 	&.options-l {
-		width: 130px;
+		width: 150px;
 		padding-right: 0px;
 	}
 }
@@ -219,7 +219,7 @@ td.cell-align-right {
 
 
 .field {
-	width: 300px;
+	width: 100%;
 	select, input[type="text"] {
 		float: right;
 	}
@@ -227,6 +227,11 @@ td.cell-align-right {
 		background-color: #454545;
 		border: 1px solid #555555;
 		color: #EEE;
+	}
+	input[type="text"] {
+		color: white;
+		background-color: #555555;
+		border: 1px solid #454545;
 	}
 }
 
@@ -274,7 +279,7 @@ a {
 }
 
 .nested-form {
-	background-color: #CCC;
+	background-color: #EEE;
 	width: 510px;
 	form {
 		padding: 15px;

@@ -12,6 +12,10 @@
         <%= f.label "Hasta:" %>
         <%= f.date_select :date_to, discard_day: true, include_blank: true, selected: nil, start_year: 2015, end_year: Date.current.year %>
       </div>
+      <div class="field show-on-click">
+        <span>Nombre Sociedad:</span>
+        <%= f.text_field :name %>
+      </div>
       <div class="show-on-click">
         <span class="toggle-on-click" data-toggle="close">Periodicidad</span>
         <div class="field show-on-click">
@@ -52,7 +56,7 @@
       </div>
     </div>
     <div class="actions">
-      <%= f.submit "Filtrar", {class: "button-field"} %>
+      <%= f.submit "Filtrar", {class: "button-l"} %>
     </div>
   </div>
 <% end %>

@@ -96,7 +96,7 @@ class Society < ApplicationRecord
 
 	def statement_nodes params
 		query = statements
-		query = query. left_outer_joins(:status)
+		query = query.left_outer_joins(:status).joins(:society)
 		query = params.filter query
 	end
 

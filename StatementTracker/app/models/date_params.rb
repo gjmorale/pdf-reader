@@ -75,6 +75,8 @@ class DateParams
   end
 
   def filter_quantities query
+  		date ||= (Date.current-1.month).end_of_month
+  		periodicity ||= Tax::Periodicity::MONTHLY
 		seq_join = "LEFT JOIN "
 		seq_q = "sequences.date <= '#{date}' AND "
 		case periodicity

@@ -61,6 +61,10 @@ class Tax < ApplicationRecord
     params.filter query
   end
 
+  def node_path status: :open
+    "/taxes/#{id}?status=#{status.to_s}"
+  end
+
   def time_nodes params
     query = sequences
     query = query.joins(:society, :statements)

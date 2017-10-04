@@ -66,8 +66,8 @@ class SearchParams
   end
 
   def filter query
-		if name
-			query = query.where("societies.name LIKE ?", "%#{name}%")
+		if name and not name.empty?
+			query = query.where("societies.name LIKE ? COLLATE utf8_general_ci", "%#{name}%")
 		end
 		if periodicities.any?
 			query = query.where("taxes.periodicity IN (?)", periodicities)

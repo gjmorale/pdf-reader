@@ -128,6 +128,10 @@ class Statement < ApplicationRecord
     self.status.progress
   end
 
+  def node_path status: :open
+    "/statements/#{id}?status=#{status.to_s}"
+  end
+
   private
 
     def default_status

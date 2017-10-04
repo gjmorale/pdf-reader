@@ -20,6 +20,10 @@ class Sequence < ApplicationRecord
     params.filter query
   end
 
+  def node_path status: :open
+    "/sequences/#{id}?status=#{status.to_s}"
+  end
+
   def progress
     statements.joins(:status).sum("statement_statuses.progress")/capacity
   end
