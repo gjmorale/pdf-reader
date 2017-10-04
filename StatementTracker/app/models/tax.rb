@@ -104,6 +104,10 @@ class Tax < ApplicationRecord
     ds.sum(&:progress)*1.0 / expected(date_params)
   end
 
+  def last_sequence
+    statements.order(:d_filed).first
+  end
+
   def self.reload date_from = nil, date_to = nil
     self.all.each do |tax|
       tax.reload date_from, date_to

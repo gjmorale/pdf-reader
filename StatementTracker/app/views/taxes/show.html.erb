@@ -2,38 +2,62 @@
   <%= link_to @tax.bank, @tax.bank %> - <%= link_to @tax.society, @tax.society %>
 </h1>
 
-<h4>Espera <%= @tax.quantity %> cartolas al <%= @tax.periodicity %></h4>
+<div class="panel panel-body">
+	<span class="item item-content">
+		Espera <%= @tax.quantity %> cartolas al <%= @tax.periodicity %>
+	</span>
+</div>
+<div class="panel">
+	<div class="panel-head">
+		<h2>Fuentes</h2>
+	</div>
+	<div class="panel-body">
+	<% @tax.source_paths.each do |source_path| %>
+		<div class="item">
+			<span class="item-label">
+				Ruta: 
+			</span>
+			<span class="item-content">
+    			<%= source_path %>
+			</span>
+		</div>
+	<% end %>
+	</div>
+</div>
 
-<h2>Fuentes:</h2>
-<ul>
-<% @tax.source_paths.each do |source_path| %>
-  <li>
-    <%= source_path %>
-  </li>
-<% end %>
-</ul>
-<h3>Nueva fuente</h3>
-<%= form_for(@tax) do |f| %>
-	<div class="nested-form">
+<div class="nested-form">
+    <div class="nested-form-head">
+    	<h2>Nueva fuente</h2>
+    </div>
+    <%= form_for @tax do |f| %>
 		<%= f.fields_for :source_paths, @tax.source_paths.build do |s| %>
-	    <div class="field xl-field">
-	      <%= s.text_field :path, value: @tax.society.path %>
-	    </div>
+		    <div class="field xl-field">
+		      <%= s.text_field :path, value: @tax.society.path %>
+		    </div>
 		<% end %>
-	</div>
-	<div class="actions">
-		<%= f.submit "Agregar Ruta" %>
-	</div>
-<% end %>
+		<div class="actions">
+			<%= f.submit "Agregar Ruta", {class: "button-l"} %>
+		</div>
+    <% end %>    
+</div>
 
-<h2>Períodos:</h2>
-<ul>
-<% @tax.sequences.each do |sequence| %>
-  <li>
-    <%= link_to "#{sequence.date.to_s} (#{sequence.statements.size})", sequence %>
-  </li>
-<% end %>
-</ul>
+<div class="panel">
+	<div class="panel-head">
+		<h2>Períodos</h2>
+	</div>
+	<div class="panel-body">
+	<% @tax.sequences.each do |sequence| %>
+		<div class="item">
+			<span class="item-label">
+    			<%= link_to "#{sequence.date.to_s}", sequence %>
+			</span>
+			<span class="item-content">
+    			<%= "Contiene #{pluralize sequence.statements.size, 'cartola'} " %>
+			</span>
+		</div>
+	<% end %>
+	</div>
+</div>
 
 <%= link_to 'Edit', edit_tax_path(@tax) %> |
 <%= link_to 'Back', taxes_path %>

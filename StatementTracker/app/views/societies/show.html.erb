@@ -1,40 +1,65 @@
 <h1>
   <%= @society.name %>
 </h1>
-<% if @society.rut and not @society.rut.empty? %>
-<p>
-  <strong>Rut:</strong>
-  <%= @society.rut %>
-</p>
-<% end %>
 
-<% unless @society.root? %>
-<p>
-  <strong>Parent:</strong>
-  <%= link_to @society.parent.name, @society.parent %>
-</p>
-<% end %>
+<div class="panel panel-body">
+  <div class="item">
+    <span class="item-label">Cliente:</span>
+    <span class="item-content">
+      <% if @society.root? %>
+        <%= @society %>
+      <% else %>
+        <%= link_to @society.parent.name, @society.parent %>
+      <% end %>
+    </span>
+  </div>
+
+  <div class="item">
+    <span class="item-label">Rut:</span>
+    <span class="item-content"><%= @society.rut %></span>
+  </div>
+</div>
 
 <% if @society.leaf? or (@society.root? and @society.children.count == 0) %>
-  <h2>Checkmovs:</h2>
-  <ul>
-    <% @society.checkmovs.each do |check| %>
-      <li><a href="<%= check.chrome_path current_user %>"><%= check.path %></a></li>
-    <% end %>
-  </ul>
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Checkmovs</h2>
+    </div>
+    <div class="panel-body">
+      <% @society.checkmovs.each do |check| %>
+      <div class="item">
+        <span class="item-label">
+        </span>
+        <span class="item-content">
+          <a href="<%= check.chrome_path current_user %>"><%= check.path %></a></li>
+        </span>
+      </div>
+      <% end %>
+    </div>
+  </div>
 
-  <h2>Taxes:</h2>
-  <ul>
-    <% @society.taxes.each do |tax| %>
-      <li>
-        <strong><%= link_to tax.bank, tax_path(tax) %>:</strong>
-        <%= pluralize(tax.quantity, "statement") %>
-        <%= tax.periodicity %>
-        <%= link_to "Edit", edit_tax_path(tax) %>
-        <%= link_to 'X', tax, method: :delete, data: { confirm: 'Are you sure?' } %>
-      </li>
-    <% end %>
-  </ul>
+  <% if @society.taxes.any? %>
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Instituciones Financieras:</h2>
+    </div>
+    <div class="panel-body">
+      <% @society.taxes.each do |tax| %>
+      <div class="item">
+        <span class="item-label">
+          <%= link_to tax.bank, tax_path(tax) %>:
+        </span>
+        <span class="item-content">
+          <%= pluralize(tax.quantity, "statement") %>
+          <%= tax.periodicity %>
+          <span class="options-right options-s"><%= link_to 'X', tax, method: :delete, data: { confirm: 'Are you sure?' } %></span>
+          <span class="options-right options-s"><%= link_to "Edit", edit_tax_path(tax) %></span>
+        </span>
+      </div>
+      <% end %>
+    </div>
+  </div>
+  <% end %>
 
   <div class="nested-form">
     <div class="nested-form-head">
@@ -72,16 +97,22 @@
 <% @society.reload %>
 <% if @society.taxes.size == 0 %>
   <% if @society.children.any? %>
-    <h2>Sociedades</h2>
-    <ul>
-      <% @society.children.each do |child| %>
-        <li>
-          <strong><%= link_to child.name, child %></strong>
-          <%= child.rut %>
-          <%= link_to 'X', child, method: :delete, data: { confirm: 'Are you sure?' } %>
-        </li>
-      <% end %>
-    </ul>
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Sociedades</h2>
+      </div>
+      <div class="panel-body">
+        <% @society.children.each do |child| %>
+          <div class="item">
+            <span class="item-label"><%= link_to "#{child.name} ", child %></span>
+            <span class="item-content">
+              <span class="options-right options-s"><%= link_to 'X', child, method: :delete, data: { confirm: 'Are you sure?' } %></span>
+              <span class="options-right"><%= (ls = child.last_sequence) ? ls.date : "-" %></span>
+            </span>
+          </div>
+        <% end %>
+      </div>
+    </div>
   <% end %>
 
   <div class="nested-form">

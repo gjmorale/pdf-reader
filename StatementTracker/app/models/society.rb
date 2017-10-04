@@ -132,6 +132,12 @@ class Society < ApplicationRecord
 	    return p/q
 	end
 
+	def last_sequence
+		societies = Society.where id: descendant_ids
+		societies = societies.joins(taxes: {sequences: :statements}).order("statements.d_filed")
+		societies = societies.select("statements.d_filed AS date").first
+	end
+
 	def all_times params
 		query = Sequence.all
 		query = query.left_outer_joins(tax: :society, statements: :status)

@@ -2,22 +2,52 @@
   <%= @bank.name %>
 </h1>
 
-<p>
-  <strong>Nombre de Carpeta:</strong>
-  <%= @bank.folder_name %>
-</p>
+<div class="panel panel-body">
+	<div class="item">
+	  <span class="item-label">Nombre de Carpeta: </span>
+	  <span class="item-content"><%= @bank.folder_name %></span>
+	</div>
+	<div class="item">
+	  <span class="item-label">Código: </span>
+	  <span class="item-content"><%= @bank.code_name %></span>
+	</div>
+</div>
 
-<p>
-  <strong>Código:</strong>
-  <%= @bank.code_name %>
-</p>
+<div class="panel">
+	<div class="panel-head">
+		<h2>Sinonimos</h2>
+	</div>
+	<div class="panel-body">
+	<% @bank.synonyms.each do |syn| %>	
+		<div class="item">
+			<span class="item-label">
+				<%= syn.label %> 
+			</span>
+			<span class="item-content">
+			    <span class="options-right"><%= link_to 'X', synonym_path("#{syn.id}"), method: :delete %></span>
+			</span>
+		</div>
+	<% end %>
+	</div>
+</div>
 
+<div class="nested-form">
+    <div class="nested-form-head">
+    	<h2>Nuevo Sinonimo</h2>
+    </div>
+    <%= form_for @bank do |f| %>
+		<%= f.fields_for :synonyms, @bank.synonyms.build do |s| %>
+		    <div class="field">
+		    	Termino: 
+		    	<%= s.text_field :path, value: @bank.name %>
+		    </div>
+		<% end %>
+		<div class="actions">
+			<%= f.submit "Agregar Sinonimo", {class: "button-l"} %>
+		</div>
+    <% end %>    
+</div>
 
-<h2>Sinónimos:</h2>
-<% @bank.synonyms.each do |syn| %>
-	<%= syn.label %> 
-    <%= link_to 'X', synonym_path("#{syn.id}"), method: :delete %><br>
-<% end %>
 
 <div class="actions">
 	<%= link_to 'Edit', edit_bank_path(@bank), {class: "button"} %>

@@ -1,18 +1,26 @@
 <h1>Societies</h1>
 
-<ul>
-  <% @societies.each do |society| %>
-    <li>
-    	<%= link_to society.name, society %>
-    </li>
-  <% end %>
-</ul>
 
-<br>
+<div class="panel">
+  <div class="panel-head">
+    <h2>Sociedades</h2>
+  </div>
+  <div class="panel-body">
+    <% @societies.each do |child| %>
+      <div class="item">
+        <span class="item-label"><%= link_to "#{child.name}: ", child %></span>
+        <span class="item-content">
+          <span class="options-right options-s"><%= link_to 'X', child, method: :delete, data: { confirm: 'Are you sure?' } %></span>
+          <span class="options-right"><%= (ls = child.last_sequence) ? ls.date : "-" %></span>
+        </span>
+      </div>
+    <% end %>
+  </div>
+</div>
 
 <%= form_tag reload_societies_path, method: :post do %>
 	<div class="actions">
-		<%= link_to 'New Society', new_society_path, {class: "button"} %>
-		<%= submit_tag 'Load From Files' %>
+		<%= link_to 'Nuevo Cliente', new_society_path, {class: "button"} %>
+		<%= submit_tag 'Cargar de Carpetas', {class: "button"} %>
 	</div>
 <% end %>

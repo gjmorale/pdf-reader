@@ -1,6 +1,9 @@
 <header>
   <div class="container">
-    <%= link_to "TRACKER", root_url, id: "logo" %>
+    <div id="logo">
+      <%= image_tag "/logo.gif", id: "logo-img" %>
+      <%= link_to "TRACKER", root_url %>
+    </div>
     <nav>
       <ul class="header-options header-options-right">
         <li><%= link_to "Cartolas", statements_path %></li>

@@ -1,11 +1,13 @@
 <h1><%= @handler.short_name %><small> (<%= link_to 'edit', edit_handler_path(@handler) %>)</small></h1>
-<p>
-  <strong>Local Path:</strong>
-  <a href="<%= "f://#{@handler.repo_path}#{@handler.local_path}" %>"><%= "#{@handler.repo_path}#{@handler.local_path}" %></a>
-</p>
+<div class="panel panel-body">
+	<div class="item">
+	  <span class="item-label">Local Path:</span>
+	  <a href="<%= "f://#{@handler.repo_path}#{@handler.local_path}" %>" class="item-content"><%= "#{@handler.repo_path}#{@handler.local_path}" %></a>
+	</div class="item">
+</div>
 
 
-<h1>My Statements</h1>
+<h2>Mis Cartolas:</h2>
 
 <%= render 'statements/by_status', statements: @handler.statements, edit: false %>
 

@@ -41,6 +41,10 @@
 		width: 150px;
 		padding-right: 0px;
 	}
+	&.options-s {
+		width: 50px;
+		padding-right: 10px;
+	}
 }
 
 
@@ -94,6 +98,7 @@ header{
 	ul {
 		margin: 0px;
 		padding-right: 10px;
+		padding-top: 45px;
 		display: inline;
 		position: absolute;
 		right: 0px;
@@ -113,20 +118,32 @@ header{
 	.container{
 		background-color: black;
 		width: 100%;
-		height: 40px;
-		padding-top: 30px;
-		padding-left: 40px;
+		height: 80px;
 	}
 
 	#logo {
 		float: left;
-		font-size: 30px;
+		padding-top: 10px;
+		line-height: 65px;
+		> a {
+			vertical-align: top;
+		}
+		padding-left: 20px;
+		font-size: 32px;
 		font-weight: bold;
+	}
+	#logo-img {
+		width: 50px;
+		height: 50px;
+		padding-right: 10px;
+		margin-top: 10px;
+		background-color: white;
 	}
 }
 
 body {
 	margin: 0px;
+	margin-bottom: 50px;
 	a {
 		text-decoration: none;
 	}
@@ -146,16 +163,6 @@ body {
 	display: none;
 }
 
-.xl-field {
-	input {
-		width: 100%;
-	}
-}
-
-.nested-form {
-	width: 450px;
-}
-
 .home-container {
 	padding: 60px;
 	background-color: #EEE;
@@ -167,8 +174,12 @@ body {
 
 	p {
 		color: #777;
-		font-size: 20px;
+		font-size: 12px;
 		padding-top: 25px;
+		text-transform: uppercase;
+		letter-spacing: 1px;
+		margin: 0px;
+		padding-bottom: 25px;
 	}
 }
 
@@ -193,10 +204,14 @@ body {
 }
 
 table {
+	margin-top: 45px;
 	border-collapse: collapse;
 	th {
 	 	border-bottom: 1px solid #BBB;
 	 	height: 40px;
+	 	text-transform: uppercase;
+	 	letter-spacing: 1px;
+	 	text-weight: bold;
 	}
 	 td {
 	 	border-bottom: 1px solid #DDD;
@@ -215,6 +230,9 @@ td.cell-align-right {
 .advanced-options {
 	background-color: #F0F3F9;
 	width: 100%;
+	.toggle-on-click {
+		cursor: pointer;
+	}
 }
 
 
@@ -235,9 +253,23 @@ td.cell-align-right {
 	}
 }
 
+.xl-field {
+	input {
+		width: 100%;
+	}
+	select, input[type="text"] {
+		float: none;
+	}
+}
+
 .actions {
 	margin-top: 15px;
 	input[type="submit"], .button {
+		cursor: pointer;
+		&:hover {
+			text-shadow: 1px 1.4px #AAA;
+	    box-shadow: 0.9px 0.9px 1px rgba(0, 0, 0, .8);
+		}
 	    background-color: #3090FF; 
 	    background-color: #FF8000; 
 	    border: none;
@@ -251,9 +283,9 @@ td.cell-align-right {
 	    text-transform: uppercase;
 	    font-weight: bold;
 	    letter-spacing: 2px;
-	    width: 250px;
 	    line-height: 12px;
 	    box-shadow: 1px 1px 1px rgba(0, 0, 0, .6);
+	    width: 272px;
 	    &.button-s {
 	    	width: 30px;
 	    	padding: 5px 5px;
@@ -267,7 +299,7 @@ td.cell-align-right {
 	    }
     }
     .button {
-    	width: 190px;
+    	width: 212px;
     }
 }
 
@@ -280,7 +312,8 @@ a {
 
 .nested-form {
 	background-color: #EEE;
-	width: 510px;
+	width: 560px;
+	margin-bottom: 25px;
 	form {
 		padding: 15px;
 	}
@@ -299,6 +332,44 @@ a {
 			font-size: 15px;
 		}
 	}
+}
+
+.panel {
+	display: block;
+	background-color: #EEE;
+	margin-bottom: 25px;
+	width: 560px;
+	.panel-head {
+		width: 100%;
+		background-color: black;
+		padding-top: 0px;
+		padding-bottom: 8px;
+		h2 {
+			margin: 0px;
+			color: white;
+			text-align: center;
+			letter-spacing: 3px;
+			text-transform: uppercase;
+			line-height: 12px;
+			font-size: 15px;
+		}
+	}
+	&.panel-body, .panel-body {
+		width: 540px;
+		padding:10px;
+		.item {
+			.item-label {
+				color: black;
+				text-transform: uppercase;
+				font-weight: bold;
+				letter-spacing: 1px;
+			}
+			.item-content {
+				color: #555;
+			}
+		}
+	}
+	
 }
 
 h1,h2,h3 {
