@@ -1,34 +1,36 @@
 <h1>
   <%= @statement.file_name %>
 </h1>
+<span class="title-details"><%= @statement.path %></span>
 
 <h2>
-  <%= link_to @statement.bank, @statement.bank %> - <%= link_to @statement.society, @statement.society %>
+  <%= link_to @statement.bank, @statement.bank %>
+    - 
+   <%= link_to @statement.society, @statement.society %>
+    - 
+   <%= link_to @statement.sequence.date.to_s, @statement.sequence %>
 </h2>
-
-<h3>
-  <%= link_to @statement.sequence.date.to_s, @statement.sequence %>
-</h3>
-
-<p>
-  <strong>Estado:</strong>
-  <%= @statement.status %>
-</p>
-
-<p>
-  <strong>Handler:</strong>
-  <%= @statement.handler ? link_to(@statement.handler) : "Sin Asignar" %>
-</p>
-
-<p>
-  <strong>Fecha Ingreso:</strong>
-  <%= @statement.d_filed %>
-</p>
-
-<p>
-  <a href="<%= @statement.chrome_path current_user %>">Abrir Archivo Original</a>
-</p>
-
-
-<%= link_to 'Edit', edit_statement_path(@statement) %> |
-<%= link_to 'Back', statements_path %>
+<div class="panel panel-body">
+  <div class="item">
+    <span class="item-label">Estado: </span>
+    <span class="item-content"><%= @statement.status %></span>
+  </div>
+  <div class="item">
+    <span class="item-label">Handler: </span>
+    <span class="item-content"><%= @statement.handler ? link_to(@statement.handler) : "Sin Asignar" %></span>
+  </div>
+  <div class="item">
+    <span class="item-label">Fecha Ingreso: </span>
+    <span class="item-content"><%= @statement.d_filed %></span>
+  </div class="item">
+  <div class="item">
+    <span class="item-label">Archivo Original: </span>
+    <div class="item-content">
+      <a href="<%= @statement.chrome_path current_user %>"><%= @statement.path %></a>
+    </div>
+  </div>
+</div>
+<div class="actions">
+  <%= link_to 'Edit', edit_statement_path(@statement), {class: "button"} %>
+  <%= link_to 'Back', statements_path, {class: "button"} %>
+</div>
