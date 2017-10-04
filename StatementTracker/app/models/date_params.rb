@@ -58,6 +58,7 @@ class DateParams
   end
 
   def filter query, distinct: true
+  		query = query.where("taxes.active = ?", true)
 		query = query.where("taxes.periodicity = ?", periodicity)
 		query = query.where("sequences.date <= ?", date)
 		case periodicity
@@ -75,6 +76,7 @@ class DateParams
   end
 
   def filter_quantities query
+  		query = query.where("taxes.active = ?", true)
   		date ||= (Date.current-1.month).end_of_month
   		periodicity ||= Tax::Periodicity::MONTHLY
 		seq_join = "LEFT JOIN "

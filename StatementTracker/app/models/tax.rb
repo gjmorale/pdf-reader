@@ -171,6 +171,7 @@ class Tax < ApplicationRecord
 
   def close date_params
     self.quantity = 0
+    self.active = false
     self.save
     if seq = self.sequence(date_params)
       seq.quantity = seq.statements.size

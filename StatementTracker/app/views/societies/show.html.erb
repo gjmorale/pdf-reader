@@ -104,8 +104,9 @@
       <div class="panel-body">
         <% @society.children.each do |child| %>
           <div class="item">
-            <span class="item-label"><%= link_to "#{child.name} ", child %></span>
+            <span class="item-label"><%= link_to "#{child.name}: ", child %></span>
             <span class="item-content">
+              <%= child.active ? "Activa" : "Cerrada" %>
               <span class="options-right options-s"><%= link_to 'X', child, method: :delete, data: { confirm: 'Are you sure?' } %></span>
               <span class="options-right"><%= (ls = child.last_sequence) ? ls.date : "-" %></span>
             </span>

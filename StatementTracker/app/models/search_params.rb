@@ -66,6 +66,8 @@ class SearchParams
   end
 
   def filter query
+  		query = query.where("societies.active = ?", true)
+  		query = query.where("taxes.active = ?", true)
 		if name and not name.empty?
 			#query = query.where("societies.name LIKE ? COLLATE utf8_general_ci", "%#{name}%") NOT SUPPORTED IN SQLite3 UBUNTU 12.04
 			query = query.where("societies.name LIKE ? ", "%#{name}%")

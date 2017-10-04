@@ -22,7 +22,9 @@ class SocietiesController < ApplicationController
   def progress
     set_society if params[:id]
     @societies = @society ? @society.children : Society.roots
+    @societies = @societies.where(active: true) if @societies
     @taxes = @society.taxes if @society and @society.leaf?
+    @taxes = @taxes.where(active: true) if @taxes
   end
 
   # GET /societies/1

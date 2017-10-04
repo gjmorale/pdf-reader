@@ -205,6 +205,8 @@ class Society < ApplicationRecord
 	end
 
 	def close date_params
+		self.active = false
+		self.save
 		if self.leaf?
 			taxes.each do |tax|
 				tax.close date_params

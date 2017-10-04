@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171003180441) do
+ActiveRecord::Schema.define(version: 20171004211934) do
 
   create_table "banks", force: :cascade do |t|
     t.string   "name"
@@ -54,8 +54,9 @@ ActiveRecord::Schema.define(version: 20171003180441) do
     t.string   "name"
     t.string   "rut"
     t.integer  "parent_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+    t.boolean  "active",     default: true
     t.index ["name", "parent_id"], name: "index_societies_on_name_and_parent_id", unique: true
     t.index ["parent_id"], name: "index_societies_on_parent_id"
   end
@@ -110,8 +111,9 @@ ActiveRecord::Schema.define(version: 20171003180441) do
     t.integer  "quantity",    default: 0
     t.integer  "optional",    default: 0
     t.string   "periodicity"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+    t.boolean  "active",      default: true
     t.index ["bank_id"], name: "index_taxes_on_bank_id"
     t.index ["society_id"], name: "index_taxes_on_society_id"
   end
