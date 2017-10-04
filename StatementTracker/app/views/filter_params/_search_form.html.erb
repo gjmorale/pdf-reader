@@ -1,7 +1,7 @@
 <%= form_for search_params, url: filter_statements_url do |f| %>
   <div class="search-block">
     <div class="field">
-      <%= f.label "Desde:" %>
+      <span>Fecha:</span>
       <%= f.date_select :date_from, discard_day: true, selected: search_params.date_from, start_year: 2015, end_year: Date.current.year %>
 
     </div>
@@ -9,7 +9,7 @@
     <div class="advanced-options">
       <span class="toggle-on-click" data-toggle="close">Opciones Avanzadas (F5)</span>
       <div class="field show-on-click">
-        <%= f.label "Hasta:" %>
+        <span>Fecha Hasta:</span>
         <%= f.date_select :date_to, discard_day: true, include_blank: true, selected: nil, start_year: 2015, end_year: Date.current.year %>
       </div>
       <div class="field show-on-click">

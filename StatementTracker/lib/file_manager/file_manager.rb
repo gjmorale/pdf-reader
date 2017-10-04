@@ -33,7 +33,7 @@ module FileManager
 		end
 	end
 
-	def self.exist? path, base_path: Path::DROPBOX
+	def self.exist? path, base_path: Paths::DROPBOX
 		File.exist? base_path + '/' + path
 	end
 
