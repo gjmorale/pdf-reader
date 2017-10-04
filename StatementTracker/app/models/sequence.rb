@@ -1,8 +1,8 @@
 class Sequence < ApplicationRecord
-  belongs_to :tax
+  belongs_to :tax, inverse_of: :sequences
   has_one :society, through: :tax
   has_one :bank, through: :tax
-  has_many :statements, dependent: :destroy
+  has_many :statements, dependent: :destroy, inverse_of: :sequence
 
   before_validation :default_quantities
   validates :date, presence: true

@@ -33,15 +33,19 @@ class SocietiesController < ApplicationController
       format.js do 
         set_search_params
         @element = @society
-        if @element.leaf?        
-          @node_template = 'statements/node'
-          @children = @society.statement_nodes @search_params
+        if params[:status] and params[:status] == "close"
           render 'nodes/navigation'
         else
-          @node_template = 'societies/node'
-          @children = @society.filter @search_params
-          @children = @society.treefy @children #TODO: Check and fix
-          render 'nodes/navigation'
+          if @element.leaf?        
+            @node_template = 'statements/node'
+            @children = @society.statement_nodes @search_params
+            render 'nodes/navigation'
+          else
+            @node_template = 'societies/node'
+            @children = @society.filter @search_params
+            @children = @society.treefy @children
+            render 'nodes/navigation'
+          end
         end
       end
     end

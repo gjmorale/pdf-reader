@@ -84,6 +84,10 @@ class Society < ApplicationRecord
 		params.filter query
 	end
 
+	def node_path status: :open
+		"/societies/#{id}?status=#{status.to_s}"
+	end
+
 	def time_nodes params
 		query = sequences
 		query = query.left_outer_joins(statements: :status)
@@ -111,6 +115,7 @@ class Society < ApplicationRecord
 	    	p += m[1]
 	    end
 	    return 0 if p == 0
+	    return 100 if q == 0
 	    return p/q
 	end
 

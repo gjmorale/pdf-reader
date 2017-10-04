@@ -2,7 +2,6 @@
 $(document).ready(function () {
     $('.toggle-on-click').click(function (event) {
         if ($(this).data('toggle') == 'open') {
-            console.log("closing")
             $(this).parent().children('.show-on-click').each(function () {
                 $(this).hide(250);
             });

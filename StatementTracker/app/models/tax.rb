@@ -14,7 +14,7 @@ class Tax < ApplicationRecord
   	]
   end
 
-  has_many :sequences, dependent: :destroy
+  has_many :sequences, dependent: :destroy, inverse_of: :tax
   has_many :statements, through: :sequences, inverse_of: :tax
   has_many :source_paths, dependent: :destroy, inverse_of: :tax
 
@@ -68,9 +68,11 @@ class Tax < ApplicationRecord
   end
 
   def progress params
+    return 100 if quantity == 0
     means = time_nodes(params).joins(statements: :status).group("sequences.id").sum("statement_statuses.progress")
     return 0 unless means.any?
-    (means.map{|m| m[1].to_f}.inject{|t, m| t+(m)}/(quantity*means.size)).to_i
+    byebug if id == 201
+    (means.map{|m| m[1].to_f}.inject{|t, m| t+(m)}/(self.quantity*means.size)).to_i
   end
 
   def sequence date_params

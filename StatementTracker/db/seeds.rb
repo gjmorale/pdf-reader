@@ -12,31 +12,37 @@ noticed_status = StatementStatus.where(
 	progress: 20,
 	message: "Recibido"
 	).first_or_create
+noticed_status.update(description: "Cartola ha llegado al repositorio.")
 read_status = StatementStatus.where(
 	code: 110, 
 	progress: 60,
 	message: "Leído"
 	).first_or_create
+read_status.update(description: "Cartola fue leída correctamente y conciliada en Checkmov")
 uploaded_status = StatementStatus.where(
 	code: 120, 
 	progress: 70,
 	message: "Subido"
 	).first_or_create
+uploaded_status.update(description: "Posición y Movimientos subidos al sistema")
 balanced_status = StatementStatus.where(
 	code: 130, 
 	progress: 80,
 	message: "Conciliado"
 	).first_or_create
+balanced_status.update(description: "Cartola ajustada y cuadre entre movimientos, posición y precios")
 processed_status = StatementStatus.where(
 	code: 140, 
 	progress: 99,
 	message: "Procesado"
 	).first_or_create
+processed_status.update(description: "Cartola procesada y revisada")
 archived_status = StatementStatus.where(
 	code: 200, 
 	progress: 100,
 	message: "Archivado"
 	).first_or_create
+archived_status.update(description: "Cartola archivada después de ser usada")
 
 #BANKs
 ms = Bank.where(

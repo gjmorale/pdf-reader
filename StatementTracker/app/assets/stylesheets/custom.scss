@@ -33,10 +33,14 @@
 
 .options-right {
 	float: right;
-	padding-right: 10px;
+	padding-right: 7px;
 	width: 90px;
 	text-align: center;
 	//display: none;
+	&.options-l {
+		width: 130px;
+		padding-right: 0px;
+	}
 }
 
 
@@ -220,8 +224,8 @@ td.cell-align-right {
 		float: right;
 	}
 	select {
-		background-color: #333;
-		border: 1px solid #444;
+		background-color: #454545;
+		border: 1px solid #555555;
 		color: #EEE;
 	}
 }
@@ -278,8 +282,8 @@ a {
 	.nested-form-head {
 		width: 100%;
 		background-color: black;
-		padding-top: 5px;
-		padding-bottom: 5px;
+		padding-top: 0px;
+		padding-bottom: 8px;
 		h2 {
 			margin: 0px;
 			color: white;
@@ -289,5 +293,20 @@ a {
 			line-height: 12px;
 			font-size: 15px;
 		}
+	}
+}
+
+h1,h2,h3 {
+	letter-spacing: 1px;
+	text-transform: uppercase;
+	margin-top: 0px;
+	padding-top: 10px;
+	color: #454545;
+	font-weight: bold;
+	span.title-details {
+		font-size: 10px;
+		padding-left: 20px;
+		color: #888;
+		text-transform: uppercase;
 	}
 }

@@ -11,7 +11,14 @@ class StatementStatus < ApplicationRecord
     end
 
     def self.group_by_status statements
-      statements.sort_by(&:status).reverse.group_by(&:status)
+      aux = self.joins("LEFT JOIN (#{statements.to_sql}) AS stms ON stms.status_id = statement_statuses.id")
+      aux = aux.order(code: :desc).select("stms.id AS statement_id, statement_statuses.*")
+      statuses = {}
+      aux.each do |r|
+        statuses[r] = [] unless statuses.has_key? r
+        statuses[r] << Statement.find(r.statement_id) unless r.statement_id.nil?
+      end
+      statuses
     end
 
     def self.noticed

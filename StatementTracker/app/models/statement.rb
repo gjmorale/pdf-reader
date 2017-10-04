@@ -4,7 +4,7 @@ class Statement < ApplicationRecord
 
   belongs_to :handler, required: false
   belongs_to :status, class_name: "StatementStatus"
-  belongs_to :sequence
+  belongs_to :sequence, inverse_of: :statements
   has_one :tax, through: :sequence, inverse_of: :statements
   has_one :bank, through: :tax
   has_one :society, through: :tax

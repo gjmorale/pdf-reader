@@ -1,17 +1,20 @@
 <% StatementStatus.group_by_status(statements).each do |status, statement_group| %>
-	<h2><%= status %></h2>
-	<%= form_tag batch_update_statements_path do %>
-	  <table>
-	    <%= render'statements/table_head', edit: edit %>
-	    <%= render'statements/table_body', statements: statement_group, edit: edit %>
-	  </table>
-	  <div class="actions">
-		  <% if edit %>
-		    <%= submit_tag StatementsCommit::BATCH_UPDATE %>
-		  <% else %>
-		    <%= submit_tag StatementsCommit::UPGRADE, {class: "button-s"} unless status.archived? %>
-		    <%= submit_tag StatementsCommit::DOWNGRADE, {class: "button-s"} unless status.noticed? %>
-		  <% end %>
-	  </div>
+	<h2><%= status %><span class="title-details"><%= status.description %></span></h2>
+	<% if statement_group.any? %>
+		<%= form_tag batch_update_statements_path do %>
+		  <table>
+		    <%= render'statements/table_head', edit: edit %>
+		    <%= render'statements/table_body', statements: statement_group, edit: edit %>
+		  </table>
+		  <div class="actions">
+			  <% if edit %>
+			    <%= submit_tag StatementsCommit::BATCH_UPDATE %>
+			  <% else %>
+			    <%= submit_tag StatementsCommit::UPGRADE, {class: "button-s"} unless status.archived? %>
+			    <%= submit_tag StatementsCommit::DOWNGRADE, {class: "button-s"} unless status.noticed? %>
+			  <% end %>
+		  </div>
+		<% end %>
 	<% end %>
+	<hr>
 <% end %>
