@@ -22,21 +22,20 @@
       <%= f.text_field :rut %>
     </div>
 
+    <%= f.fields_for :source_path, SourcePath.new do |s| %>
+      <div class="field">
+        Ruta de Cartolas:
+        <div class="xl-field">
+          <%= s.text_field :path, value: society.path %>
+        </div>
+      </div>
+    <% end %>
+
     <% if society.persisted? %>
       <div class="field">
         Sociedad Padre:
         <%= f.collection_select :parent_id, society.ancestors, :id, :name %>
       </div>
-    <% end %>
-
-    <% if society.taxes.any? %>
-      <h2>Nuevo Checkmov:</h2>
-      <%= f.fields_for(:checkmovs, Checkmov.new) do |c| %>
-        <div class="field">
-          <%= c.label :path %>
-          <%= c.text_field :path %>
-        </div>
-      <% end %>
     <% end %>
 
     <div class="actions">
@@ -66,6 +65,27 @@
         <% end %>
       <% end %>
       
+      <div class="actions">
+        <%= f.submit "Editar Checkmovs" %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<% if society.taxes.any? %>
+  <div class="nested-form">
+    <div class="nested-form-head">
+      <h2>Nuevo Checkmov:</h2>
+    </div>
+    <%= form_for(society) do |f| %>
+      <%= f.fields_for(:checkmovs, Checkmov.new) do |c| %>
+        <div class="field">
+          <%= c.label :path %>
+          <div class="xl-field">
+            <%= c.text_field :path %>
+          </div>
+        </div>
+      <% end %>
       <div class="actions">
         <%= f.submit "Editar Checkmovs" %>
       </div>

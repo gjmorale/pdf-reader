@@ -1,6 +1,7 @@
 <h1>
   <%= @society.name %>
 </h1>
+<span class="title-details"><%= @society.path %></span>
 
 <div class="panel panel-body">
   <div class="item">
@@ -87,9 +88,9 @@
         <%= t.fields_for :source_paths, SourcePath.new do |s| %>
           <div class="field">
             Directorio Origen de Cartolas:
-          </div>
-          <div class="xl-field">
-            <%= s.text_field :path, value: @society.path %>
+            <div class="xl-field">
+              <%= s.text_field :path, value: @society.path %>
+            </div>
           </div>
         <% end %>
       <% end %>

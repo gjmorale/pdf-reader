@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171004211934) do
+ActiveRecord::Schema.define(version: 20171005195144) do
 
   create_table "banks", force: :cascade do |t|
     t.string   "name"
@@ -63,11 +63,13 @@ ActiveRecord::Schema.define(version: 20171004211934) do
 
   create_table "source_paths", force: :cascade do |t|
     t.string   "path"
-    t.integer  "tax_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "sourceable_id"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.string   "sourceable_type"
+    t.string   "key"
     t.index ["path"], name: "index_source_paths_on_path", unique: true
-    t.index ["tax_id"], name: "index_source_paths_on_tax_id"
+    t.index ["sourceable_id"], name: "index_source_paths_on_sourceable_id"
   end
 
   create_table "statement_statuses", force: :cascade do |t|

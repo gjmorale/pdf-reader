@@ -157,6 +157,7 @@ class SocietiesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def society_params
       params.require(:society).permit(:name, :rut, :parent_id, 
+        source_path_attributes: [:path],
         taxes_attributes: [:bank_id, 
                           :periodicity, 
                           :quantity, 

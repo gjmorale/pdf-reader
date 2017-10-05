@@ -8,6 +8,7 @@ class Society < ApplicationRecord
   has_many :sequences, through: :taxes
   has_many :statements, through: :sequences
   has_many :checkmovs, inverse_of: :society
+  has_one :source_path, as: :sourceable, dependent: :destroy, autosave: true, required: false
 
   validates :name, presence: true
   validates_uniqueness_of :name, scope: :parent_id
@@ -15,6 +16,7 @@ class Society < ApplicationRecord
   accepts_nested_attributes_for :children, allow_destroy: true
   accepts_nested_attributes_for :taxes, allow_destroy: true
   accepts_nested_attributes_for :checkmovs, allow_destroy: true
+  accepts_nested_attributes_for :source_path
 
   #validates_uniqueness_of :rut, scope: :name #DANGEROUS IN DEBUG
 
@@ -163,7 +165,9 @@ class Society < ApplicationRecord
 	end
 
 	def path
-		self.self_and_ancestors.reverse.join('/')
+		parent_infered = (parent ? "#{parent.path}#{name}" : false)
+		own_path = (source_path ? source_path.path : false)
+		own_path || parent_infered || (self_and_ancestors.reverse.map{|s| s.name}.join('/')+'/')
 	end
 
 	def expected date_params

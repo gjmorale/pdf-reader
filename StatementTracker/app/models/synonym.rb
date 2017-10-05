@@ -1,5 +1,5 @@
 class Synonym < ApplicationRecord
-  belongs_to :listable, polymorphic: true, required: false
+  belongs_to :listable, polymorphic: true
 
   validates :label, presence: true
   validates_uniqueness_of :label, scope: :listable_type

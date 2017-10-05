@@ -16,7 +16,7 @@ class Tax < ApplicationRecord
 
   has_many :sequences, dependent: :destroy, inverse_of: :tax
   has_many :statements, through: :sequences, inverse_of: :tax
-  has_many :source_paths, dependent: :destroy, inverse_of: :tax
+  has_many :source_paths, dependent: :destroy, as: :sourceable
 
   belongs_to :bank
   belongs_to :society

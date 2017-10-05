@@ -172,7 +172,10 @@ module FileManager
 				societies.each do |soc|
 					if parent and not soc.persisted?
 						soc.parent = parent
-						soc.save
+						if soc.save
+							soc.build_source_path(path: path[/#{Regexp.escape(parent.path)}.*#{Regexp.escape(soc.name)}/])
+							soc.save!
+						end
 					end
 					parent = soc
 				end
