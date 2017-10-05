@@ -12,13 +12,14 @@
 		<h2>Fuentes</h2>
 	</div>
 	<div class="panel-body">
-	<% @tax.source_paths.each do |source_path| %>
+	<% @tax.source_paths.each.with_index do |source_path, i| %>
 		<div class="item">
 			<span class="item-label">
-				Ruta: 
+				<%= "#{i+1}.-" %>
 			</span>
 			<span class="item-content">
     			<%= source_path %>
+			    <span class="options-right"><%= link_to 'X', source_path_path(source_path), method: :delete %></span>
 			</span>
 		</div>
 	<% end %>

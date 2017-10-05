@@ -11,6 +11,7 @@ class SourcePath < ApplicationRecord
   private
 
   	def valid_path
+      self.path = "#{path}/" unless self.path[-1] == '/'
   		errors.add(:path, "Path doesn't exist") unless FileManager.exist? path
   	end
 

@@ -3,10 +3,10 @@ class SynonymsController < ApplicationController
 
 	def destroy
     @synonym.destroy
-    respond_to do |format|
-      format.html { redirect_to bank_url(@bank), notice: 'Synonym was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+	    respond_to do |format|
+	      format.html { redirect_to bank_url(@bank), notice: 'Synonym was successfully destroyed.' }
+	      format.json { head :no_content }
+	    end
 	end
 
 	private

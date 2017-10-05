@@ -18,6 +18,11 @@
     <span class="item-label">Rut:</span>
     <span class="item-content"><%= @society.rut %></span>
   </div>
+
+  <div class="item">
+    <span class="item-label">Estado:</span>
+    <span class="item-content"><%= @society.active ? "Activa" : "Cerrada" %></span>
+  </div>
 </div>
 
 <% if @society.leaf? or (@society.root? and @society.children.count == 0) %>

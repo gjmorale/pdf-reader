@@ -118,7 +118,8 @@ class TaxesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def tax_params
       params.require(:tax).permit(:bank_id, :society_id, :quantity, :periodicity,
-          source_paths_attributes: [:id, :path]
+          source_paths_attributes: [:id, :path],
+          sequences_attributes: [:id, :quantity]
         )
     end
 end

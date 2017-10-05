@@ -12,17 +12,17 @@ class DateParams
       send("#{name}=", value) unless name =~ /\(*\)/
     end
     if @date and @date.is_a? Date
-			case periodicity
-			when Tax::Periodicity::ANNUAL
-				@date = @date.end_of_year
-			when Tax::Periodicity::MONTHLY
-				@date = @date.end_of_month
-			when Tax::Periodicity::WEEKLY
-				@date = @date.end_of_week
-			when Tax::Periodicity::DAILY
-				@date = @date
-			end
+		case periodicity
+		when Tax::Periodicity::ANNUAL
+			@date = @date.end_of_year
+		when Tax::Periodicity::MONTHLY
+			@date = @date.end_of_month
+		when Tax::Periodicity::WEEKLY
+			@date = @date.end_of_week
+		when Tax::Periodicity::DAILY
+			@date = @date
 		end
+	end
   end
 
   def self.date_from_attribute name, attributes
@@ -77,22 +77,23 @@ class DateParams
 
   def filter_quantities query
   		query = query.where("taxes.active = ?", true)
-  		date ||= (Date.current-1.month).end_of_month
+		query = query.where('taxes.periodicity = ?', periodicity)
+  		q_date = @date || (Date.current-1.month).end_of_month
   		periodicity ||= Tax::Periodicity::MONTHLY
 		seq_join = "LEFT JOIN "
-		seq_q = "sequences.date <= '#{date}' AND "
+		seq_q = "sequences.date <= '#{q_date}' AND "
 		case periodicity
 		when Tax::Periodicity::ANNUAL
-			seq_q << "sequences.date >= '#{date.beginning_of_year}'"
+			seq_q << "sequences.date >= '#{q_date.beginning_of_year}'"
 		when Tax::Periodicity::MONTHLY
-			seq_q << "sequences.date >= '#{date.beginning_of_month}'"
+			seq_q << "sequences.date >= '#{q_date.beginning_of_month}'"
 		when Tax::Periodicity::WEEKLY
-			seq_q << "sequences.date >= '#{date.beginning_of_week}'"
+			seq_q << "sequences.date >= '#{q_date.beginning_of_week}'"
 		when Tax::Periodicity::DAILY
-			seq_q << "sequences.date >= '#{date}'"
+			seq_q << "sequences.date >= '#{q_date}'"
 		end
 		seq_join << "(" << Sequence.where(seq_q).to_sql << ") AS seqs"
-		seq_join << " ON (seqs.tax_id = taxes.id"#sequences.date <= date(#{date+2.years}) AND "
+		seq_join << " ON (seqs.tax_id = taxes.id"
 		seq_join << ")"
 		seq_join << " LEFT JOIN statements ON statements.sequence_id = seqs.id"
 		query = query.joins(seq_join).group('taxes.id, seqs.id')
@@ -101,7 +102,6 @@ class DateParams
 		select << ', IFNULL(seqs.quantity,taxes.quantity) AS q_expected'
 		select << ', COUNT(statements.id) AS q_recieved'
 		query = query.select(select)
-		query = query.where('taxes.periodicity = ?', periodicity)
   end
 
 end

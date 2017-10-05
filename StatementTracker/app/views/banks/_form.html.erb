@@ -1,44 +1,63 @@
-<%= form_for(bank) do |f| %>
-  <% if bank.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(bank.errors.count, "error") %> prohibited this bank from being saved:</h2>
+<div class="nested-form">
+  <%= form_for(bank) do |f| %>
+    <% if bank.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(bank.errors.count, "error") %> prohibited this bank from being saved:</h2>
 
-      <ul>
-      <% bank.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
+        <ul>
+        <% bank.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+        </ul>
+      </div>
+    <% end %>
 
-  <div class="field">
-    <%= f.label :name %>
-    <%= f.text_field :name %>
-  </div>
-
-  <div class="field">
-    <%= f.label :folder_name %>
-    <%= f.text_field :folder_name %>
-  </div>
-
-  <div class="field">
-    <%= f.label :code_name %>
-    <%= f.text_field :code_name %>
-  </div>
-
-  <h2>Sinónimos:</h2>
-  <% bank.synonyms.each do |syn| %>
-    <%= syn.label %><br>
-  <% end %>
-  <h2>Nuevo Sinónimo</h2>
-  <%= f.fields_for(:synonyms, Synonym.new) do |s| %>
     <div class="field">
-      <%= s.label :label %>
-      <%= s.text_field :label %>
+      <%= f.label :name %>
+      <%= f.text_field :name %>
+    </div>
+
+    <div class="field">
+      <%= f.label :folder_name %>
+      <%= f.text_field :folder_name %>
+    </div>
+
+    <div class="field">
+      <%= f.label :code_name %>
+      <%= f.text_field :code_name %>
+    </div>
+
+    <div class="actions">
+      <%= f.submit "Actualizar" %>
     </div>
   <% end %>
+</div>
+<% if bank.persisted? %>
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Sinonimos</h2>
+    </div>
+    <div class="panel-body">
+      <% bank.synonyms.each do |syn| %>
+        <div class="item"><span class="item-label"><%= syn.label %></span></div>
+      <% end %>
+    </div>
+  </div>
+  <div class="nested-form">
+    <div class="nested-form-head">
+      <h2>Nuevo Sinonimo</h2>
+    </div>
+    <%= form_for(bank) do |f| %>
+      <%= f.fields_for(:synonyms, Synonym.new) do |s| %>
+        <div class="field">
+          <%= s.label :label %>
+          <%= s.text_field :label %>
+        </div>
+      <% end %>
 
-  <div class="actions">
-    <%= f.submit %>
+      <div class="actions">
+        <%= f.submit "Agregar Sinonimo" %>
+      </div>
+    <% end %>
   </div>
 <% end %>

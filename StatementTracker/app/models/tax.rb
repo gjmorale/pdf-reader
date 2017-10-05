@@ -22,6 +22,7 @@ class Tax < ApplicationRecord
   belongs_to :society
 
   validates :periodicity, presence: true
+  accepts_nested_attributes_for :sequences
   accepts_nested_attributes_for :source_paths, allow_destroy: true
   validates :source_paths, :length => { :minimum => 1 }
 
