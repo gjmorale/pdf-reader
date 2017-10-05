@@ -22,7 +22,6 @@ class Society < ApplicationRecord
   		soc = nil
   		if not parent
   			soc = self.find_by(name: folder, parent: nil)
-  			soc ||= Society.roots.first #DEBUG
   		elsif parent.persisted?
   			soc = parent.children.find_by(name: folder)
   			soc ||= parent.children.build(name: folder)

@@ -1,31 +1,44 @@
-<%= form_for(tax) do |f| %>
-  <% if tax.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(tax.errors.count, "error") %> prohibited this tax from being saved:</h2>
+<div class="nested-form">
+  <%= form_for(tax) do |f| %>
+    <% if tax.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(tax.errors.count, "error") %> prohibited this tax from being saved:</h2>
 
-      <ul>
-      <% tax.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
+        <ul>
+        <% tax.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="field">
+      <%= f.label :bank_id %>
+      <%= collection_select(:tax, :bank_id, Bank.all, :id, :name) %>
+    </div>
+    <div class="field">
+      <%= f.label :periodicity %>
+      <%= f.select :periodicity, Tax::Periodicity::ALL.map{|p| [p,p]} %>
+    </div>
+
+    <div class="field">
+      <%= f.label :quantity %>
+      <%= f.select :quantity, (0..30) %>
+    </div>
+
+    <% if tax.persisted? %>
+      <div class="field">
+        Sociedad:
+        <%= f.collection_select :society_id, tax.society.self_and_ancestors, :id, :name %>
+      </div>
+    <% end %>
+
+    <div class="actions">
+      <% if tax.persisted? %>
+        <%= f.submit "Editar Cuenta" %>
+      <% else %>
+        <%= f.submit "Agregar Cuenta" %>
       <% end %>
-      </ul>
     </div>
   <% end %>
-
-  <div class="field">
-    <%= f.label :bank_id %>
-    <%= collection_select(:tax, :bank_id, Bank.all, :id, :name) %>
-    <%= f.label :periodicity %>
-    <%= f.select :periodicity, Tax::Periodicity::ALL.map{|p| [p,p]} %>
-  </div>
-
-  <div class="field">
-    <%= f.label :quantity %>
-    <%= f.number_field :quantity %>
-    <%= f.label :optional %>
-    <%= f.number_field :optional %>
-  </div>
-
-  <div class="actions">
-    <%= f.submit %>
-  </div>
-<% end %>
+</div>

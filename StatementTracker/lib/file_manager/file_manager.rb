@@ -130,6 +130,7 @@ module FileManager
 			next unless path_contains_root? f
 			date_found = bank_found = false
 			society_found = true
+			root_found = false
 			last_node = nil
 			bank = year = month = nil
 			societies = []
@@ -139,26 +140,28 @@ module FileManager
 				next if folder == ""
 				path << "#{folder}/" unless bank_found
 				full_path << "#{folder}/"
-				if is_date folder
-					date_found = true
-					year = get_year folder
-				elsif is_month folder
-					date_found = true
-					month = get_month folder
-					year ||= get_year folder
-				elsif is_bank folder
-					bank_found = true
-					bank = Bank.find_bank folder
-				elsif not date_found and not bank_found
-					last_node = Society.new_from_folder folder, last_node
-					unless last_node
-						society_found = false
-						break
-					else
-						societies << last_node
+				if root_found ||= path_contains_root?(folder)
+					if is_date folder
+						date_found = true
+						year = get_year folder
+					elsif is_month folder
+						date_found = true
+						month = get_month folder
+						year ||= get_year folder
+					elsif is_bank folder
+						bank_found = true
+						bank = Bank.find_bank folder
+					elsif not date_found and not bank_found and root_found
+						last_node = Society.new_from_folder folder, last_node
+						unless last_node
+							society_found = false
+							break
+						else
+							societies << last_node
+						end
 					end
+					break if month and bank_found
 				end
-				break if month and bank_found
 			end
 			#TODO: Refactor dividing this two sections
 			if bank and society_found

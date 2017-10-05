@@ -1,7 +1,11 @@
 <header>
   <div class="container">
     <div id="logo">
-      <%= image_tag "/logo-halloween.png", id: "logo-img" %>
+      <% if Paths::DROPBOX =~ /finantecdeveloper3/i %>
+        <%= image_tag "/logo-morty.png", id: "logo-img" %>
+      <% else %>
+        <%= image_tag "/logo-halloween.png", id: "logo-img" %>
+      <% end %>
       <%= link_to "TRACKER", root_url %>
     </div>
     <nav>

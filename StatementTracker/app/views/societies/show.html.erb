@@ -25,7 +25,7 @@
   </div>
 </div>
 
-<% if @society.leaf? or (@society.root? and @society.children.count == 0) %>
+  <% if @society.taxes.any? %>
   <div class="panel">
     <div class="panel-head">
       <h2>Checkmovs</h2>
@@ -43,7 +43,6 @@
     </div>
   </div>
 
-  <% if @society.taxes.any? %>
   <div class="panel">
     <div class="panel-head">
       <h2>Instituciones Financieras:</h2>
@@ -66,6 +65,7 @@
   </div>
   <% end %>
 
+<% if @society.leaf? or (@society.root? and @society.children.count == 0) %>
   <div class="nested-form">
     <div class="nested-form-head">
       <h2>Nueva Institución Financiera</h2>
@@ -100,26 +100,26 @@
   </div>
 <% end %> 
 <% @society.reload %>
-<% if @society.taxes.size == 0 %>
-  <% if @society.children.any? %>
-    <div class="panel">
-      <div class="panel-head">
-        <h2>Sociedades</h2>
-      </div>
-      <div class="panel-body">
-        <% @society.children.each do |child| %>
-          <div class="item">
-            <span class="item-label"><%= link_to "#{child.name}: ", child %></span>
-            <span class="item-content">
-              <%= child.active ? "Activa" : "Cerrada" %>
-              <span class="options-right options-s"><%= link_to 'X', child, method: :delete, data: { confirm: 'Are you sure?' } %></span>
-              <span class="options-right"><%= (ls = child.last_sequence) ? ls.date : "-" %></span>
-            </span>
-          </div>
-        <% end %>
-      </div>
+<% if @society.children.any? %>
+  <div class="panel">
+    <div class="panel-head">
+      <h2>Sociedades</h2>
     </div>
-  <% end %>
+    <div class="panel-body">
+      <% @society.children.each do |child| %>
+        <div class="item">
+          <span class="item-label"><%= link_to "#{child.name}: ", child %></span>
+          <span class="item-content">
+            <%= child.active ? "Activa" : "Cerrada" %>
+            <span class="options-right options-s"><%= link_to 'X', child, method: :delete, data: { confirm: 'Are you sure?' } %></span>
+            <span class="options-right"><%= (ls = child.last_sequence) ? ls.date : "-" %></span>
+          </span>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+<% if @society.taxes.size == 0 %>
 
   <div class="nested-form">
     <div class="nested-form-head">

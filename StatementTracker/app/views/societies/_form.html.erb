@@ -1,46 +1,60 @@
-<%= form_for(society) do |f| %>
-  <% if society.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(society.errors.count, "error") %> prohibited this society from being saved:</h2>
+<div class="nested-form">
+  <%= form_for(society) do |f| %>
+    <% if society.errors.any? %>
+      <div id="error_explanation">
+        <h2><%= pluralize(society.errors.count, "error") %> prohibited this society from being saved:</h2>
 
-      <ul>
-      <% society.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class="field">
-    <%= f.label :name %>
-    <%= f.text_field :name %>
-  </div>
-
-  <div class="field">
-    <%= f.label :rut %>
-    <%= f.text_field :rut %>
-  </div>
-
-  <% if society.taxes.any? %>
-    <h2>Nuevo Checkmov:</h2>
-    <%= f.fields_for(:checkmovs, Checkmov.new) do |c| %>
-      <div class="field">
-        <%= c.label :path %>
-        <%= c.text_field :path %>
+        <ul>
+        <% society.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+        </ul>
       </div>
     <% end %>
+
+    <div class="field">
+      <%= f.label :name %>
+      <%= f.text_field :name %>
+    </div>
+
+    <div class="field">
+      <%= f.label :rut %>
+      <%= f.text_field :rut %>
+    </div>
+
+    <% if society.persisted? %>
+      <div class="field">
+        Sociedad Padre:
+        <%= f.collection_select :parent_id, society.ancestors, :id, :name %>
+      </div>
+    <% end %>
+
+    <% if society.taxes.any? %>
+      <h2>Nuevo Checkmov:</h2>
+      <%= f.fields_for(:checkmovs, Checkmov.new) do |c| %>
+        <div class="field">
+          <%= c.label :path %>
+          <%= c.text_field :path %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <div class="actions">
+      <% if society.persisted? %>
+        <%= f.submit "Editar Sociedad" %>
+      <% else %>
+        <%= f.submit "Crear Sociedad" %>
+      <% end %>
+    </div>
   <% end %>
+</div>
 
-  <div class="actions">
-    <%= f.submit "Editar Sociedad" %>
-  </div>
-<% end %>
-
-<% if society.taxes.any? %>
-  <%= form_for(society) do |f| %>
-
-    <% if society.checkmovs.any? %>
-      <h2>Checkmovs:</h2>
+<% if society.checkmovs.any? %>
+  <div class="nested-form">
+    <%= form_for(society) do |f| %>
+      <div class="nested-form-header">
+        <h2>Checkmovs:</h2>
+      </div>
       <% society.checkmovs.each do |check| %>
         <%= f.fields_for(:checkmovs, check) do |c| %>
           <div class="field">
@@ -51,9 +65,10 @@
           </div>
         <% end %>
       <% end %>
+      
+      <div class="actions">
+        <%= f.submit "Editar Checkmovs" %>
+      </div>
     <% end %>
-    <div class="actions">
-      <%= f.submit "Editar Checkmovs" %>
-    </div>
-  <% end %>
+  </div>
 <% end %>
