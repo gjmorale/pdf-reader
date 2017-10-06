@@ -58,7 +58,7 @@ module FileManager
 		else
 		#CASE: Path is wrong
 			original_dir = path[0..path.rindex('/')-1]
-			Dir[Paths::DROPBOX + "/#{original_dir}/*.pdf"].each do |file|
+			Dir[Paths::DROPBOX + "/#{original_dir}/*.{#{FileFormats::ALL.join(',')}}"].each do |file|
 				puts file
 				digest = Digest::MD5.file(file).hexdigest
 				if hash.eql? digest
@@ -74,7 +74,7 @@ module FileManager
 					return nil
 				end
 			end
-			Dir[Paths::DROPBOX + "/**/*.pdf"].each do |file|
+			Dir[Paths::DROPBOX + "/**/*.{#{FileFormats::ALL.join(',')}}"].each do |file|
 				digest = Digest::MD5.file(file).hexdigest
 				if hash.eql? digest
 				#CASE: File was moved and renamed
