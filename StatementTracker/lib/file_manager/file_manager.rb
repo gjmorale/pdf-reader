@@ -17,18 +17,19 @@ module FileManager
 		NUMBER_DATE = /(?<=\/|^)(20\d\d|(?<= )[1-9]\d)(?=$|\/)/i
 		ALT_YEAR_DATE = /20[1-9]\d/i
 		module Months
-			JAN = [/(\/|^)([0-9]{1,2} )?(ENE(RO)?|JAN(UARY)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 1]
-			FEB = [/(\/|^)([0-9]{1,2} )?(FEB(rero)?(bruary)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 2]
-			MAR = [/(\/|^)([0-9]{1,2} )?(MAR(ZO)?(CH)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 3]
-			APR = [/(\/|^)([0-9]{1,2} )?(ABR(IL)?|APR(IL)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 4]
-			MAY = [/(\/|^)([0-9]{1,2} )?(MAY(O)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 5]
-			JUN = [/(\/|^)([0-9]{1,2} )?(JUN(IO)?(E)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 6]
-			JUL = [/(\/|^)([0-9]{1,2} )?(JUL(IO)?(Y)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 7]
-			AUG = [/(\/|^)([0-9]{1,2} )?(AGO(STO)?|AUG(OST)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 8]
-			SEP = [/(\/|^)([0-9]{1,2} )?(SEP(T(IEMBRE)?)?|SEP(T(EMBER)?)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 9]
-			OCT = [/(\/|^)([0-9]{1,2} )?(OCT(UBRE)?(OBER)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 10]
-			NOV = [/(\/|^)([0-9]{1,2} )?(NOV(IEMBRE)?(EMBER)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 11]
-			DEC = [/(\/|^)([0-9]{1,2} )?(DIC(IEMBRE)?|DEC(EMBER)?)( (20\d\d|[1-9]\d).*)?($|\/)/i, 12]
+			JAN = [/(\/|^)(20[1-2][0-9][0-1]?1|(ENE(RO)?|JAN(UARY)?)( [^\/]+)?(.[a-zA-Z]{3,4})|([0-9]{1,2} )?(ENE(RO)?|JAN(UARY)?)( (20\d\d|[1-9]\d).*)?)($|\/)/i, 1]
+			FEB = [/(\/|^)(20[1-2][0-9][0-1]?2|(FEB(rero)?(bruary)?)( [^\/]+)?(.[a-zA-Z]{3,4})|([0-9]{1,2} )?(FEB(rero)?(bruary)?)( (20\d\d|[1-9]\d).*)?)($|\/)/i, 2]
+			MAR = [/(\/|^)(20[1-2][0-9][0-1]?3|(MAR(ZO)?(CH)?)( [^\/]+)?(.[a-zA-Z]{3,4})|([0-9]{1,2} )?(MAR(ZO)?(CH)?)( (20\d\d|[1-9]\d).*)?)($|\/)/i, 3]
+			APR = [/(\/|^)(20[1-2][0-9][0-1]?4|(ABR(IL)?|APR(IL)?)( [^\/]+)?(.[a-zA-Z]{3,4})|([0-9]{1,2} )?(ABR(IL)?|APR(IL)?)( (20\d\d|[1-9]\d).*)?)($|\/)/i, 4]
+			MAY = [/(\/|^)(20[1-2][0-9][0-1]?5|(MAY(O)?)( [^\/]+)?(.[a-zA-Z]{3,4})|([0-9]{1,2} )?(MAY(O)?)( (20\d\d|[1-9]\d).*)?)($|\/)/i, 5]
+			JUN = [/(\/|^)(20[1-2][0-9][0-1]?6|(JUN(IO)?(E)?)( [^\/]+)?(.[a-zA-Z]{3,4})|([0-9]{1,2} )?(JUN(IO)?(E)?)( (20\d\d|[1-9]\d).*)?)($|\/)/i, 6]
+			JUL = [/(\/|^)(20[1-2][0-9][0-1]?7|(JUL(IO)?(Y)?)( [^\/]+)?(.[a-zA-Z]{3,4})|([0-9]{1,2} )?(JUL(IO)?(Y)?)( (20\d\d|[1-9]\d).*)?)($|\/)/i, 7]
+			AUG = [/(\/|^)(20[1-2][0-9][0-1]?8|(AGO(STO)?|AUG(OST)?)( [^\/]+)?(.[a-zA-Z]{3,4})|([0-9]{1,2} )?(AGO(STO)?|AUG(OST)?)( (20\d\d|[1-9]\d).*)?)($|\/)/i, 8]
+			SEP = [/(\/|^)(20[1-2][0-9][0-1]?9|(SEP(T(IEMBRE)?)?|SEP(T(EMBER)?)?)( [^\/]+)?(.[a-zA-Z]{3,4})|([0-9]{1,2} )?(SEP(T(IEMBRE)?)?|SEP(T(EMBER)?)?)( (20\d\d|[1-9]\d).*)?)($|\/)/i, 9]
+			OCT = [/(\/|^)(20[1-2][0-9]10|(OCT(UBRE)?(OBER)?)( [^\/]+)?(.[a-zA-Z]{3,4})|([0-9]{1,2} )?(OCT(UBRE)?(OBER)?)( (20\d\d|[1-9]\d).*)?)($|\/)/i, 10]
+			NOV = [/(\/|^)(20[1-2][0-9]11|(NOV(IEMBRE)?(EMBER)?)( [^\/]+)?(.[a-zA-Z]{3,4})|([0-9]{1,2} )?(NOV(IEMBRE)?(EMBER)?)( (20\d\d|[1-9]\d).*)?)($|\/)/i, 11]
+			DEC = [/(\/|^)(20[1-2][0-9]12|(DIC(IEMBRE)?|DEC(EMBER)?)( [^\/]+)?(.[a-zA-Z]{3,4})|([0-9]{1,2} )?(DIC(IEMBRE)?|DEC(EMBER)?)( (20\d\d|[1-9]\d).*)?)($|\/)/i, 12]
+
 			ALL = [JAN,FEB,MAR,APR,MAY,JUN,JUL,AUG,SEP,OCT,NOV,DEC]
 		end
 	end
@@ -104,12 +105,13 @@ module FileManager
 		return true
 	end
 
-	def self.load_from path, date_from, date_to
+	def self.load_from path, date_from, date_to, key = nil
 		dbox_path = Paths::DROPBOX + '/' + path
 		return false unless Dir.exist? dbox_path
 		files = Dir[dbox_path + "**/*.{#{FileFormats::ALL.join(',')}}"]
 		files_with_dates = []
 		files.each do |f|
+			next if key and not f =~ /\/[^\/]*#{Regexp.escape(key)}[^\/]*$/
 			year = get_year f
 			month = get_month f
 			if year and month
@@ -140,6 +142,7 @@ module FileManager
 				next if folder == ""
 				path << "#{folder}/" unless bank_found
 				full_path << "#{folder}/"
+				next if folder =~ /cartolas/i
 				if root_found ||= path_contains_root?(folder)
 					if is_date folder
 						date_found = true
