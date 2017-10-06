@@ -1,6 +1,6 @@
 
 <div class="nested-<%= element.parent_id ? "child" : "root" %>" id=<%= element.js_id %> data-toggle="close" data-type=<%= element.parent_id ? "child" : "root" %>>
-  <span class="nested-caret"><%= link_to "\\/", element.node_path(status: :open), remote: true %></span>
+  <span class="nested-caret"><%= link_to '∇', element.node_path(status: :open), remote: true %></span>
   <span><%= link_to element.name, society_path(element) %></span>
   <span class="options-right"><%= element.progress scope %> %</span>
   <!--span class="options-right"><%= link_to "X", element, method: :delete, data: { confirm: 'Are you sure?' } %></span-->

@@ -1,6 +1,6 @@
 
 <div class="nested-child" id=<%= element.js_id %> data-toggle="close" data-type="child">
-  <span class="nested-caret"><%= link_to "\\/", element, remote: true %></span>
+  <span class="nested-caret"><%= link_to '∇', element, remote: true %></span>
   <span><%= link_to element.date_path, element %></span>
   <span><%= link_to "#{element.tax.bank} - #{element.tax.society}", element.tax %></span>
   <span class="options-right"><%= element.progress %> %</span>

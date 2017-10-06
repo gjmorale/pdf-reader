@@ -1,6 +1,6 @@
 
 <div class="nested-child" id=<%= element.js_id %> data-toggle="close" data-type="child">
-  <span class="nested-caret"><%= link_to "\\/", element, remote: true %></span>
+  <span class="nested-caret"><%= link_to "&#8710;", element, remote: true %></span>
   <span><%= link_to element.bank, element %></span>
   <span><%= element.periodicity %></span>
   <span><%= element.quantity %> Cartolas - <%= link_to element.society, society_path(element.society) %></span>

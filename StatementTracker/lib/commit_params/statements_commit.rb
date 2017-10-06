@@ -8,8 +8,8 @@ class StatementsCommit
 	ASSIGN = "assign".freeze
 	UNASSIGN = "unassign".freeze
 	UPDATE = "update".freeze
-	UPGRADE = "/\\".freeze
-	DOWNGRADE = "\\/".freeze
+	UPGRADE = "∆".freeze
+	DOWNGRADE = "∇".freeze
 	BATCH_UPDATE = "Update Selected".freeze
 
 	def initialize(*param_values)

@@ -17,7 +17,7 @@ function close_node(id) {
 	$(id).children("div").slideUp(200, function(){
 		$(id).children("div.animate-remove").remove()
     });
-	$(id).children("span.nested-caret").children("a").html("\\/")
+	$(id).children("span.nested-caret").children("a").html("&#8711;")
 	$(id).children("span.nested-caret").children("a").attr("href","<%= @element.node_path(status: :open) %>")
 	$(id).data('toggle','close')
 }
@@ -30,7 +30,7 @@ function open_node(id) {
 			$(id).append("<%= j (render @node_template, element: child, scope: @search_params) %>")
 			$("#<%= child.js_id %>").slideDown(250)
 		<% end %>
-		$(id).children("span.nested-caret").children("a").html("/\\")
+		$(id).children("span.nested-caret").children("a").html("&#8710;")
 		$(id).data('toggle','open')
 		$(id).children("span.nested-caret").children("a").attr("href","<%= @element.node_path(status: :close) %>")
 	<% end %>
