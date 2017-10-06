@@ -95,8 +95,12 @@ class Statement < ApplicationRecord
     self.sequence.date
   end
 
+  def check_file
+    FileManager.get_file path, file_hash
+  end
+
   def file
-    real_file = FileManager.get_file path, file_hash
+    real_file = check_file
     if real_file and real_file != self.path
       self.path = real_file
       self.save
@@ -112,7 +116,7 @@ class Statement < ApplicationRecord
   end
 
   def file?
-    !!file
+    !!(check_file)
   end
 
   def raw?

@@ -56,14 +56,14 @@ module FileManager
 				return nil
 			end
 		else
+			puts Paths::DROPBOX + "/#{path} => " + File.exist?(file = Paths::DROPBOX + "/#{path}").to_s
 		#CASE: Path is wrong
 			original_dir = path[0..path.rindex('/')-1]
 			Dir[Paths::DROPBOX + "/#{original_dir}/*.{#{FileFormats::ALL.join(',')}}"].each do |file|
-				puts file
 				digest = Digest::MD5.file(file).hexdigest
 				if hash.eql? digest
 				#CASE: File renamed but not moved
-					return path
+					return file.sub(Paths::DROPBOX+'/','')
 				end
 			end
 			Dir[Paths::DROPBOX + "/**/#{name}"].each do |file|
