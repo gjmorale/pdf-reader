@@ -59,6 +59,7 @@ module FileManager
 		#CASE: Path is wrong
 			original_dir = path[0..path.rindex('/')-1]
 			Dir[Paths::DROPBOX + "/#{original_dir}/*.pdf"].each do |file|
+				puts file
 				digest = Digest::MD5.file(file).hexdigest
 				if hash.eql? digest
 				#CASE: File renamed but not moved
