@@ -57,7 +57,7 @@ module FileManager
 			end
 		else
 		#CASE: Path is wrong
-			original_dir = File.dirname path
+			original_dir = path[0..path.rindex('/')-1]
 			Dir[Paths::DROPBOX + "/#{original_dir}/*.pdf"].each do |file|
 				digest = Digest::MD5.file(file).hexdigest
 				if hash.eql? digest
