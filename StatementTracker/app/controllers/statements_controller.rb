@@ -19,6 +19,7 @@ class StatementsController < ApplicationController
   def reload
     date_from = Date.new(*(params[:reload_from].map{|k,v| v.to_i}))
     date_to = Date.new(*(params[:reload_to].map{|k,v| v.to_i}))
+    Statement.destroy_invalid_files
     Tax.reload(date_from, date_to)
     redirect_back(fallback_location: statements_path)
   end

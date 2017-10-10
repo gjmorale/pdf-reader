@@ -43,7 +43,7 @@ module FileManager
 	end
 
 	def self.get_file path, hash
-		return false unless path and hash
+		raise IOError, "Unhandled File Location for File: #{path}" unless path and hash
 		name = File.basename path
 		if File.exist?(file = Paths::DROPBOX + "/#{path}")
 		#CASE: Path is right

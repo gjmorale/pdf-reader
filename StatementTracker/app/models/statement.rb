@@ -99,8 +99,18 @@ class Statement < ApplicationRecord
     FileManager.get_file path, file_hash
   end
 
+  def self.destroy_invalid_files
+    self.all.each do |statement|
+      statement.destroy unless statement.file?
+    end
+  end
+
   def file
-    real_file = check_file
+    begin
+      real_file = check_file
+    rescue IOError
+      return nil 
+    end
     if real_file and real_file != self.path
       self.path = real_file
       self.save
@@ -116,12 +126,16 @@ class Statement < ApplicationRecord
   end
 
   def file?
-    if check_file
-      self.path = check_file
-    else
-      self.file_hash = FileManager.digest_this(self.path)
+    begin
+      if check_file
+        self.path = check_file
+      else
+        self.file_hash = FileManager.digest_this(self.path)
+      end
+      !!(self.path)
+    rescue IOError
+      return false
     end
-    !!(self.path)
   end
 
   def raw?
