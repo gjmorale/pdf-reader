@@ -13,6 +13,6 @@ class SourcePathController < ApplicationController
 
 		def set_source_path
 			@source_path = SourcePath.find(params[:id])
-			@tax = @source_path.tax
+			@tax = @source_path.sourceable
 		end
 end
