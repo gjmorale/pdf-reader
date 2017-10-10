@@ -70,6 +70,7 @@ module FileManager
 				digest = Digest::MD5.file(file).hexdigest
 				if hash.eql? digest
 				#CASE: File moved but not renamed
+					puts "NEW PATH: #{file.sub(Paths::DROPBOX+'/','')}"
 					return file.sub(Paths::DROPBOX+'/','')
 				end
 			end
