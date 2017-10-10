@@ -130,7 +130,7 @@ class StatementsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def statement_params
-      params.require(:statement).permit(:file_name, :sequence_id, :bank_id, :handler_id, :d_filed, :d_open, :d_close, :d_read, :status)
+      params.require(:statement).permit(:file_name, :path)
     end
 
     def set_statements
