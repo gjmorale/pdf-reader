@@ -9,7 +9,7 @@
 <h2>Cartolas (<%= @sequence.statements.size %>/<%= @sequence.quantity %>):</h2>
 <ul>
   <% @sequence.statements.each do |statement| %>
-    <li><%= link_to statement.file_name, statement %></li>
+    <li><%= link_to statement.file_name, statement %> <%= link_to 'X', statement_path("#{statement.id}"), method: :delete %></li>
   <% end %>
 </ul>
 
