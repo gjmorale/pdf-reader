@@ -75,6 +75,7 @@ module FileManager
 				end
 			end
 			Dir[Paths::DROPBOX + "/**/*.{#{FileFormats::ALL.join(',')}}"].each do |file|
+				puts file
 				digest = Digest::MD5.file(file).hexdigest
 				if hash.eql? digest
 				#CASE: File was moved and renamed
