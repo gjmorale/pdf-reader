@@ -204,7 +204,7 @@ class Society < ApplicationRecord
 	end
 
 	def inherited_ifs
-		targets = Tax.where(society_id: descendant_ids).size
+		targets = Tax.where(society_id: descendant_ids, active: true).size
 	end
 
 	def close date_params
