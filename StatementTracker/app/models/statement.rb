@@ -116,7 +116,7 @@ class Statement < ApplicationRecord
   end
 
   def file?
-    !!(check_file)
+    !!(self.file = check_file)
   end
 
   def raw?
