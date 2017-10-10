@@ -70,10 +70,10 @@ module FileManager
 				digest = Digest::MD5.file(file).hexdigest
 				if hash.eql? digest
 				#CASE: File moved but not renamed
-					puts "NEW PATH: #{file.sub(Paths::DROPBOX+'/','')}"
 					return file.sub(Paths::DROPBOX+'/','')
 				end
 			end
+			raise IOError, "Unhandled File Location for File: #{path}"
 			Dir[Paths::DROPBOX + "/**/*.{#{FileFormats::ALL.join(',')}}"].each do |file|
 				puts file
 				digest = Digest::MD5.file(file).hexdigest
