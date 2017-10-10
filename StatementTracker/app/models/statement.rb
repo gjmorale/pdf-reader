@@ -116,8 +116,11 @@ class Statement < ApplicationRecord
   end
 
   def file?
-    self.path = check_file
-    puts self.path
+    if check_file
+      self.path = check_file
+    else
+      self.file_hash = FileManager.digest_this(self.path)
+    end
     !!(self.path)
   end
 
