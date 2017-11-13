@@ -30,8 +30,8 @@ OptionParser.new do |opt|
     opt.separator ""
     opt.separator "**WARNING** :	The temp file path is automatically destroyed in every run
 		unless the flag --skip-raw [-s] is set. Be carefull with the
-		rout you specify"
-    opt.separator "Check the file read.rb to set your default route."
+		route you specify"
+    opt.separator "Check the file read.rb to set your default routes."
     opt.separator ""
     opt.separator "CODE -> Bank:"
     opt.separator "\tMS\tMorgan Stanley"
@@ -71,8 +71,8 @@ OptionParser.new do |opt|
 end.parse!
 
  #in_path = 'C:/Users/windows7/Desktop/Cartolas'		#PC_1
- in_path = 'C:/Users/Guillermo Morales/Desktop/Cartolas'#PC_2
- #in_path = Dir.home + '/gmo/Cartolas'					#VAIO
+ #in_path = 'C:/Users/Guillermo Morales/Desktop/Cartolas'#PC_2
+ in_path = Dir.home + '/gmo/Cartolas'					#VAIO
  #in_path = Dir.home + '/gmo/Sandbox/Prueba'		#VAIO_CONFLICTO
  out_path = in_path + '/output'							#RELEASE
  mid_path = in_path + '/temp'
