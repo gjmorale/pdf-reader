@@ -8,7 +8,6 @@
       <th>Repo path</th>
       <th>Local path</th>
       <th>Short name</th>
-      <th>Name</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -19,7 +18,6 @@
         <td><%= handler.repo_path %></td>
         <td><%= handler.local_path %></td>
         <td><%= handler.short_name %></td>
-        <td><%= handler.name %></td>
         <td><%= link_to 'Show', handler %></td>
         <td><%= link_to 'Edit', edit_handler_path(handler) %></td>
         <td><%= link_to 'Destroy', handler, method: :delete, data: { confirm: 'Are you sure?' } %></td>
