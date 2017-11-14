@@ -112,6 +112,7 @@ class Reader
 			file_name = "#{@file[@file.rindex('/')+1..-1]}"
 			file_path = "#{@file}/#{file_name}_#{@page}.page"
 			if File.exist? file_path
+				return false if File.stat(file_path).size == 0
 				page = File.new(file_path, 'r:UTF-8')
 			else
 				puts "EOF and #{field} not found" if verbose

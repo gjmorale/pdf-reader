@@ -3,6 +3,13 @@ class Movement
 	attr_accessor :value
 	attr_accessor :detalle
 	attr_accessor :id_sec1
+	attr_accessor :id_fi1
+	attr_accessor :concepto
+	attr_accessor :forward_id
+	attr_accessor :id_ti_valor1
+	attr_accessor :id_ti1
+	attr_accessor :cantidad1
+	attr_accessor :concepto
 
 	def initialize **args
 		@fecha_movimiento = clean args[:fecha_movimiento] || ""
@@ -11,6 +18,7 @@ class Movement
 		@id_sec1 = clean args[:id_sec1] || ""
 		@factura = clean args[:factura] || ""
 		@id_ti_valor1 = clean args[:id_ti_valor1] || ""
+		@id_ti1 = clean args[:id_ti1] || ""
 		@id_fi1 = args[:id_fi1] || ""
 		@cantidad1 = args[:cantidad1] || ""
 		@id_ti_valor2 = clean args[:id_ti_valor2] || ""
@@ -20,6 +28,7 @@ class Movement
 		@delta = args[:delta] || ""
 		@detalle = clean args[:detalle] || ""
 		@value = args[:value] || 0.0
+		@forward_id = args[:forward_id]
 	end
 
 	def fecha_pago fp
@@ -44,7 +53,7 @@ class Movement
 		out << ";#{@factura}"
 		out << ";#{@precio.to_s.gsub('.',',')}"
 		out << ";#{@id_ti_valor1}"
-		out << ";" #id_ti1
+		out << ";#{@id_ti1}"
 		out << ";#{@id_sec1}"
 		out << ";#{@id_fi1}" #IF
 		out << ";#{@cantidad1.to_s.gsub('.',',')}"
@@ -53,7 +62,7 @@ class Movement
 		out << ";" #{@id_sec2}"
 		out << ";" #{@id_fi2}"
 		out << ";#{@cantidad2.to_s.gsub('.',',')}"
-		out << ";#{@detalle};\n"
+		out << ";#{@forward_id ? @forward_id : @detalle};\n"
 		out
 	end
 
@@ -63,5 +72,11 @@ class Movement
 
 	def inspect
 		to_s
+	end
+
+	def merge other
+		@cantidad2 = other.cantidad1
+		@id_ti_valor2 = other.id_ti_valor1
+		@id_ti2 = other.id_ti1
 	end
 end

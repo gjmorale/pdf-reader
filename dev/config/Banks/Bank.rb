@@ -41,6 +41,7 @@ M_ALL = [MONTHS,MESES].flatten(1)
 	end
 
 	def print_pos  out
+		return unless @accounts.any? {|acc| not acc.positions.nil? and not acc.positions.empty?}
 		file = File.open(out,'w:UTF-8')
 		file.write("Id_sec1;Id_fi1;Fecha;Instrumento;Cantidad;Precio;Monto\n")
 		accounts.reverse_each do |acc|
@@ -57,10 +58,14 @@ M_ALL = [MONTHS,MESES].flatten(1)
 		file = File.open(out,'w:UTF-8')
 		file.write("concepto;fecha_movimiento;fecha_pago;Monto Comision;Moneda Comision;factura;precio;id_ti_valor1;id_ti1;id_sec1;id_fi1;cantidad1;id_ti_valor2;id_ti2;id_sec2;id_fi2;cantidad2;detalle\n")
 		accounts.reverse_each do |acc|
+			acc.set_movs legacy_code
 			acc.movements.each do |mov|
 				file.write(mov.print)
 			end
 		end
+	end
+
+	def pre_print
 	end
 
 end

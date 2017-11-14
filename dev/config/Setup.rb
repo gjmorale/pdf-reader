@@ -91,10 +91,15 @@ module Setup
 			@@offset = nil
 			@@orientation = nil
 			@@safe_zone = nil
+			@@header_offset = nil
 		end
 
 		def self.global_offset
 			@@global_offset ||= Setup.inst.class::GLOBAL_OFFSET
+		end
+
+		def self.header_offset
+			@@header_offset ||= Setup.inst.class::HEADER_OFFSET
 		end
 
 		def self.offset
@@ -181,6 +186,7 @@ class Institution
 	# Override in sub-classes for bank specific
 	GLOBAL_OFFSET = [0,0,0,0]
 	TABLE_OFFSET = 6
+	HEADER_OFFSET = 1
 	HEADER_ORIENTATION = 8
 	VERTICAL_SEARCH_RANGE = 5
 	HORIZONTAL_SEARCH_RANGE = 15
@@ -220,6 +226,7 @@ class Institution
 			unless File.exist? "#{@out_path}/#{dir_name}"
 				Dir.mkdir("#{@out_path}/#{dir_name}")
 			end
+			pre_print
 			out = "#{@out_path}/#{dir_name}/#{file_name}_pos.csv"
 			print_pos out
 			out = "#{@out_path}/#{dir_name}/#{file_name}_mov.csv"

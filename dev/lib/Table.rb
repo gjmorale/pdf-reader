@@ -69,13 +69,13 @@ class Table
 			case i
 			when 0
 				header.outer_left = @range[0]
-				header.outer_right = @headers[i+1].left-1
+				header.outer_right = @headers[i+1].left-Setup::Table.header_offset
 			when @headers.size - 1
-				header.outer_left = @headers[i-1].right+1
+				header.outer_left = @headers[i-1].right+Setup::Table.header_offset
 				header.outer_right = @range[1]
 			else
-				header.outer_right = @headers[i+1].left-1
-				header.outer_left = @headers[i-1].right+1
+				header.outer_right = @headers[i+1].left-Setup::Table.header_offset
+				header.outer_left = @headers[i-1].right+Setup::Table.header_offset
 			end
 			#header.print_borders
 		end

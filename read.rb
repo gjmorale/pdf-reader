@@ -93,7 +93,7 @@ unless Dir.exist? "#{out_path}" or not options.process
 end 
 
 puts "\n === DETECTING FILES === ".bold
-files = FileMeta.classify_files in_path, options.recursive, options.date_from, options.date_to
+files = FileMeta.classify in_path, options.recursive, options.date_from, options.date_to
 files = files.select{|f| options.banks.include? f[0]} if options.banks
 files = files.select{|f| options.date_from <= f[2]} if options.date_from
 files = files.select{|f| options.date_to >= f[2]} if options.date_to

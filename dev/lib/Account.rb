@@ -28,8 +28,8 @@ class Account
 		@movements += mov if mov
 	end
 
-	def set_movs
-		movements.map {|m| m.sec_1 = come}
+	def set_movs fi_name = nil
+		movements.map {|m| m.id_sec1 = code; m.id_fi1 = fi_name}
 	end
 
 	def add_pos pos
