@@ -1,7 +1,8 @@
 class SAN::Account < Account
 
 	def initialize code, value
-		@code = code
+		@code = "Portfolio " + code[/\d+(?=USD - )/]
+		@name = code
 		@value = value
 		@positions = []
 		@movements = []

@@ -17,106 +17,73 @@ class SAN::TransactionTable < TransactionTable
 		if args[1] != Result::NOT_FOUND
 			segments = args[1].strings.join('/').split('/').select{|s| not s.strip.empty? }
 			hash = {}
-			hash[:detalle] = "#{args[1]}".strip
-			hash[:fecha_movimiento] = SAN.value_to_date("#{args[0]}".strip)
-			hash[:fecha_pago] 		= SAN.value_to_date("#{args[2]}".strip) || hash[:fecha_movimiento]
+			hash[:detalle] 	= "#{args[1]}".strip
+			hash[:fecha]	= SAN.value_to_date("#{args[2]}".strip) || hash[:fecha_movimiento]
+			hash[:monto] = BankUtils.to_number(args[3]) + BankUtils.to_number(args[4])
+			hash[:value] = hash[:monto]
 			case args[1]
 			when /Saldo inicial/
 				hash[:concepto] = 0
 				hash[:value] = BankUtils.to_number(args[5])
 				hash[:detalle] = "Saldo inicial"
 			when /TRANSFER BILL PAYMENT/
-				hash[:concepto] = 9013
-				hash[:id_ti_valor1] = @alt_currency.upcase
-				hash[:id_ti1] = "Currency"
-				hash[:cantidad1] = BankUtils.to_number(args[3], spanish)
-				hash[:cantidad1] += BankUtils.to_number(args[4], spanish)
-				hash[:value] = hash[:cantidad1]
+				hash[:concepto] = "Transferencia cuenta corriente"
+				hash[:descripcion] = "Transferencia #{hash[:value] > 0 ? 'de' : 'a'} #{segments.last}"
+				hash[:currency] = @alt_currency.upcase
 			when /OUR ACCOUNT PAY CREDIT/
-				hash[:concepto] = 9991
-				hash[:id_ti_valor1] = @alt_currency.upcase
-				hash[:id_ti1] = "Currency"
-				hash[:cantidad1] = BankUtils.to_number(args[3], spanish)
-				hash[:cantidad1] += BankUtils.to_number(args[4], spanish)
-				hash[:value] = hash[:cantidad1]
-				hash[:forward_id] = args[1].split('/')[1].strip
+				hash[:concepto] = "Compras"
+				hash[:currency] = @alt_currency.upcase
+				hash[:forward_id] = segments[1].strip[/(?<=fx)\d+/i].to_i
+				hash[:descripcion] = "Se compraron #{hash[:currency]} #{hash[:monto]}"
 			when /CURRENCY PURCHASE/
-				hash[:concepto] = 9990
-				hash[:id_ti_valor1] = @alt_currency.upcase
-				hash[:id_ti1] = "Currency"
-				hash[:cantidad1] = -BankUtils.to_number(args[3], spanish)
-				hash[:cantidad1] -= BankUtils.to_number(args[4], spanish)
-				hash[:value] = -hash[:cantidad1]
-				hash[:forward_id] = args[1].split('/')[1].strip
+				hash[:concepto] = "Ventas"
+				hash[:currency] = @alt_currency.upcase
+				hash[:forward_id] = segments[1].strip[/(?<=fx)\d+/i].to_i
+				hash[:descripcion] = "Se vendieron #{hash[:currency]} #{-hash[:monto]}"
 			when /(CHEQUE|OUTWARD FED PAYMENT|SWIFT PAYMENT|ACH TRANSACTION)/
-				hash[:concepto] = 9002
-				hash[:id_ti_valor1] = @alt_currency.upcase
-				hash[:id_ti1] = "Currency"
-				hash[:cantidad1] = -BankUtils.to_number(args[3], spanish)
-				hash[:cantidad1] -= BankUtils.to_number(args[4], spanish)
-				hash[:value] = -hash[:cantidad1]
+				hash[:concepto] = "Transferencia cuenta corriente"
+				hash[:currency] = @alt_currency.upcase
+				hash[:descripcion] = "#{hash[:value] > 0 ? 'Ingreso' : 'Egreso'} de #{hash[:currency]}"
 			when /INTERNAL TRANSFER/
-				hash[:id_ti_valor1] = @alt_currency.upcase
-				hash[:id_ti1] = "Currency"
-				hash[:cantidad1] = -BankUtils.to_number(args[3], spanish)
-				hash[:cantidad1] -= BankUtils.to_number(args[4], spanish)
-				hash[:value] = -hash[:cantidad1]
-				hash[:concepto] = hash[:cantidad1] > 0 ? 9002 : 9001
-				hash[:cantidad1] = hash[:cantidad1].abs
+				hash[:concepto] = "Transferencia cuenta corriente"
+				hash[:descripcion] = "Transferencia #{hash[:value] > 0 ? 'de' : 'a'} #{segments.last}"
+				hash[:currency] = @alt_currency.upcase
 			when /SECURITIES SALE/
-				hash[:concepto] = 9005
-				hash[:id_ti_valor1] = segments.last.split(' - ')[1]
-				hash[:cantidad1] = BankUtils.to_number(segments.last.split(' - ')[0])
-				hash[:id_ti_valor2] = @alt_currency.upcase
-				hash[:id_ti2] = "Currency"
-				hash[:cantidad2] = BankUtils.to_number(args[3], spanish)
-				hash[:cantidad2] += BankUtils.to_number(args[4], spanish)
-				hash[:value] = hash[:cantidad2]
+				hash[:concepto] = "Ventas"
+				cantidad = BankUtils.to_number(segments.last.split(' - ')[0])
+				instrumento = segments.last.split(' - ')[1]
+				hash[:descripcion] = "Venta de #{cantidad} unidades de #{instrumento}"
+				hash[:currency] = @alt_currency.upcase
 			when /SECURITIES PURCHASE/
-				hash[:concepto] = 9004
-				hash[:id_ti_valor1] = segments.last.split(' - ')[1]
-				hash[:cantidad1] = BankUtils.to_number(segments.last.split(' - ')[0])
-				hash[:id_ti_valor2] = @alt_currency.upcase
-				hash[:cantidad2] = -BankUtils.to_number(args[3], spanish)
-				hash[:cantidad2] -= BankUtils.to_number(args[4], spanish)
-				hash[:value] = -hash[:cantidad2]
+				hash[:concepto] = "Compras"
+				cantidad = BankUtils.to_number(segments.last.split(' - ')[0])
+				instrumento = segments.last.split(' - ')[1]
+				hash[:descripcion] = "Compra de #{cantidad} unidades de #{instrumento}"
+				hash[:currency] = @alt_currency.upcase
 			when /COUPONS.+(ANNUAL CASH DIVIDEND|CASH DIVIDEND|CASH)/
-				hash[:concepto] = 9006
-				hash[:id_ti_valor1] = segments.join(' ').split(' - ')[1].gsub(/^[0-9\. ]+/,'')
-				hash[:cantidad1] = 0.0
-				hash[:id_ti_valor2] = @alt_currency.upcase
-				hash[:id_ti2] = "Currency"
-				hash[:cantidad2] = BankUtils.to_number(args[3], spanish)
-				hash[:cantidad2] += BankUtils.to_number(args[4], spanish)
-				hash[:value] = hash[:cantidad2]
-			when /(FEES ADJUSTMENT|MANAGEMENT FEES|DEBIT INTEREST|NON-DISCRETIONARY FEES|QUARTERLY MAINTENANCE FEE)/
-				hash[:concepto] = 9013
-				hash[:id_ti_valor1] = @alt_currency.upcase
-				hash[:id_ti1] = "Currency"
-				hash[:cantidad1] = -BankUtils.to_number(args[3], spanish)
-				hash[:cantidad1] -= BankUtils.to_number(args[4], spanish)
-				hash[:value] = -hash[:cantidad1]
+				hash[:concepto] = "Dividendos extranjeros"
+				instrumento = segments.join(' ').split(' - ')[1].gsub(/^[0-9\. ]+/,'')
+				hash[:descripcion] = "Dividendos de #{instrumento}"
+				hash[:currency] = @alt_currency.upcase
+			when /(FEES ADJUSTMENT|MANAGEMENT FEES|NON-DISCRETIONARY FEES|QUARTERLY MAINTENANCE FEE)/
+				hash[:concepto] = "Comisiones"
+				hash[:descripcion] = "Comisiones #{ "negativas" if hash[:value] > 0 } por mantención"
+				hash[:currency] = @alt_currency.upcase
 			when /COUPON PAYMENT/
-				hash[:concepto] = 9007
-				hash[:id_ti_valor1] = segments.join(' ').split(' - ')[1]
-				hash[:cantidad1] = 0.0
-				hash[:id_ti_valor2] = @alt_currency.upcase
-				hash[:id_ti2] = "Currency"
-				hash[:cantidad2] = BankUtils.to_number(args[3], spanish)
-				hash[:cantidad2] += BankUtils.to_number(args[4], spanish)
-				hash[:value] = hash[:cantidad2]
-			when /CREDIT INTEREST/
-				hash[:concepto] = 9014
-				hash[:id_ti_valor1] = @alt_currency.upcase
-				hash[:id_ti1] = "Currency"
-				hash[:cantidad1] = BankUtils.to_number(args[3], spanish)
-				hash[:cantidad1] += BankUtils.to_number(args[4], spanish)
-				hash[:value] = hash[:cantidad1]
+				hash[:concepto] = "Dividendos extranjeros"
+				instrument = segments.join(' ').split(' - ')[1]
+				hash[:descripcion] = "Pago de cupón de #{instrument}"
+				hash[:currency] = @alt_currency.upcase
+			when /CREDIT INTEREST|DEBIT INTEREST/
+				hash[:concepto] = "Intereses ganados"
+				hash[:descripcion] = "#{ hash[:value] > 0 ? "Cobro" : "Pago" } de intereses"
+				hash[:currency] = @alt_currency.upcase
 			else
 				return nil
 			end
 			#puts "#{hash[:concepto]}: #{hash[:value]} - #{hash[:detalle]}"
-			return Movement.new(hash)
+			(hash[:descripcion] << ", completado al " + SAN.value_to_date("#{args[0]}".strip).to_s) if hash[:descripcion] and not hash[:forward_id]
+			return SAN::Movement.new(hash)
 		end
 		return nil
 	end

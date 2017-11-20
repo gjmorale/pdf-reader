@@ -78,6 +78,7 @@ SAN.class_eval do
 	private
 
 		def analyse_position file
+			@file = file
 			@reader = Reader.new(file)
 			@accounts = []
 
@@ -86,7 +87,7 @@ SAN.class_eval do
 				acc_field = SingleField.new("Portfolio", [Custom::ACC_NAME])
 				acc_field.execute @reader
 				acc_field.print_results
-				account = SAN::Account.new(acc_field.results[0], 777.0)
+				account = SAN::Account.new(acc_field.results[0].to_s, 777.0)
 
 				#Field.new("Extracto de cuenta").execute @reader
 
@@ -105,14 +106,33 @@ SAN.class_eval do
 
 		def pre_print
 			@accounts.each do |account|
-				account.movements.select{|m| m.concepto == 9990}.each do |buyer|
+				account.movements.select{|m| m.concepto == "Ventas" and m.forward_id}.each do |buyer|
 					seller = account.movements.find do |m| 
-						m.concepto == 9991 and m.forward_id == buyer.forward_id
+						m.concepto == "Compras" and m.forward_id == buyer.forward_id
 					end
 					seller.merge buyer
-					seller.concepto = 9004
-					seller.detalle = buyer.forward_id
-					account.movements.delete buyer
+					buyer.merge seller
+				end
+			end
+		end
+
+		def prerun out
+
+			file = "#{out}/Movimientos.csv"
+			File.delete file if File.exist? file
+			io_file = File.open(file, 'w:UTF-8')
+			#io_file.write("\xEF\xBB\xBF") # UTF-8 BOM Marker
+			io_file.write("Fecha;N° de cuenta;Institución Financiera;Concepto;Monto;Descripción de la transacción;Moneda;Detalles\n")
+		end
+
+		def print_mov  out
+			return unless @accounts.any? {|acc| not acc.movements.nil? and not acc.movements.empty?}
+			file = File.open("#{File.dirname out}/Movimientos.csv",'a:UTF-8')
+			accounts.reverse_each do |acc|
+				#acc.set_movs legacy_code
+				acc.movements.sort_by{|m| [m.fecha, m.forward_id || 0]}.each do |mov|
+					mov.set_acc acc
+					file.write(mov.print)
 				end
 			end
 		end

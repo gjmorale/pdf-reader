@@ -208,9 +208,14 @@ class Institution
 		@out_path = out_path
 	end
 
+	def prerun out
+		# Override for output preparation
+	end
+
 	# Main method be executed
 	def run files
 		files = files.map{|f| "#{@in_path}/#{dir}/#{f}"}
+		prerun "#{@out_path}/#{dir}"
 		files.each do |file|
 			dir_path = File.dirname(file)
 			dir_name = dir_path[dir_path.rindex('/')+1..-1]
@@ -218,8 +223,8 @@ class Institution
 			puts "\n                                      ".underlined
 			print  "~,~´¨`~,~´¨`~,~´¨`~,~´¨`~,~´¨`~,~´¨`~,".underlined
 			puts " - #{file_name}"
-			begin
 				analyse_position file
+			begin
 			rescue StandardError => e
 				puts e.to_s.red
 			end

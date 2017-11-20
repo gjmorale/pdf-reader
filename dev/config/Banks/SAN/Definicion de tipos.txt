@@ -1,0 +1,50 @@
+/Saldo inicial/
+/TRANSFER BILL PAYMENT/
+/OUR ACCOUNT PAY CREDIT/
+/CURRENCY PURCHASE/
+/(CHEQUE|
+	OUTWARD FED PAYMENT|
+	SWIFT PAYMENT|
+	ACH TRANSACTION
+	)/
+/INTERNAL TRANSFER/
+/SECURITIES SALE/
+/SECURITIES PURCHASE/
+/COUPONS.+(ANNUAL CASH DIVIDEND|
+	CASH DIVIDEND|
+	CASH
+	)/
+/(FEES ADJUSTMENT|
+	MANAGEMENT FEES|
+	DEBIT INTEREST|
+	NON-DISCRETIONARY FEES|
+	QUARTERLY MAINTENANCE FEE
+	)/
+/COUPON PAYMENT/
+/CREDIT INTEREST/
+
+			
+
+
+Dividendos extranjeros
+Dividendos percibidos
+Ingresos exentos de impuestos
+Cta manejada
+Dividendos otras inversiones
+Propiedades
+Transferencia cuenta corriente
+Intereses ganados
+Compras
+Ventas
+Rescate 
+Rebaja deuda
+Llamado de capital
+Devolucion capital
+Fondo mutuo
+Ganancia de capital
+Utilidad no realizada
+Pérdida no realizada
+Amortizacion
+
+
+FEES ADJUSTMENT & MANAGEMENT FEES & DEBIT INTEREST & NON-DISCRETIONARY FEES & QUARTERLY MAINTENANCE FEE
