@@ -119,6 +119,7 @@ SAN.class_eval do
 		def prerun out
 
 			file = "#{out}/Movimientos.csv"
+			Dir.mkdir(File.dirname file)
 			File.delete file if File.exist? file
 			io_file = File.open(file, 'w:UTF-8')
 			#io_file.write("\xEF\xBB\xBF") # UTF-8 BOM Marker
