@@ -21,6 +21,7 @@ module Setup
 		MON = "MON"
 		CREDICORP = "CREDICORP"
 		PER = "PER"
+		SIGA = "SIGA"
 	end
 
 	# Field text alignment
@@ -148,6 +149,9 @@ module Setup
 		when Format::PER
 			puts "Pershing selected"
 			@@institution = PER.new()
+		when Format::SIGA
+			puts "Siga selected"
+			@@institution = SIGA.new()
 		else
 			puts "Wrong input, try again or CTRL + C to exit"
 			return false

@@ -20,7 +20,7 @@ class Position
 	end
 
 	def print
-		"#{@name};#{@quantity.to_s.sub('.',',')};#{@price.to_s.sub('.',',')};#{@value.to_s.sub('.',',')};#{@extra}\n"
+		"#{@name.sub(';','')};#{@quantity.to_s.sub('.',',')};#{@price.to_s.sub('.',',')};#{@value.to_s.sub('.',',')};#{@extra}\n"
 	end
 
 end 

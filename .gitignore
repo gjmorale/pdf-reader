@@ -9,5 +9,8 @@ out/*
 !out/.gitkeep
 pdf_ghost/source.private
 read.rb
+StatementTracker/**/*
+StatementTracker/**/*.cache
+StatementTracker/**/*.log
 
 

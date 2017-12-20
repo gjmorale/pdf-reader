@@ -30,8 +30,10 @@ class TransactionTable < AssetTable
 			fecha_pago: args[@mov_map[:fecha_pago]],
 			concepto: args[@mov_map[:concepto]],
 			id_ti_valor1: args[@mov_map[:id_ti_valor1]], #CLP
+			id_ti1: @mov_map[:id_ti1],
 			cantidad1: BankUtils.to_number(args[@mov_map[:cantidad1]], spanish),
 			id_ti_valor2: @mov_map[:id_ti_valor2] ? args[@mov_map[:id_ti_valor2]] : @mov_map[:id_ti_valor2_default],
+			id_ti2: @mov_map[:id_ti2],
 			precio: BankUtils.to_number(args[@mov_map[:precio]], spanish),
 			cantidad2: BankUtils.to_number(args[@mov_map[:cantidad2]], spanish),
 			detalle: args[@mov_map[:detalle]],
