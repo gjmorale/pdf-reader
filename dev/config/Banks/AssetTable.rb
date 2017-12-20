@@ -80,8 +80,8 @@ class AssetTable
 		present = get_table do |table|							#Iteration over each table until bottom
 			table.rows.reverse_each.with_index do |row, i|		#Iteration over each table row
 				results = table.headers.map {|h| h.results[-i-1].result} 		#Row results
-				each_result_do results, row	
-				puts results if @verbose									#Personalized result formatting for sub-classes
+				each_result_do results, row										#Personalized result formatting for sub-classes
+				puts results if @verbose									
 				if total_column and results[total_column] == "Total"			#When a row is the total of its predecesors
 					quantity = (quantity_default || results[quantity_index])	
 					value = (value_default || results[value_index])
