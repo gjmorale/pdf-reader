@@ -17,22 +17,18 @@ class SIGA::Account < Account
 		(sell_movs+buy_movs).each{|m| movements.delete m }
 		prorate buy_movs, 9004, "COMPRAS"
 		prorate sell_movs, 9005, "VENTAS"
-		#raise
 	end
 
 	private 
 
 		def prorate collection, concept, title = nil
-			puts title
 			collection.each do |m|
 				m.factura = m.factura.gsub(/\./,'')
 				movs = movements.select{|n| n.concepto == concept and n.factura == m.factura }
-				puts "#{m.factura}->#{movs.size}"
 				n = movs.inject(0){|t,i| t + i.cantidad2}
-				r = m.cantidad2/n
+				q = (m.cantidad2 and m.cantidad2.is_a? Numeric) ? m.cantidad2 : m.cantidad1
 				movs.each do |mov|
-					comison = r*mov.cantidad2
-					mov.add_value comision
+					comision = (q-n)*mov.cantidad2/n
 					mov.set_comision comision, "CLP"
 				end
 			end

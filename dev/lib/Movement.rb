@@ -57,7 +57,8 @@ class Movement
 
 	def set_comision amount, currency
 		@comision = amount
-		@comision = currency
+		@comision_curr = currency
+		@cantidad2 += amount
 	end
 
 	def print

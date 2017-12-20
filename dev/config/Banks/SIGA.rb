@@ -104,23 +104,19 @@ SIGA.class_eval do
 			@reader = Reader.new(file)
 			date_field = SingleField.new("Hasta:", [Setup::Type::DATE])
 			date_field.execute @reader
-			date_field.print_results
 			set_date date_field.results[0].result
 
 			cue = @reader.stash
 			cash_field = SingleField.new("Caja", [Setup::Type::INTEGER])
 			cash_field.execute @reader
-			cash_field.print_results
 			cash = cash_field.results[0].result.gsub(/\./,'').to_f
 			@reader.pop cue
 
 			account_field = SingleField.new("RUT:", [Custom::RUT])
 			account_field.execute @reader
-			account_field.print_results
 
 			total = SingleField.new("Pesos (CLP)",[Setup::Type::INTEGER])
 			if total.execute @reader
-				total.print_results
 				@total_out = total.results[0].result.gsub(/\./,'').to_f
 			else
 				@total_out = 0

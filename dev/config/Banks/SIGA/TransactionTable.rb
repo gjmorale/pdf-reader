@@ -67,7 +67,9 @@ class SIGA::CashTransactionTable < CashTransactionTable
 			hash[:concepto] = 9002
 		when /CANCELA DIVIDENDOS/i
 			hash[:concepto] = 9002 # Puede cambiar en el futuro
-		when /(FACTURA VENTA R.|ABONO POR SORTEO LETRAS)/i
+		when /ABONO POR SORTEO LETRAS/i
+			hash[:concepto] = 9005
+		when /FACTURA VENTA R./i
 			hash[:concepto] = 9995
 		when /(FACTURA COMPRA R.)/i
 			hash[:concepto] = 9994

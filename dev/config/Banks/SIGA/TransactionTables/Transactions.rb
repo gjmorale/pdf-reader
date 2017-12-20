@@ -45,7 +45,7 @@ class SIGA::Transactions < SIGA::TransactionTable
 	end
 
 	def parse_movement hash
-		hash[:value] = hash[:cantidad1]
+		hash[:value] = hash[:cantidad2]
 		case hash[:concepto]
 		when /Vencimiento RF/i
 			hash[:concepto] = 9008
