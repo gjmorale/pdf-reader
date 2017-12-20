@@ -28,7 +28,7 @@ class SIGA::Account < Account
 				n = movs.inject(0){|t,i| t + i.cantidad2}
 				q = (m.cantidad2 and m.cantidad2.is_a? Numeric) ? m.cantidad2 : m.cantidad1
 				movs.each do |mov|
-					comision = (q-n)*mov.cantidad2/n
+					comision = ((q-n)*mov.cantidad2/n).round(0)
 					mov.set_comision comision, "CLP"
 				end
 			end
