@@ -1,43 +1,30 @@
 class SIGA::IIF < SIGA::AssetTable
 	def load
 		@name = "cartera pagarés"
-		@title = Field.new("Detalle Cartera Renta Variable")
-		@offset = Field.new("Mercado: CFI CLP")
-		@require_offset = false
-		@table_end = Field.new("Total mercado(CLP):")
+		@title = Field.new("Detalle Cartera Detalle Cartera Depósitos (IIF)")
+		@iterative_title = true
 		@headers = []
 			headers << HeaderField.new("Instrumento / Detalle", headers.size, Setup::Type::LABEL)
-			headers << HeaderField.new("Cantidad", headers.size, Setup::Type::INTEGER)
-			headers << HeaderField.new("Precio", headers.size, Custom::FLOAT_3)
-			headers << HeaderField.new("Valor de Mercado", headers.size, Setup::Type::INTEGER)
-			headers << HeaderField.new(["Dividendos"," Recibidos"], headers.size, Custom::NON_ZERO, true, 4)
+			headers << HeaderField.new("Cantidad (número de depósitos)", headers.size, Setup::Type::INTEGER)
+			headers << HeaderField.new(["Fecha","Venc."], headers.size, Setup::Type::DATE, true, 4)
+			headers << HeaderField.new(["Valor de","Rescate"], headers.size, Custom::FLOAT_4, false, 4)
+			headers << HeaderField.new(["Moneda","Reajuste"], headers.size, Setup::Type::CURRENCY, false, 4)
+			headers << HeaderField.new(["Tasa","Compra"], headers.size, Setup::Type::AMOUNT, false, 4)
+			headers << HeaderField.new(["Valor Compra","(CLP)"], headers.size, Setup::Type::INTEGER, false, 4)
+			headers << HeaderField.new(["Valor Actual","(CLP)"], headers.size, Setup::Type::INTEGER, false, 4)
 		@total = SingleField.new("Total mercado(CLP):",
 			[Setup::Type::INTEGER])
 		@page_end = 		Field.new("Este estado de cuenta se considerará aprobado si")
-		@price_index = 		2
-		@quantity_index = 	1
-		@value_index = 		3
+		@price_index = 		5
+		@quantity_index = 	6
+		@value_index = 		7
 		@total_index = 		0
 	end
 
 	def each_result_do results, row = nil
 		detail = nil
-		lines = results[0].strings.select{|s| s and not s.empty?}.map do |s|
-			d = s[/(?<=Rubro:).*$/]
-			detail ||= d
-			!!d ? '' : s
-		end
-		results[0] = lines[0]
-		results[0] << ";#{lines[-1]}"
-		results[0] << " - #{detail}" if detail and not detail.empty?
-	end
-
-	def parse_position str, type
-		parts = str.split(';')
-		if parts.size > 1
-			[parts[0..-2].join(), parts.last]
-		else
-			[str,nil]
-		end
+		line = results[0].strings.select{|s| s and not s.empty?}.first.gsub(/\([A-Z]+\)/,'')
+		date = "#{results[2]}".strip
+		results[0] = "#{line} #{date}"
 	end
 end
