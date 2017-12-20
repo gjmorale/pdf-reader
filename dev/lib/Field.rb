@@ -31,6 +31,7 @@ class Field
 	end
 
 	def regex
+		return @m_regex if @m_regex and @m_width == @width
 		if @width > 1 and not @text.is_a? Multiline
 			#puts "expanded"
 			@text = Multiline.generate ["#{@text}"]
@@ -42,7 +43,8 @@ class Field
 				raise RangeError, "Multiline field was reduced beyond bounds"
 			end
 		end 
-		RegexHelper.regexify @text, @date
+		@m_width = @width
+		@m_regex = RegexHelper.regexify @text, @date
 	end
 
 	def to_s

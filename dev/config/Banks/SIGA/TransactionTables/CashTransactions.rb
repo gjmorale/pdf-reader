@@ -11,7 +11,7 @@ class SIGA::CashTransaction < SIGA::CashTransactionTable
 			headers << HeaderField.new("Cargo CLP", headers.size, Setup::Type::INTEGER, true)
 			headers << HeaderField.new("Abono CLP", headers.size, Setup::Type::INTEGER)
 			headers << HeaderField.new("Saldo CLP", headers.size, Setup::Type::INTEGER)
-		@page_end = Field.new("Este estado de cuenta se considerará aprobado si CREDICORP CAPITAL S.A. CORREDORES DE BOLSA.")
+		@page_end = Field.new("Este estado de cuenta se considerará aprobado si")
 		@total = SingleField.new("Saldo Final del Periodo",
 			[Setup::Type::INTEGER], 3, Setup::Align::LEFT)
 		@total_index = 		0
@@ -23,7 +23,8 @@ class SIGA::CashTransaction < SIGA::CashTransactionTable
 			abono: 				5,
 			cargo: 				4,
 			instrument: 		3,
-			detalle: 			2
+			detalle: 			2,
+			factura: 			1
 		}
 	end
 end

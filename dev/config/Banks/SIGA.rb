@@ -135,6 +135,7 @@ SIGA.class_eval do
 
 			account.add_mov analyse_cash
 			account.add_mov analyse_transactions
+			account.adjust_movs
 
 			puts "Account #{account.code} total "
 			BankUtils.check account.pos_value, account.value

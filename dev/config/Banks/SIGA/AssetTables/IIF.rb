@@ -1,8 +1,8 @@
-class SIGA::ETF < SIGA::AssetTable
+class SIGA::IIF < SIGA::AssetTable
 	def load
-		@name = "cartera ETF"
+		@name = "cartera pagarés"
 		@title = Field.new("Detalle Cartera Renta Variable")
-		@offset = Field.new("Mercado: ETF Nacionales en BCS CLP")
+		@offset = Field.new("Mercado: CFI CLP")
 		@require_offset = false
 		@table_end = Field.new("Total mercado(CLP):")
 		@headers = []
@@ -23,16 +23,21 @@ class SIGA::ETF < SIGA::AssetTable
 	def each_result_do results, row = nil
 		detail = nil
 		lines = results[0].strings.select{|s| s and not s.empty?}.map do |s|
-			d = s[/(?<=Rubro: ).*$/]
+			d = s[/(?<=Rubro:).*$/]
 			detail ||= d
 			!!d ? '' : s
 		end
-		results[0] = lines.join(' ')
-		results[0] << ";#{detail}" if detail
+		results[0] = lines[0]
+		results[0] << ";#{lines[-1]}"
+		results[0] << " - #{detail}" if detail and not detail.empty?
 	end
 
 	def parse_position str, type
 		parts = str.split(';')
-		[parts[0..-2].join(), parts.last]
+		if parts.size > 1
+			[parts[0..-2].join(), parts.last]
+		else
+			[str,nil]
+		end
 	end
 end

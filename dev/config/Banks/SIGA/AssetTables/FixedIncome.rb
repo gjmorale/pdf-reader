@@ -14,7 +14,7 @@ class SIGA::FixedIncome < SIGA::AssetTable
 			headers << HeaderField.new(["Cupones","Pagados CLP"], headers.size, Setup::Type::INTEGER, true, 4)
 		@total = SingleField.new("Valor Total de la Cartera (CLP):",
 			[Setup::Type::INTEGER])
-		@page_end = 		Field.new("Este estado de cuenta se considerará aprobado si CREDICORP CAPITAL S.A. CORREDORES DE BOLSA.")
+		@page_end = 		Field.new("Este estado de cuenta se considerará aprobado si")
 		@price_index = 		2
 		@quantity_index = 	1
 		@value_index = 		6

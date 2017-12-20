@@ -38,6 +38,7 @@ class SIGA::CashTransactionTable < CashTransactionTable
 		hash = {
 			fecha_movimiento: args[@mov_map[:fecha_movimiento]],
 			fecha_pago: args[@mov_map[:fecha_pago]],
+			factura: args[@mov_map[:factura]],
 			concepto: args[@mov_map[:concepto]],
 			id_ti_valor1: id_ti_valor1, 
 			id_ti1: id_ti_1, 
@@ -66,8 +67,10 @@ class SIGA::CashTransactionTable < CashTransactionTable
 			hash[:concepto] = 9002
 		when /CANCELA DIVIDENDOS/i
 			hash[:concepto] = 9002 # Puede cambiar en el futuro
-		when /(FACTURA (COMPRA|VENTA) R.|ABONO POR SORTEO LETRAS)/i
-			return nil
+		when /(FACTURA VENTA R.|ABONO POR SORTEO LETRAS)/i
+			hash[:concepto] = 9995
+		when /(FACTURA COMPRA R.)/i
+			hash[:concepto] = 9994
 		else
 			hash[:concepto] = 9000
 		end
