@@ -2,6 +2,7 @@ class SIGA::Transactions < SIGA::TransactionTable
 	def load
 		@name = "movimientos de titulos"
 		@title = Field.new("Movimientos de Títulos")
+		@iterative_title = true
 		@table_end = [Field.new("Nota: Para compras y ventas de acciones, P/B señala si cuando éstas fueron realizadas,")]
 		@headers = []
 			headers << HeaderField.new("Fecha", headers.size, Setup::Type::DATE, true) 				# 0
@@ -17,7 +18,7 @@ class SIGA::Transactions < SIGA::TransactionTable
 			headers << HeaderField.new("Cantidad", headers.size, Custom::FLOAT_4) 					# 10
 			headers << HeaderField.new("Precio, TIR", headers.size, Setup::Type::AMOUNT) 			# 11
 			headers << HeaderField.new("Monto Neto", headers.size, Setup::Type::INTEGER) 			# 12
-		@page_end = Field.new("Este estado de cuenta se considerará aprobado si CREDICORP CAPITAL S.A. CORREDORES DE BOLSA.")
+		@page_end = Field.new("Este estado de cuenta se considerará aprobado si")
 		@mov_map = {
 			fecha_movimiento: 	0,
 			fecha_pago: 		0,
@@ -30,6 +31,7 @@ class SIGA::Transactions < SIGA::TransactionTable
 			precio: 			11,
 			cantidad2: 			12,
 			detalle: 			3,
+			factura: 			1,
 			delta: [
 			]
 		}

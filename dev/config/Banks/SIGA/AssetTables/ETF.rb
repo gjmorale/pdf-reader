@@ -13,7 +13,7 @@ class SIGA::ETF < SIGA::AssetTable
 			headers << HeaderField.new(["Dividendos"," Recibidos"], headers.size, Custom::NON_ZERO, true, 4)
 		@total = SingleField.new("Total mercado(CLP):",
 			[Setup::Type::INTEGER])
-		@page_end = 		Field.new("Este estado de cuenta se considerará aprobado si CREDICORP CAPITAL S.A. CORREDORES DE BOLSA.")
+		@page_end = 		Field.new("Este estado de cuenta se considerará aprobado si")
 		@price_index = 		2
 		@quantity_index = 	1
 		@value_index = 		3

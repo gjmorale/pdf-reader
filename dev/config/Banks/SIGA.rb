@@ -132,9 +132,11 @@ SIGA.class_eval do
 
 			account.add_pos analyse_fixed_income
 			account.add_pos analyse_variable_income
+			account.add_pos analyse_iif
 
 			account.add_mov analyse_cash
 			account.add_mov analyse_transactions
+			account.adjust_movs
 
 			puts "Account #{account.code} total "
 			BankUtils.check account.pos_value, account.value
@@ -167,6 +169,10 @@ SIGA.class_eval do
 			pos = SIGA::ETF.new(@reader).analyze
 			positions += pos if pos
 			return positions
+		end
+
+		def analyse_iif
+			SIGA::IIF.new(@reader).analyze
 		end
 
 end

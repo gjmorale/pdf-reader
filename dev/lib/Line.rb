@@ -60,11 +60,17 @@ class Multiline < String
 		out
 	end
 
-	def [] key
+	def [] key, limit = nil
 		if key.is_a? Range
 			r = []
 			@strings.each do |string|
 				r << string[key]
+			end
+			return Multiline.new(r) 
+		elsif limit
+			r = []
+			@strings.each do |string|
+				r << string[key, limit]
 			end
 			return Multiline.new(r) 
 		else
