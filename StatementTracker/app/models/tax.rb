@@ -76,8 +76,7 @@ class Tax < ApplicationRecord
     return 100 if quantity == 0
     means = time_nodes(params).joins(statements: :status).group("sequences.id").sum("statement_statuses.progress")
     return 0 unless means.any?
-    byebug if id == 201
-    (means.map{|m| m[1].to_f}.inject{|t, m| t+(m)}/(self.quantity*means.size)).to_i
+    (means.inject(0){|t, m| t + m[1]}/(self.quantity*means.size)).to_i
   end
 
   def sequence date_params
@@ -102,7 +101,7 @@ class Tax < ApplicationRecord
     ds = dated_statements(date_params)
     n = expected(date_params)
     return 100 if n == 0
-    ds.sum(&:progress)*1.0 / expected(date_params)
+    ds.sum(&:progress).to_f / expected(date_params)
   end
 
   def last_sequence

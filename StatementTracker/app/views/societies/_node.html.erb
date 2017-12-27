@@ -4,7 +4,7 @@
   <span><%= link_to element.name, society_path(element) %></span>
   <span class="options-right"><%= element.progress scope %> %</span>
   <!--span class="options-right"><%= link_to "X", element, method: :delete, data: { confirm: 'Are you sure?' } %></span-->
-  <span class="options-right"><%= link_to "IFs (#{element.all_ifs(scope).count})", ifs_society_path(element), remote: true %></span>
-  <span class="options-right"><%= link_to "Tiempos (#{element.all_times(scope).count})", times_society_path(element), remote: true %></span>
-  <span class="options-right"><%= link_to "Cartolas (#{element.all_statements(scope).count})", statements_society_path(element), remote: true %></span>
+  <span class="options-right"><%= link_to "IFs (#{element.all_ifs(scope).size})", ifs_society_path(element), remote: true %></span>
+  <span class="options-right"><%= link_to "Tiempos (#{element.all_times(scope).size})", times_society_path(element), remote: true %></span>
+  <span class="options-right"><%= link_to "Cartolas (#{element.all_statements(scope).size})", statements_society_path(element), remote: true %></span>
 </div>
