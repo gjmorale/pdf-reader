@@ -33,26 +33,26 @@ class Tax < ApplicationRecord
   def self.to_period_end date, periodicity
     case periodicity
     when Periodicity::ANNUAL
-      Date.new(date.year,-1,-1)
+      date.end_of_year
     when Periodicity::MONTHLY
-      Date.new(date.year,date.month,-1)
+      date.end_of_month
     when Periodicity::WEEKLY
-      Date.new(date.year,date.month,date.day).next_week(:sunday)
+      date.end_of_week
     when Periodicity::DAILY
-      Date.new(date.year,date.month,date.day)
+      date
     end
   end
 
   def self.to_period_start date, periodicity
     case periodicity
     when Periodicity::ANNUAL
-      Date.new(date.year,1,1)
+      date.beginning_of_year
     when Periodicity::MONTHLY
-      Date.new(date.year,date.month,1)
+      date.beginning_of_month
     when Periodicity::WEEKLY
-      Date.new(date.year,date.month,date.day).beginning_of_week
+      date.beginning_of_week
     when Periodicity::DAILY
-      Date.new(date.year,date.month,date.day)
+      date
     end
   end
 

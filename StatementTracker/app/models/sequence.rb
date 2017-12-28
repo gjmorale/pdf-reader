@@ -9,9 +9,10 @@ class Sequence < ApplicationRecord
   validates :quantity, presence: true
   validates_uniqueness_of :tax_id, scope: :date
   accepts_nested_attributes_for :statements
+  validate :set_start_date
 
   def periodicity
-  	tax.periodicity
+  	@periodicity ||= tax.periodicity
   end
 
   def filter params
@@ -28,11 +29,15 @@ class Sequence < ApplicationRecord
     statements.joins(:status).sum("statement_statuses.progress")/capacity
   end
 
+  def recieved
+    statements.size/capacity
+  end
+
   def date_path
     date_s = "#{date.year}"
     date_s << "-#{date.month}"
     if periodicity == Tax::Periodicity::WEEKLY
-      date_s << " Temporal #{date.week}"
+      date_s << "-S#{date.week}"
     else
       date_s << "-#{date.day}"
     end
@@ -41,12 +46,12 @@ class Sequence < ApplicationRecord
 
   def capacity
     total = statements.count
-    if total < tax.quantity
-      tax.quantity
-    elsif total < tax.quantity + tax.optional
+    if total < quantity
+      quantity
+    elsif total < quantity + optional
       total
     else
-      tax.quantity + tax.optional
+      quantity + optional
     end
   end
 
@@ -55,6 +60,11 @@ class Sequence < ApplicationRecord
     def default_quantities
       self.quantity ||= tax.quantity
       self.optional ||= tax.optional
+    end
+
+    def set_start_date
+      self.start_date ||= Tax.to_period_start date, periodicity
+      errors.add(:start_date, "Undefined start date") unless self.start_date
     end
 
 end

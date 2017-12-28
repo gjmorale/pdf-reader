@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
 
     def search_params
       @search_params = SearchParams.new(params[:search_params])
-      cookies[:search] = {value: @search_params.serialize, expires: 40.days.from_now}
+      cookies[:search] = {value: @search_params.serialize, expires: 1.year.from_now}
     end
 
     def set_date_params
@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
 
     def date_params
       @date_params = DateParams.new(params[:date_params])
-      cookies[:date] = {value: @date_params.serialize, expires: 40.days.from_now}
+      cookies[:date] = {value: @date_params.serialize, expires: 1.year.from_now}
     end
 
   protected

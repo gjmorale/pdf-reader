@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171005195144) do
+ActiveRecord::Schema.define(version: 20171227193743) do
 
   create_table "banks", force: :cascade do |t|
     t.string   "name"
@@ -46,6 +46,7 @@ ActiveRecord::Schema.define(version: 20171005195144) do
     t.integer  "optional"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.date     "start_date"
     t.index ["tax_id", "date"], name: "index_sequences_on_tax_id_and_date", unique: true
     t.index ["tax_id"], name: "index_sequences_on_tax_id"
   end

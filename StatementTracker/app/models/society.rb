@@ -86,7 +86,7 @@ class Society < ApplicationRecord
 	end
 
 	def node_path status: :open
-		"/societies/#{id}?status=#{status.to_s}"
+		"/societies/#{id}.js?status=#{status.to_s}"
 	end
 
 	def time_nodes params
@@ -108,12 +108,11 @@ class Society < ApplicationRecord
 	end
 
 	def progress params
-	    means = all_times(params).group("taxes.id", "sequences.id").sum("statement_statuses.progress")
-	    return "0" unless means.any?
+	    means = params.filter_progress all_times(params)
 	    q = p = 0
 	    means.each do |m|
-	    	q += Tax.find(m[0][0]).quantity
-	    	p += m[1]
+	    	q += m.q_quantity
+	    	p += m.q_progress
 	    end
 	    return 0 if p == 0
 	    return 100 if q == 0
@@ -122,6 +121,7 @@ class Society < ApplicationRecord
 
 	def self_progress params
 		#DEPRECATED
+		raise
 	    means = time_nodes(params).group("taxes.id", "sequences.id").sum("statement_statuses.progress")
 	    return "0" unless means.any?
 	    q = p = 0
@@ -171,20 +171,20 @@ class Society < ApplicationRecord
 	end
 
 	def expected date_params
-		targets = Tax.where(society_id: descendant_ids)
+		targets = Tax.where(society_id: descendant_ids, active: true)
 		targets = date_params.filter_quantities targets
 		targets.sum(&:q_expected)
 	end
 
 	def recieved date_params
-		targets = Society.where(id: descendant_ids)
+		targets = Society.where(id: descendant_ids, active: true)
 		targets = targets.joins(taxes: {sequences: :statements})
 		query = date_params.filter targets, distinct: false
 		query.size
 	end
 
 	def recieved_progress date_params
-		targets = Tax.where(society_id: descendant_ids)
+		targets = Tax.where(society_id: descendant_ids, active: true)
 		targets = date_params.filter_quantities targets
 		total = targets.sum(&:q_expected)
 		real_recieved = targets.map{|r| [r.q_recieved,r.q_expected].min}.reduce(:+)
@@ -195,7 +195,7 @@ class Society < ApplicationRecord
 	def period_progress date_params
 		n = expected(date_params)
 		return 100 if n == 0
-		targets = Society.where(id: descendant_ids)
+		targets = Society.where(id: descendant_ids, active: true)
 		targets = targets.joins(taxes: {sequences: {statements: :status}})	
 		status = StatementStatus.arel_table	
 		query = date_params.filter targets, distinct: false
