@@ -1,5 +1,6 @@
 class CrediCorp::InvestmentFundsCLP < CrediCorp::AssetTable
 	def load
+		@verbose = true
 		@name = "fondos de inversion clp"
 		@offset = Field.new("FONDOS DE INVERSIÓN")
 		@table_end = Field.new("TOTAL¶FONDOS¶DE¶INVERSIÓN / CLP")
@@ -12,7 +13,7 @@ class CrediCorp::InvestmentFundsCLP < CrediCorp::AssetTable
 			headers << HeaderField.new("ACTUAL",headers.size, Setup::Type::FLOAT,false,1,Setup::Align::BOTTOM,60)
 			headers << HeaderField.new("VALOR ACTUAL",headers.size, Setup::Type::AMOUNT)
 			headers << HeaderField.new("RENTABILIDAD (%)",headers.size, Setup::Type::PERCENTAGE)
-		@skips = ['FONDO\s?(MUTUO|DE\s?INVERSI[OÓ]N)\s?(CREDICORP|IM TRUST|RENTA FIJA).*']
+		@skips = ['FONDO\s?(MUTUO|DE\s?INVERSI[OÓ]N)\s?(CREDICORP|IM TRUST|RENTA FIJA).*|\(AGF\)']
 		@total = SingleField.new("TOTAL¶FONDOS¶DE¶INVERSIÓN / CLP",
 			[Setup::Type::AMOUNT])
 		@page_end = 		Field.new("Reporte de Inversiones Provisorio")
@@ -37,7 +38,7 @@ class CrediCorp::InvestmentFundsUSD < CrediCorp::AssetTable
 			headers << HeaderField.new("ACTUAL",headers.size, Setup::Type::FLOAT,false,1,Setup::Align::BOTTOM,60)
 			headers << HeaderField.new("VALOR ACTUAL",headers.size, Setup::Type::AMOUNT)
 			headers << HeaderField.new("RENTABILIDAD (%)",headers.size, Setup::Type::PERCENTAGE)
-		@skips = ['FONDO\s?(MUTUO|DE\s?INVERSI[OÓ]N)\s?(CREDICORP|IM TRUST|RENTA FIJA).*']
+		@skips = ['FONDO\s?(MUTUO|DE\s?INVERSI[OÓ]N)\s?(CREDICORP|IM TRUST|RENTA FIJA).*|\(AGF\)']
 		@total = SingleField.new("TOTAL¶FONDOS¶DE¶INVERSIÓN / USD",
 			[Setup::Type::AMOUNT])
 		@page_end = 		Field.new("Reporte de Inversiones Provisorio")
