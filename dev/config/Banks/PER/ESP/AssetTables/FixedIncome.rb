@@ -45,7 +45,6 @@ class PER::ESP::Bonds < PER::AssetTable
 		text = text.gsub(/ISIN.*/,'')
 		text = text.gsub(/;/,' ')
 		text << ";#{code}" if code
-		puts text
 		text
 	end
 end

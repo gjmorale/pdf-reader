@@ -32,6 +32,8 @@ PER.class_eval do
 		NUM4 = 		-4
 		NO_MM_DATE =-5
 		ACTIVIDAD =	-6
+		LABEL_OR_DATE =	-7
+		LABEL_OR_BLANK =	-8
 	end
 
 	def regex(type)
@@ -49,7 +51,7 @@ PER.class_eval do
 		when Setup::Type::LABEL
 			'.*[a-zA-Z].*'
 		when Setup::Type::DATE
-			'(\d{2}\/\d{2}\/\d{2}|Total(\s?Cubierto)?\s*$)'
+			'(\d{2}\/\d{2}\/\d{2}|Total(\s?(Cubierto|Covered))?\s*$)'
 		when Setup::Type::FLOAT
 			'-?([1-9]\d{0,2}(?:\.[0-9]{3})*|0)(\,[0-9]{4})'
 		when Setup::Type::BLANK
@@ -66,6 +68,10 @@ PER.class_eval do
 			'(\d{2}\/\d{2}\/\d{2}|Saldo .+$)'
 		when Custom::ACTIVIDAD
 			'(Retiro|Dep.sito|etc...)'
+		when Custom::LABEL_OR_DATE
+			'(\d{2}\/\d{2}\/\d{2}|.*[a-zA-Z].*)'
+		when Custom::LABEL_OR_BLANK
+			'(^$|.*[a-zA-Z].*)'
 		end
 	end
 
@@ -73,7 +79,6 @@ PER.class_eval do
 
 		def set_date months, value
 			date = []
-			puts value
 			if value.include? ','
 				date = value.split('-')[1].gsub(',','').split(' ').map{|s| s.strip}
 			else
@@ -147,11 +152,16 @@ PER.class_eval do
 			#ETFS
 			if Field.new("EXCHANGE-TRADED PRODUCTS").execute @reader
 				@reader.go_to(@reader.page, @reader.offset - 10)
-				account.add_pos analyse_etfs factory
+				pos = analyse_etfs factory
+				pos ? account.add_pos(pos) : account.add_pos(analyse_etfs_alt factory)
 			end
 
 			#Transactions
 			if Field.new("Transactions by Type of Activity").execute @reader
+				account.add_mov analyse_taxes_eng factory
+			end
+			if Field.new("Transactions in Date Sequence").execute @reader
+				@reader.go_to(@reader.page, @reader.offset - 10)
 				account.add_mov analyse_transactions_eng factory
 			end
 			
@@ -225,6 +235,10 @@ PER.class_eval do
 			return factory::ETFS.new(@reader).analyze
 		end
 
+		def analyse_etfs_alt factory
+			return factory::ETFSAlt.new(@reader).analyze
+		end
+
 		def analyse_cash_esp factory
 			pos ||= factory::Cash.new(@reader).analyze
 			pos ||= factory::CashAlt.new(@reader).analyze
@@ -252,7 +266,7 @@ PER.class_eval do
 			return pos
 		end
 
-		def analyse_transactions_eng factory
+		def analyse_taxes_eng factory
 			pos = new_pos = []
 			new_pos += pos if(pos = factory::Dividends.new(@reader).analyze)
 			unless(pos = factory::Taxes.new(@reader).analyze)
@@ -261,6 +275,10 @@ PER.class_eval do
 			end
 			new_pos += pos if pos
 			return new_pos
+		end
+
+		def analyse_transactions_eng factory
+			factory::Transactions.new(@reader).analyze
 		end
 
 		def analyse_cash_transactions factory
