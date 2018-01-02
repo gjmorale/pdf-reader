@@ -2,7 +2,6 @@ class BC2::TransactionTable < BC::TransactionTable
 	#Dir[File.dirname(__FILE__) + '/TransactionTables/*.rb'].each {|file| require_relative file }
 
 	def load 
-		@verbose = true
 		@name = "transacciones"
 		@title = Field.new("CUENTA CORRIENTE ENTRE EL ")
 		@table_end = Field.new("Página ")

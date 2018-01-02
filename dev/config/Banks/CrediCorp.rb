@@ -26,7 +26,7 @@ CrediCorp.class_eval do
 		SERIES_CODE = 	-3
 		ACC_CODES = 	-4
 		OPERATION = 	-5
-		MOV_ID = 	-6
+		MOV_ID = 		-6
 	end
 
 	def regex(type)

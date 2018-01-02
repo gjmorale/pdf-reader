@@ -21,7 +21,7 @@ class PER::AssetTable < AssetTable
 		text = (text.is_a?(Multiline) ? text.strings : [text]) 
 		text = text.map{|s| s.gsub(/¶{3}¶+/,';').gsub(/¶/,'').gsub(';;',';')}
 		options = text.join(';').split(';')
-		if options.select{|o| o =~ /\(continuación\)/}.any? or options.empty?
+		if options.select{|o| o =~ /\((continuación|continuation)\)/}.any? or options.empty?
 			return Result::NOT_FOUND 
 		else
 			text = filter_text options

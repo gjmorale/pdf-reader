@@ -27,7 +27,7 @@ class TransactionTable < AssetTable
 		hash = {
 			fecha_movimiento: args[@mov_map[:fecha_movimiento]],
 			fecha_pago: args[@mov_map[:fecha_pago]],
-			factura: args[@mov_map[:factura]],
+			factura: @mov_map[:factura] ? args[@mov_map[:factura]] : '',
 			concepto: args[@mov_map[:concepto]],
 			id_ti_valor1: args[@mov_map[:id_ti_valor1]], #CLP
 			id_ti1: @mov_map[:id_ti1],
@@ -78,7 +78,7 @@ class CashTransactionTable < TransactionTable
 		hash = {
 			fecha_movimiento: args[@mov_map[:fecha_movimiento]],
 			fecha_pago: args[@mov_map[:fecha_pago]],
-			factura: args[@mov_map[:factura]],
+			factura: @mov_map[:factura] ? args[@mov_map[:factura]] : '',
 			concepto: args[@mov_map[:concepto]],
 			id_ti_valor1: @cash_curr, #CLP
 			cantidad1: abono - cargo,

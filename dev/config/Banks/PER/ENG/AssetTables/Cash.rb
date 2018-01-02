@@ -1,12 +1,11 @@
 
 class PER::ENG::Cash < PER::AssetTable
 	def load
-		@verbose = true
 		@name = "cash"
 		@offset = Field.new("CASH, MONEY FUNDS, AND BANK DEPOSITS")
 		@table_end = Field.new("Total Money Market")
 		@headers = []
-			headers << HeaderField.new("[Description|Opening Date]",headers.size, Setup::Type::LABEL)
+			headers << HeaderField.new("[Description|Opening Date]",headers.size, Custom::LABEL_OR_DATE)
 			headers << HeaderField.new("Quantity",headers.size, Custom::NUM3)
 			headers << HeaderField.new(["Opening","Balance"],headers.size, Custom::NUM2,false,4)
 			headers << HeaderField.new(["Closing","Balance"],headers.size, Custom::NUM2,true,4)

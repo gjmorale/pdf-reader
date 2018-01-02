@@ -87,7 +87,7 @@ class PER::CashTransactionTable < CashTransactionTable
 		text = (text.is_a?(Multiline) ? text.strings : [text]) 
 		text = text.map{|s| s.gsub(/¶{3}¶+/,';').gsub(/¶/,'').gsub(';;',';')}
 		options = text.join(';').split(';')
-		if options.select{|o| o =~ /\(continuación\)/}.any? or options.empty?
+		if options.select{|o| o =~ /\(continua(ción|tion)\)/}.any? or options.empty?
 			return Result::NOT_FOUND 
 		else
 			text = options.select{|o| 

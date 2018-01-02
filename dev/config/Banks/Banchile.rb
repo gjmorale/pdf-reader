@@ -239,7 +239,10 @@ BC.class_eval do
 		### FORMAT 2 ###
 
 		def analyse_mutual_funds_2 factory
-			new_pos = factory::MutualFunds.new(@reader).analyze
+			new_pos = []
+			new_pos += factory::MutualFundsLP.new(@reader).analyze || []
+			@reader.go_to(@reader.page, 0)
+			new_pos += factory::MutualFundsCP.new(@reader).analyze || []
 			@reader.go_to(@reader.page, 0)
 			new_pos
 		end

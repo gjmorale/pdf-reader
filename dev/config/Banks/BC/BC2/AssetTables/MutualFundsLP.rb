@@ -1,8 +1,8 @@
-class BC2::MutualFundsCP < BC2::AssetTable
+class BC2::MutualFundsLP < BC2::AssetTable
 	def load
 		@name = "fondos mutuos"
-		@title = Field.new("FM Deuda Menor a 90 días")
-		@table_end = Field.new("Total FM Deuda Menor a 90 días")
+		@title = Field.new("FM Deuda Mediano y Largo Plazo")
+		@table_end = Field.new("Total FM Deuda Mediano y Largo Plazo")
 		@headers = []
 			headers << HeaderField.new("Nemotécnico", headers.size, Setup::Type::LABEL, true)
 			headers << HeaderField.new("Mon.", headers.size, Setup::Type::CURRENCY, false)
@@ -13,7 +13,7 @@ class BC2::MutualFundsCP < BC2::AssetTable
 			headers << HeaderField.new("Total", headers.size, Setup::Type::FLOAT, false)
 			headers << HeaderField.new("Patrimonio", headers.size, Custom::FLOAT2, false)
 			headers << HeaderField.new("Rentabilidad", headers.size, Custom::FLOAT2, false)
-		@total = SingleField.new("Total FM Deuda Menor a 90 días",
+		@total = SingleField.new("Total FM Deuda Mediano y Largo Plazo",
 			[Setup::Type::FLOAT,
 			Setup::Type::FLOAT,
 			Custom::FLOAT2], 

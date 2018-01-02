@@ -1,5 +1,5 @@
 class Cleaner
-
+	require 'shellwords'
 
 	WILDCHAR = '¶'
 
@@ -28,8 +28,7 @@ class Cleaner
 				Dir.mkdir(sub_file_name) 
 				#Dir.mkdir("#{sub_file_name}/raw")
 			end
-			f_input = File.open(file, 'rb')
-			@reader = PDF::Reader.new(f_input)
+			correct_format file
 			n = @reader.pages.size
 			step = 0
 			@reader.pages.each.with_index do |page, j|
@@ -140,6 +139,58 @@ class Cleaner
 			}
 		end
 		new_line
+	end
+
+	def correct_format file
+		#page = @reader.pages.first
+		blanks = false
+		correct_file file
+		if @reader.pages.any? do |page|
+				receiver = PDF::Reader::PageTextReceiver.new
+				page.walk(receiver)
+				receiver.content.lines.size == 0
+			end
+			temp = "#{File.dirname file}/#{File.basename file, '.pdf'}.ps"
+			_file = Shellwords.shellescape file
+			_temp = Shellwords.shellescape temp
+			system "pdftops #{_file} #{_temp}"
+			system "ps2pdf13 #{_temp} #{_file}"
+			system "rm #{_temp}"
+			correct_file file
+		end
+	end
+
+	def correct_file file
+		begin
+			f_input = File.open(file, 'rb')
+			@reader = PDF::Reader.new(f_input)
+			return true
+		rescue StandardError => e
+			if e.message == "PDF does not contain EOF marker"
+				retry if trim_file file
+			end
+			puts "Unable to read #{File.basename(file,'.pdf')}"
+			puts "ERROR: #{e.message}".red
+			return false
+		end
+	end
+
+	def trim_file file
+		bytes = [37,37,69,79,70]
+		j = 0
+		end_pos = nil
+		f = File.new(file)
+		f.each_byte do |b|
+			b == bytes[j] ? j += 1 : j = 0
+			end_pos = f.pos if j == 5
+		end
+		if end_pos
+			print "..".red
+			File.truncate(file, end_pos+5)
+		else
+			print ".."
+		end 
+		return !!end_pos
 	end
 
 end
