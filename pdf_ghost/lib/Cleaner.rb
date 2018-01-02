@@ -1,5 +1,5 @@
 class Cleaner
-
+	require 'shellwords'
 
 	WILDCHAR = '¶'
 
@@ -30,6 +30,7 @@ class Cleaner
 			end
 			f_input = File.open(file, 'rb')
 			@reader = PDF::Reader.new(f_input)
+			correct_format file
 			n = @reader.pages.size
 			step = 0
 			@reader.pages.each.with_index do |page, j|
@@ -140,6 +141,26 @@ class Cleaner
 			}
 		end
 		new_line
+	end
+
+	def correct_format file
+		#page = @reader.pages.first
+		blanks = false
+		if @reader.pages.any? do |page|
+				receiver = PDF::Reader::PageTextReceiver.new
+				page.walk(receiver)
+				receiver.content.lines.size == 0
+			end
+			puts "#{file}"
+			temp = "#{File.dirname file}/#{File.basename file, '.pdf'}.ps"
+			_file = Shellwords.shellescape file
+			_temp = Shellwords.shellescape temp
+			system "pdftops #{_file} #{_temp}"
+			system "ps2pdf13 #{_temp} #{_file}"
+			system "rm #{_temp}"
+			f_input = File.open(file, 'rb')
+			@reader = PDF::Reader.new(f_input)
+		end
 	end
 
 end
