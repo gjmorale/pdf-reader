@@ -10,7 +10,7 @@ class Cleaner
 
 	def execute
 		print "Processing"
-		files = Dir["#{@input_path}/#{@format}/*.{pdf,PDF}"]
+		files = Dir["#{@input_path}/#{@format}/*.{pdf,PDF}"].uniq
 		total = files.size
 		puts " #{total} files: "
 		files.each.with_index do |file, i|
@@ -153,9 +153,10 @@ class Cleaner
 			temp = "#{File.dirname file}/#{File.basename file, '.pdf'}.ps"
 			_file = Shellwords.shellescape file
 			_temp = Shellwords.shellescape temp
-			system "pdftops #{_file} #{_temp}"
-			system "ps2pdf13 #{_temp} #{_file}"
-			system "rm #{_temp}"
+			step_1 = system "pdftops #{_file} #{_temp}"
+			step_2 = system "ps2pdf13 #{_temp} #{_file}"
+			step_3 = system "rm #{_temp}"
+			#puts "#{!!step_1} -> #{!!step_2} -> #{!!step_3}"
 			correct_file file
 		end
 	end
