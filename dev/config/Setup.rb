@@ -22,6 +22,7 @@ module Setup
 		CREDICORP = "CREDICORP"
 		PER = "PER"
 		SIGA = "SIGA"
+		MBI = "MBI"
 	end
 
 	# Field text alignment
@@ -152,6 +153,9 @@ module Setup
 		when Format::SIGA
 			puts "Siga selected"
 			@@institution = SIGA.new()
+		when Format::MBI
+			puts "Siga selected"
+			@@institution = MBI.new()
 		else
 			puts "Wrong input, try again or CTRL + C to exit"
 			return false

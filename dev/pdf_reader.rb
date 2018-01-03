@@ -20,6 +20,7 @@ module FileReader
 	require File.dirname(__FILE__) + '/config/Banks/CrediCorp.rb'
 	require File.dirname(__FILE__) + '/config/Banks/Pershing.rb'
 	require File.dirname(__FILE__) + '/config/Banks/SIGA.rb'
+	require File.dirname(__FILE__) + '/config/Banks/MBI.rb'
 	require File.dirname(__FILE__) + '/config/Errors.rb'
 
 	#Dir[File.dirname(__FILE__) + '/config/*.rb'].each {|file| require file }
