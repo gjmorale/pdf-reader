@@ -5,8 +5,7 @@ class TransactionTable < AssetTable
 		present = get_table do |table|
 			table.rows.each.with_index do |row, i|
 				results = table.headers.map {|h| h.results[-i-1].result}		#Row results
-				each_result_do results, row		
-				puts results if @verbose
+				each_result_do results, row	
 				movement = new_movement(results)
 				movements << movement if movement
 			end
@@ -28,10 +27,13 @@ class TransactionTable < AssetTable
 		hash = {
 			fecha_movimiento: args[@mov_map[:fecha_movimiento]],
 			fecha_pago: args[@mov_map[:fecha_pago]],
+			factura: args[@mov_map[:factura]],
 			concepto: args[@mov_map[:concepto]],
 			id_ti_valor1: args[@mov_map[:id_ti_valor1]], #CLP
+			id_ti1: @mov_map[:id_ti1],
 			cantidad1: BankUtils.to_number(args[@mov_map[:cantidad1]], spanish),
 			id_ti_valor2: @mov_map[:id_ti_valor2] ? args[@mov_map[:id_ti_valor2]] : @mov_map[:id_ti_valor2_default],
+			id_ti2: @mov_map[:id_ti2],
 			precio: BankUtils.to_number(args[@mov_map[:precio]], spanish),
 			cantidad2: BankUtils.to_number(args[@mov_map[:cantidad2]], spanish),
 			detalle: args[@mov_map[:detalle]],
@@ -76,6 +78,7 @@ class CashTransactionTable < TransactionTable
 		hash = {
 			fecha_movimiento: args[@mov_map[:fecha_movimiento]],
 			fecha_pago: args[@mov_map[:fecha_pago]],
+			factura: args[@mov_map[:factura]],
 			concepto: args[@mov_map[:concepto]],
 			id_ti_valor1: @cash_curr, #CLP
 			cantidad1: abono - cargo,

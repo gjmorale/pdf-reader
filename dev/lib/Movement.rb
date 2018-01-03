@@ -55,12 +55,18 @@ class Movement
 		@cantidad2 = @value
 	end
 
+	def set_comision amount, currency
+		@comision = amount
+		@comision_curr = currency
+		@cantidad2 += amount
+	end
+
 	def print
 		out = "#{@concepto}"
 		out << ";#{@fecha_movimiento}"
 		out << ";#{@fecha_pago}"
-		out << ";" #Monto Comision
-		out << ";" #Moneda Comision
+		out << ";#{@comision ? @comision.to_s.gsub('.',',') : ''}" #Monto Comision
+		out << ";#{@comision_curr}" #Moneda Comision
 		out << ";#{@factura}"
 		out << ";#{@precio.to_s.gsub('.',',')}"
 		out << ";#{@id_ti_valor1}"

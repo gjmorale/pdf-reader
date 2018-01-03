@@ -125,7 +125,7 @@ MON.class_eval do
 				account.add_pos analyse_others_variable
 			end
 
-			if Field.new("INFORMACIÓN GENERAL")
+			if Field.new("INFORMACIÓN GENERAL").execute @reader
 				account.add_mov analyse_transactions
 			end
 
