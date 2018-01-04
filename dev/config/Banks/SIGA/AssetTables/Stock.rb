@@ -7,10 +7,10 @@ class SIGA::Stock < SIGA::AssetTable
 		@table_end = Field.new("Total mercado(CLP):")
 		@headers = []
 			headers << HeaderField.new("Instrumento / Detalle", headers.size, Setup::Type::LABEL)
-			headers << HeaderField.new("Cantidad", headers.size, Setup::Type::INTEGER)
+			headers << HeaderField.new("Cantidad", headers.size, Custom::NON_ZERO, true)
 			headers << HeaderField.new("Precio", headers.size, Custom::FLOAT_3)
 			headers << HeaderField.new("Valor de Mercado", headers.size, Setup::Type::INTEGER)
-			headers << HeaderField.new(["Dividendos"," Recibidos"], headers.size, Custom::NON_ZERO, true, 4)
+			headers << HeaderField.new(["Dividendos"," Recibidos"], headers.size, Setup::Type::INTEGER, false, 4)
 		@total = SingleField.new("Total mercado(CLP):",
 			[Setup::Type::INTEGER])
 		@page_end = 		Field.new("Este estado de cuenta se considerará aprobado si")
