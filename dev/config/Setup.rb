@@ -154,7 +154,7 @@ module Setup
 			puts "Siga selected"
 			@@institution = SIGA.new()
 		when Format::MBI
-			puts "Siga selected"
+			puts "MBI selected"
 			@@institution = MBI.new()
 		else
 			puts "Wrong input, try again or CTRL + C to exit"
@@ -210,8 +210,8 @@ class Institution
 			dir_name = dir_path[dir_path.rindex('/')+1..-1]
 			file_name = file[file.rindex('/')+1..-1]
 			puts "\n\n************************************** - #{file_name}"
-				analyse_position file
 			begin
+				analyse_position file
 			rescue StandardError => e
 				puts "ERROR: #{e.to_s}".red
 			end

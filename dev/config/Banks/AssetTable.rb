@@ -197,7 +197,7 @@ class AssetTable
 				(not @require_rows or table.rows.any?))
 				puts "Processing #{name} in page #{@reader.page}" if not(title or present) and @require_offset
 				present = true
-				yield table
+				yield  table
 				table.print_results if verbose
 			else
 				puts "NOT PRESENT".yellow unless present or @require_offset

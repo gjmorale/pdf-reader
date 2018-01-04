@@ -5,6 +5,7 @@ class Movement
 	attr_accessor :fecha_pago
 	attr_accessor :concepto
 	attr_accessor :factura
+	attr_accessor :precio
 	attr_accessor :id_ti_valor1
 	attr_accessor :id_ti1
 	attr_accessor :id_sec1
@@ -12,7 +13,6 @@ class Movement
 	attr_accessor :cantidad1
 	attr_accessor :id_ti_valor2
 	attr_accessor :id_ti2
-	attr_accessor :precio
 	attr_accessor :cantidad2
 	attr_accessor :delta
 	attr_accessor :detalle

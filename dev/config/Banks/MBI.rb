@@ -64,7 +64,6 @@ MBI.class_eval do
 			date_field.execute @reader
 			format = 1
 			unless date_field and date_field.results.any? and date_field.results[0].result != Result::NOT_FOUND 
-				@text_expand = 0
 				date_field = SingleField.new("Fecha Consulta: ", [Setup::Type::DATE])
 				date_field.execute @reader
 				format = 2
@@ -97,7 +96,6 @@ MBI.class_eval do
 				puts "Account #{account.code} total "
 				BankUtils.check account.pos_value, account.value
 				puts "_____________________________________/"
-				@accounts = [account]
 			when 2
 				@total_out = 0
 				@accounts = []

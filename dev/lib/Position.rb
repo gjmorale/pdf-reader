@@ -3,8 +3,8 @@ class Position
 	attr_reader :name
 	attr_reader :quantity
 	attr_accessor :price
-	attr_accessor :code
 	attr_reader :value
+	attr_accessor :code
 
 	def initialize name, quantity, price, value, extra = nil
 		@name = name.strip unless name.nil?
