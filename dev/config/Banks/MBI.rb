@@ -92,7 +92,13 @@ MBI.class_eval do
 				account.add_pos MBI::Cash.new(@reader).analyze
 				@reader.go_to(page, offset)
 				account.add_pos MBI::MutualFunds.new(@reader).analyze
-				@reader.go_to(page, offset)
+        @reader.go_to(page, offset)
+        account.add_pos MBI::EstrategiasAlternativas.new(@reader).analyze
+        @reader.go_to(page, offset)
+        account.add_pos MBI::RFE.new(@reader).analyze
+        @reader.go_to(page, offset)
+        account.add_pos MBI::RVE.new(@reader).analyze
+        @reader.go_to(page, offset)
 				puts "Account #{account.code} total "
 				BankUtils.check account.pos_value, account.value
 				puts "_____________________________________/"

@@ -1,8 +1,8 @@
-class MBI::MutualFunds < MBI::AssetTable
+class MBI::EstrategiasAlternativas < MBI::AssetTable
 	def load
-		@name = "fondos mutuos"
-		@offset = Field.new("Fondos Mutuos")
-		@table_end = Field.new("Total Fondos Mutuos")
+		@name = "estrategias alternativas baja volatilidad"
+		@offset = Field.new("Estrategias Alternativas Baja Volatilidad")
+		@table_end = Field.new("Total Estrategias Alternativas Baja Volatilidad")
 		@headers = []
 			headers << HeaderField.new("Detalle Instrumentos", headers.size, Setup::Type::LABEL)
 			headers << HeaderField.new("Emisor", headers.size, Setup::Type::LABEL)
@@ -17,7 +17,7 @@ class MBI::MutualFunds < MBI::AssetTable
 			headers << HeaderField.new(["Dividendos /","Cupones"], headers.size, Setup::Type::INTEGER, false, 4)
 			headers << HeaderField.new(["Rentab.","(%)"], headers.size, Setup::Type::PERCENTAGE, false, 4)
 			headers << HeaderField.new(["%","Cartera"], headers.size, Setup::Type::PERCENTAGE, false, 4)
-		@total = SingleField.new("Total Fondos Mutuos",
+		@total = SingleField.new("Total Estrategias Alternativas Baja Volatilidad",
 			BankUtils.to_arr(Setup::Type::INTEGER,2)+[Setup::Type::PERCENTAGE])
 		@label_index = 		0
 		@price_index = 		7

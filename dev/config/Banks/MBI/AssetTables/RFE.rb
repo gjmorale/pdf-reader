@@ -1,8 +1,8 @@
-class MBI::MutualFunds < MBI::AssetTable
+class MBI::RFE < MBI::AssetTable
 	def load
-		@name = "fondos mutuos"
-		@offset = Field.new("Fondos Mutuos")
-		@table_end = Field.new("Total Fondos Mutuos")
+		@name = "fondos extranjeros renta fija"
+		@offset = Field.new("Fondos Extranjeros Renta Fija")
+		@table_end = Field.new("Total Fondos Extranjeros Renta Fija")
 		@headers = []
 			headers << HeaderField.new("Detalle Instrumentos", headers.size, Setup::Type::LABEL)
 			headers << HeaderField.new("Emisor", headers.size, Setup::Type::LABEL)
@@ -17,7 +17,7 @@ class MBI::MutualFunds < MBI::AssetTable
 			headers << HeaderField.new(["Dividendos /","Cupones"], headers.size, Setup::Type::INTEGER, false, 4)
 			headers << HeaderField.new(["Rentab.","(%)"], headers.size, Setup::Type::PERCENTAGE, false, 4)
 			headers << HeaderField.new(["%","Cartera"], headers.size, Setup::Type::PERCENTAGE, false, 4)
-		@total = SingleField.new("Total Fondos Mutuos",
+		@total = SingleField.new("Total Fondos Extranjeros Renta Fija",
 			BankUtils.to_arr(Setup::Type::INTEGER,2)+[Setup::Type::PERCENTAGE])
 		@label_index = 		0
 		@price_index = 		7
