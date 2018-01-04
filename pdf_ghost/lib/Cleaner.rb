@@ -11,7 +11,7 @@ class Cleaner
 
 	def execute
 		print "Processing"
-		files = Dir["#{@input_path}/#{@format}/*.{pdf,PDF}"]
+		files = Dir["#{@input_path}/#{@format}/*.{pdf,PDF}"].uniq
 		total = files.size
 		puts " #{total} files: "
 		files.each.with_index do |file, i|
