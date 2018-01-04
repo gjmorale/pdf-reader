@@ -1,5 +1,6 @@
 class Cleaner
 	require 'shellwords'
+	require 'os'
 
 	WILDCHAR = '¶'
 
@@ -153,9 +154,13 @@ class Cleaner
 			temp = "#{File.dirname file}/#{File.basename file, '.pdf'}.ps"
 			_file = Shellwords.shellescape file
 			_temp = Shellwords.shellescape temp
-			system "pdftops #{_file} #{_temp}"
-			system "ps2pdf13 #{_temp} #{_file}"
-			system "rm #{_temp}"
+			if OS.linux?
+				system "pdftops #{_file} #{_temp}"
+				system "ps2pdf13 #{_temp} #{_file}"
+				system "rm #{_temp}"
+			else
+				"Invalid PDF Version. Run on Linux to solve"
+			end
 			correct_file file
 		end
 	end
