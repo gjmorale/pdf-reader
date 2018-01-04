@@ -46,14 +46,15 @@ class SIGA::CashTransactionTable < CashTransactionTable
 			id_ti_valor2: id_ti_valor2, 
 			id_ti2: id_ti_2, 
 			cantidad2: cantidad2,
-			detalle: args[@mov_map[:detalle]]
+			detalle: args[@mov_map[:detalle]],
+			value: abono-cargo
 		}
+		hash[:value] = BankUtils.to_number(args.last, @spanish) if hash[:concepto] =~ /(Saldo Inicial del Periodo)/i
 		params = parse_movement hash
 		return Movement.new(params) if params
 	end
 
 	def parse_movement hash
-		hash[:value] = hash[:cantidad1]
 		case hash[:concepto]
 		when /ABONO (INTERES|CAPITAL) POR CORTE CUPON/i
 			hash[:concepto] = 9007
@@ -73,6 +74,8 @@ class SIGA::CashTransactionTable < CashTransactionTable
 			hash[:concepto] = 9995
 		when /(FACTURA COMPRA R.)/i
 			hash[:concepto] = 9994
+		when /(Saldo Inicial del Periodo)/i
+			hash[:concepto] = 0
 		else
 			hash[:concepto] = 9000
 		end

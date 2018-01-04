@@ -8,9 +8,9 @@ class SIGA::CashTransaction < SIGA::CashTransactionTable
 			headers << HeaderField.new("#Ref", headers.size, Custom::REF_NUM)
 			headers << HeaderField.new("Operacion", headers.size, Custom::MOV_CODE)
 			headers << HeaderField.new("Instrumentos", headers.size, Custom::INST_CODE)
-			headers << HeaderField.new("Cargo CLP", headers.size, Setup::Type::INTEGER, true)
+			headers << HeaderField.new("Cargo CLP", headers.size, Setup::Type::INTEGER)
 			headers << HeaderField.new("Abono CLP", headers.size, Setup::Type::INTEGER)
-			headers << HeaderField.new("Saldo CLP", headers.size, Setup::Type::INTEGER)
+			headers << HeaderField.new("Saldo CLP", headers.size, Setup::Type::INTEGER, true)
 		@page_end = Field.new("Este estado de cuenta se considerará aprobado si")
 		@total = SingleField.new("Saldo Final del Periodo",
 			[Setup::Type::INTEGER], 3, Setup::Align::LEFT)
@@ -26,5 +26,9 @@ class SIGA::CashTransaction < SIGA::CashTransactionTable
 			detalle: 			2,
 			factura: 			1
 		}
+	end
+
+	def post_check_do new_movs
+		new_movs.delete_if{|m| m.concepto == 0}
 	end
 end

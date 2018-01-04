@@ -12,6 +12,8 @@ class SIGA::Account < Account
 	end
 
 	def adjust_movs
+		puts movements.select{|m| m.concepto == 0}
+		movements.delete_if{|m| m.concepto == 0}
 		sell_movs = movements.select{|m| m.concepto == 9995}
 		buy_movs = movements.select{|m| m.concepto == 9994}
 		(sell_movs+buy_movs).each{|m| movements.delete m }

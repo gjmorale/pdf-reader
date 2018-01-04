@@ -64,7 +64,8 @@ SIGA.class_eval do
 			'FACTURA (COMPRA|VENTA) R.',
 			'EGRESO CUENTA CORRIENTE',
 			'CANCELA DIVIDENDOS',
-			'ABONO POR SORTEO LETRAS'<<
+			'ABONO POR SORTEO LETRAS',
+			'Saldo Inicial del Periodo'<<
 			')'].join('|')
 		when Custom::INST_CODE
 			'[A-Z0-9\-]{4}[A-Z0-9\-]*'
@@ -79,11 +80,11 @@ SIGA.class_eval do
 		when Custom::LONG_ZERO
 			'1,000000'
 		when Custom::FLOAT_4
-			'-?((0|[1-9]\d{0,2}(?:,[0-9]{3})*)(\.\d{4})?|0)'
+			'-?((0|[1-9]\d{0,2}(?:\.[0-9]{3})*)(\,\d{4})?|0)'
 		when Custom::FLOAT_3
 			'-?((0|[1-9]\d{0,2}(?:,[0-9]{3})*)(\.\d{3})?|0)'
 		when Custom::NON_ZERO
-			'-?[1-9]\d{0,2}(?:,[0-9]{3})*'
+			'-?[1-9]\d{0,2}(?:\.[0-9]{3})*'
 		end
 	end
 
@@ -126,9 +127,10 @@ SIGA.class_eval do
 
 			account.add_pos [Position.new("Caja", cash, "CLP", cash)]
 
-			account.add_pos analyse_fixed_income
 			account.add_pos analyse_variable_income
+			account.add_pos analyse_fixed_income
 			account.add_pos analyse_iif
+			account.add_pos analyse_mutual_funds
 
 			account.add_mov analyse_cash
 			account.add_mov analyse_transactions
@@ -165,6 +167,10 @@ SIGA.class_eval do
 			pos = SIGA::ETF.new(@reader).analyze
 			positions += pos if pos
 			return positions
+		end
+
+		def analyse_mutual_funds
+			SIGA::MutualFunds.new(@reader).analyze
 		end
 
 		def analyse_iif
