@@ -172,7 +172,9 @@ class Cleaner
 			return true
 		rescue StandardError => e
 			if e.message == "PDF does not contain EOF marker"
-				retry if trim_file file
+				if trim_file file
+					retry
+				end 
 			end
 			puts "Unable to read #{File.basename(file,'.pdf')}"
 			puts "ERROR: #{e.message}".red
@@ -190,10 +192,10 @@ class Cleaner
 			end_pos = f.pos if j == 5
 		end
 		if end_pos
-			print "..".red
+			print ",".red
 			File.truncate(file, end_pos+5)
 		else
-			print ".."
+			print ","
 		end 
 		return !!end_pos
 	end
