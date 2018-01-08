@@ -26,12 +26,21 @@ class SEC::Transactions < SECTransactionTable
 
 	def new_movement *args
 		delta = 0
+		comision_curr = comision = ''
 		args = args[0]
-		args[12..-1].map{|arg| delta += BankUtils.to_number(arg, spanish)}
+		if args[9] =~ /usd/i
+			comision = args[12..-1].inject(0){|com, arg| com + BankUtils.to_number(arg, spanish)}
+			comision_curr = 'CLP' if comision != 0.0
+			comision = '' if comision == 0.0
+		else
+			args[12..-1].map{|arg| delta += BankUtils.to_number(arg, spanish)}
+		end
 		hash = {
 			fecha_movimiento: args[0],
 			fecha_pago: args[1],
 			concepto: args[3],
+			comision: comision,
+			comision_curr: comision_curr,
 			id_sec1: args[2],
 			factura: args[6],
 			id_ti_valor1: args[7],

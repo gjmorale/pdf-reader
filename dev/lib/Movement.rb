@@ -22,6 +22,8 @@ class Movement
 		@fecha_movimiento = clean args[:fecha_movimiento] || ""
 		@fecha_pago = fecha_pago args[:fecha_pago] || @fecha_movimiento
 		@concepto = args[:concepto] || "9000"
+		@comision = args[:comision] || ''
+		@comision_curr = args[:comision_curr] || ''
 		@factura = clean args[:factura] || ""
 		@id_ti_valor1 = clean args[:id_ti_valor1] || ""
 		@id_ti1 = clean args[:id_ti1] || ""
