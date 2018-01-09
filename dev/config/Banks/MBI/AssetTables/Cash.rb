@@ -1,6 +1,6 @@
 class MBI::Cash < MBI::AssetTable
 	def load
-		@name = "caja"
+    @name = "caja"
 		@offset = Field.new("Caja")
 		@table_end = Field.new("Total Caja")
 		@headers = []

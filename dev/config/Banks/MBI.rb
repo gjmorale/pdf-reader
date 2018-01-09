@@ -3,8 +3,7 @@ require_relative "Bank.rb"
 class MBI < Bank
 	DIR = "MBI"
 	LEGACY = "MBI"
-	TABLE_OFFSET = 20
-	TEXT_EXPAND = 0.0
+	TABLE_OFFSET = 25
 end
 
 Dir[File.dirname(__FILE__) + '/MBI/*.rb'].each {|file| require_relative file } 
@@ -20,7 +19,9 @@ MBI.class_eval do
 	end
 
 	module Custom
-		RUT = 		-1
+		RUT_2 = 	 -1
+    DATE_2 =   -2 # yyyy-mm-dd
+    FLOAT_2 =  -3
 	end
 
 	def regex(type)
@@ -41,9 +42,14 @@ MBI.class_eval do
 			'\d{2}(\/\d{2}\/|-\d{2}-)\d{4}'
 		when Setup::Type::FLOAT
 			'-?([1-9]\d{0,2}(?:\.[0-9]{3})*(,\d{4})?|0(,0000)?)'
-		when Custom::RUT
-			'[1-9]\d{0,2}(\.\d{3}){2}-[0-9kK]'
+		when Custom::RUT_2
+      '[1-9]\d{0,2}(\.\d{3}){2}-[0-9kK]'
+    when Custom::DATE_2
+      '\d{4}(\/\d{2}\/|-\d{2}-)\d{2}'
+    when Custom::FLOAT_2
+      '[1-9]\d{0,2}(?:\,[0-9]{3})*.\d\d|0.00'
 		end
+
 	end
 
 	private  
@@ -76,7 +82,7 @@ MBI.class_eval do
 				name_field = SingleField.new("Cliente", [Setup::Type::LABEL])
 				name_field.execute @reader
 				soc_name = name_field.results.first.result
-				rut_field = SingleField.new("Rut", [Custom::RUT])
+				rut_field = SingleField.new("Rut", [Custom::RUT_2])
 				rut_field.execute @reader
 				rut = rut_field.results.first.result
 				total_field = SingleField.new("Total Patrimonio", [Setup::Type::INTEGER, Setup::Type::PERCENTAGE])
@@ -84,6 +90,7 @@ MBI.class_eval do
 				@total_out = BankUtils.to_number total_field.results.first.result, true
 				account = MBI::Account.new("#{rut}#{soc_name[/ - .*$/]}", @total_out)
 				@accounts = [account]
+
 				Field.new("Cartera Inversiones").execute @reader
 				page = @reader.page
 				offset = @reader.offset
@@ -102,6 +109,17 @@ MBI.class_eval do
 				puts "Account #{account.code} total "
 				BankUtils.check account.pos_value, account.value
 				puts "_____________________________________/"
+
+        Field.new("Movimientos de Títulos").execute @reader
+        account.add_mov MBI::Transactions.new(@reader).analyze
+        @reader.go_to(page, offset)
+
+        Field.new("Movimientos de Caja").execute @reader
+        account.add_mov MBI::CashTransactions.new(@reader).analyze
+        @reader.go_to(page, offset)
+
+        BankUtils.check account.mov_value, account.value
+
 			when 2
 				@total_out = 0
 				@accounts = []

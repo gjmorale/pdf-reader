@@ -1,6 +1,6 @@
 class MBI::EstrategiasAlternativas < MBI::AssetTable
 	def load
-		@name = "estrategias alternativas baja volatilidad"
+    @name = "estrategias alternativas baja volatilidad"
 		@offset = Field.new("Estrategias Alternativas Baja Volatilidad")
 		@table_end = Field.new("Total Estrategias Alternativas Baja Volatilidad")
 		@headers = []
