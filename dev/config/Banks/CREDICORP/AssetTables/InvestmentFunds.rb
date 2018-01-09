@@ -1,6 +1,5 @@
 class CrediCorp::InvestmentFundsCLP < CrediCorp::AssetTable
 	def load
-		@verbose = true
 		@name = "fondos de inversion clp"
 		@offset = Field.new("FONDOS DE INVERSIÓN")
 		@table_end = Field.new("TOTAL¶FONDOS¶DE¶INVERSIÓN / CLP")
