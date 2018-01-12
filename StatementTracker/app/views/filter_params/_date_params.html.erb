@@ -8,7 +8,7 @@
         </div>
         <div class="field">
         	Fecha:
-          <%= f.date_select :date, discard_day: true, selected: date_params.date, start_year: 2015, end_year: Date.current.year %>
+          <%= f.date_select :date_from, discard_day: true, selected: date_params.date_from, start_year: 2015, end_year: Date.current.year %>
         </div>
         <div class="actions">
           <%= f.submit "Filtrar", {class: "button-l"} %>

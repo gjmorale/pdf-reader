@@ -1,6 +1,6 @@
 class TaxesController < ApplicationController
   before_action :set_tax, only: [:show, :edit, :update, :destroy, :time_nodes, :progress, :adjust, :close]
-  before_action :set_search_params, only: [:show, :time_nodes]
+  before_action :set_global_params, only: [:show, :time_nodes]
   before_action :set_date_params, only: [:progress, :adjust, :close]
 
   # GET /taxes

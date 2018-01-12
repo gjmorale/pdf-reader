@@ -1,6 +1,6 @@
 class SequencesController < ApplicationController
   before_action :set_sequence, only: [:show, :edit, :update, :destroy]
-  before_action :set_search_params, only: [:show]
+  before_action :set_global_params, only: [:show]
   before_action :date_params, only: [:filter]
 
   # GET /sequences

@@ -79,8 +79,12 @@ class Tax < ApplicationRecord
     (means.inject(0){|t, m| t + m[1]}/(self.quantity*means.size)).to_i
   end
 
+  def sequence_included
+    self.sequences.left_outer_joins(statements: :status, tax: :society)
+  end
+
   def sequence date_params
-    date_params.filter(self.sequences.joins(:statements, :tax)).take
+    date_params.filter(sequence_included).take
   end
 
   def dated_statements date_params

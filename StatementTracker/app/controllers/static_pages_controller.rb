@@ -1,5 +1,5 @@
 class StaticPagesController < ApplicationController
-  before_action :set_search_params, only: [:activity]
+  before_action :set_global_params, only: [:activity]
 
   def test
   end

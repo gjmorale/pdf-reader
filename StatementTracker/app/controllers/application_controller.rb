@@ -3,21 +3,21 @@ class ApplicationController < ActionController::Base
   #https://stackoverflow.com/questions/20126106/devise-error-email-cant-be-blank
   before_action :configure_permitted_parameters, if: :devise_controller?
 
-    def set_search_params
-      @search_params ||= SearchParams.deserialize cookies[:search]
+    def set_global_params
+      @search_params ||= GlobalParams.deserialize cookies[:global]
     end
 
-    def search_params
-      @search_params = SearchParams.new(params[:search_params])
-      cookies[:search] = {value: @search_params.serialize, expires: 1.year.from_now}
+    def global_params
+      @search_params = GlobalParams.new(params[:global_params])
+      cookies[:global] = {value: @search_params.serialize, expires: 1.year.from_now}
     end
 
     def set_date_params
-      @date_params ||= DateParams.deserialize cookies[:date]
+      @date_params ||= GlobalParams.deserialize cookies[:date]
     end
 
     def date_params
-      @date_params = DateParams.new(params[:date_params])
+      @date_params = GlobalParams.new(params[:global_params])
       cookies[:date] = {value: @date_params.serialize, expires: 1.year.from_now}
     end
 

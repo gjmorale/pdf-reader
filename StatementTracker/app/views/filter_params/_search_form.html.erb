@@ -7,17 +7,17 @@
     </div>
 
     <div class="advanced-options">
-      <span class="toggle-on-click" data-toggle="close">Opciones Avanzadas (F5)</span>
+      <span class="toggle-on-click" data-toggle="close"><span>&#8711;</span> Opciones Avanzadas (F5)</span>
       <div class="field show-on-click">
         <span>Fecha Hasta:</span>
-        <%= f.date_select :date_to, discard_day: true, include_blank: true, selected: nil, start_year: 2015, end_year: Date.current.year %>
+        <%= f.date_select :date_to, discard_day: true, include_blank: true, selected: search_params.date_to, start_year: 2015, end_year: Date.current.year %>
       </div>
       <div class="field show-on-click">
         <span>Nombre Sociedad:</span>
         <%= f.text_field :name %>
       </div>
       <div class="show-on-click">
-        <span class="toggle-on-click" data-toggle="close">Periodicidad</span>
+        <span class="toggle-on-click" data-toggle="close"><span>&#8711;</span> Periodicidad</span>
         <div class="field show-on-click">
           <% Tax::Periodicity::ALL.each do |per| %>
             <%= check_box_tag "search_params[periodicities][]", per, search_params.periodicities.include?(per) %>
@@ -26,7 +26,7 @@
         </div>
       </div>
       <div class="show-on-click">
-        <span class="toggle-on-click" data-toggle="close">Operadores</span>
+        <span class="toggle-on-click" data-toggle="close"><span>&#8711;</span> Operadores</span>
         <div class="field show-on-click">
           <%= check_box_tag "search_params[handlers][]", nil, (search_params.handlers and search_params.handlers.include?(nil)) %>
           <%= f.label :handler, "Sin Encargado" %> </br>
@@ -37,7 +37,7 @@
         </div>
       </div>
       <div class="show-on-click">
-        <span class="toggle-on-click" data-toggle="close">Instituciones Financieras</span>
+        <span class="toggle-on-click" data-toggle="close"><span>&#8711;</span> Instituciones Financieras</span>
         <div class="field show-on-click">
           <% Bank.all.each do |bank| %>
             <%= check_box_tag "search_params[ifs][]", bank.id, (search_params.ifs and search_params.ifs.include?(bank.id.to_s)) %>
@@ -47,7 +47,7 @@
       </div>
     </div>
       <div class="show-on-click">
-        <span class="toggle-on-click" data-toggle="close">Estados</span>
+        <span class="toggle-on-click" data-toggle="close"><span>&#8711;</span> Estados</span>
         <div class="field show-on-click">
         <% StatementStatus.all.each do |status| %>
           <%= check_box_tag "search_params[statuses][]", status.id, (search_params.statuses and search_params.statuses.include?(status.id.to_s)) %>

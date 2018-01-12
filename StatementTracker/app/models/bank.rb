@@ -44,21 +44,24 @@ class Bank < ApplicationRecord
 		return syn.listable
 	end
 
+	def tax_included
+		self.taxes.left_outer_joins(:society, sequences: [statements: :status])
+	end
+
 	def recieved date_params
-		targets = taxes
-		targets = targets.joins(sequences: :statements)
+		targets = tax_included
 		query = date_params.filter targets, distinct: false
 		query.size
 	end
 
 	def expected date_params
-		targets = taxes
-		targets = date_params.filter_quantities(targets)
+		targets = tax_included
+		targets = date_params.filter_quantities targets
 		targets.sum(&:q_expected)
 	end
 
 	def recieved_progress date_params
-		targets = taxes
+		targets = tax_included
 		targets = date_params.filter_quantities targets
 		total = targets.sum(&:q_expected)
 		real_recieved = targets.map{|r| [r.q_recieved,r.q_expected].min}.reduce(:+)
@@ -69,8 +72,7 @@ class Bank < ApplicationRecord
 	def period_progress date_params
 		n = expected(date_params)
 		return 100 if n == 0
-		targets = taxes
-		targets = targets.joins(sequences: {statements: :status})	
+		targets = tax_included
 		status = StatementStatus.arel_table	
 		query = date_params.filter targets, distinct: false
 		query = query.select(status[:progress].as("status_progress"))

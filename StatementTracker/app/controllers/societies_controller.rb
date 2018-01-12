@@ -1,7 +1,7 @@
 class SocietiesController < ApplicationController
   before_action :set_society, only: [:show, :edit, :update, :destroy, :time_nodes, :if_nodes, :statement_nodes, :close]
-  before_action :search_params, only: [:filter]
-  before_action :set_search_params, only: [:time_nodes, :if_nodes, :statement_nodes, :seed]
+  before_action :global_params, only: [:filter]
+  before_action :set_global_params, only: [:show, :time_nodes, :if_nodes, :statement_nodes, :seed]
   before_action :set_date_params, only: [:progress, :close]
 
   # GET /societies
@@ -33,7 +33,6 @@ class SocietiesController < ApplicationController
     respond_to do |format|
       format.html
       format.js do 
-        set_search_params
         @element = @society
         if params[:status] and params[:status] == "close"
           render 'nodes/navigation'
@@ -44,6 +43,8 @@ class SocietiesController < ApplicationController
             render 'nodes/navigation'
           else
             @node_template = 'societies/node'
+            puts "#{@search_params.class} #{@search_params}"
+            raise unless @search_params.is_a? GlobalParams
             @children = @society.filter @search_params
             @children = @society.treefy @children
             render 'nodes/navigation'

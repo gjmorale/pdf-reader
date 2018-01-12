@@ -26,7 +26,7 @@ class StatementStatus < ApplicationRecord
     end
 
     def noticed?
-      !!(self == StatementStatus.all.order(code: :asc).first)
+      self == StatementStatus.noticed
     end
 
     def self.next_status original_status

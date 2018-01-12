@@ -111,8 +111,8 @@ class Society < ApplicationRecord
 	    means = params.filter_progress all_times(params)
 	    q = p = 0
 	    means.each do |m|
-	    	q += m.q_quantity
-	    	p += m.q_progress
+	    	q += m.q_quantity || 0
+	    	p += m.q_progress || 0
 	    end
 	    return 0 if p == 0
 	    return 100 if q == 0
@@ -170,9 +170,14 @@ class Society < ApplicationRecord
 		own_path || parent_infered || (self_and_ancestors.reverse.map{|s| s.name}.join('/')+'/')
 	end
 
+	def tax_included
+		Tax.where(society_id: descendant_ids)
+		.left_outer_joins(:society, sequences: [statements: :status])
+	end
+
 	def expected date_params
-		targets = Tax.where(society_id: descendant_ids, active: true)
-		targets = date_params.filter_quantities targets
+		targets = tax_included
+		targets = date_params.filter_quantities targets, blanks: true
 		targets.sum(&:q_expected)
 	end
 
@@ -184,7 +189,7 @@ class Society < ApplicationRecord
 	end
 
 	def recieved_progress date_params
-		targets = Tax.where(society_id: descendant_ids, active: true)
+		targets = tax_included
 		targets = date_params.filter_quantities targets
 		total = targets.sum(&:q_expected)
 		real_recieved = targets.map{|r| [r.q_recieved,r.q_expected].min}.reduce(:+)

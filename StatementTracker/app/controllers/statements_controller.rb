@@ -1,14 +1,13 @@
 class StatementsController < ApplicationController
   before_action :set_statement, only: [:show, :edit, :update, :destroy, :assign, :unassign, :open]
-  before_action :search_params, only: [:filter]
-  before_action :set_search_params, only: [:index]
+  before_action :global_params, only: [:filter]
+  before_action :set_global_params, only: [:index]
   before_action :set_statements, only: [:batch_update, :upgrade, :downgrade]
 
   # GET /statements
   # GET /statements.json
   def index
     @societies = Society.filter @search_params if @search_params
-    @societies = Society.all
     @societies = Society.treefy @societies
   end
 
