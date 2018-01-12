@@ -15,7 +15,7 @@ module FileManager
 
 	module FileDates
 		NUMBER_DATE = /(?<=\/|^)(20\d\d|(?<= )[1-9]\d)(?=$|\/)/i
-		ALT_YEAR_DATE = /20[1-9]\d/i
+		ALT_YEAR_DATE = /(?<!\d)20[1-9]\d(?!\d)/i
 		module Months
 			JAN = [/(\/|^)(20[1-2][0-9][0-1]?1|(ENE(RO)?|JAN(UARY)?)( [^\/]+)?(.[a-zA-Z]{3,4})|([0-9]{1,2} )?(ENE(RO)?|JAN(UARY)?)( (20\d\d|[1-9]\d).*)?)($|\/)/i, 1]
 			FEB = [/(\/|^)(20[1-2][0-9][0-1]?2|(FEB(rero)?(bruary)?)( [^\/]+)?(.[a-zA-Z]{3,4})|([0-9]{1,2} )?(FEB(rero)?(bruary)?)( (20\d\d|[1-9]\d).*)?)($|\/)/i, 2]
