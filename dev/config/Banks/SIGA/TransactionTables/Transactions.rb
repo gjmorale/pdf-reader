@@ -1,6 +1,5 @@
 class SIGA::Transactions < SIGA::TransactionTable
 	def load
-		@verbose = true
 		@name = "movimientos de titulos"
 		@title = Field.new("Movimientos de Títulos")
 		@iterative_title = true
@@ -40,7 +39,7 @@ class SIGA::Transactions < SIGA::TransactionTable
 
 	def new_movement args
 		quantity = args[@mov_map[:cantidad1]]
-		quantity &&= quantity.gsub(/,/,'').gsub(/\./,',') unless "#{quantity}"[/(\,\d{6}|\d(\.\d{3})*)$/]
+		quantity &&= quantity.gsub(/,/,'').gsub(/\./,',') unless "#{quantity}"[/(\,\d{6}|\d(\.\d{3})+)$/]
 		args[@mov_map[:cantidad1]] = quantity
 		super args
 	end
