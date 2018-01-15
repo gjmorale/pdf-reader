@@ -1,6 +1,5 @@
 class MBI::RVE < MBI::AssetTable
 	def load
-    @verbose = true
 		@name = "fondos extranjeros renta variable"
 		@offset = Field.new("Fondos Extranjeros Renta Variable")
 		@table_end = Field.new("Total Fondos Extranjeros Renta Variable")

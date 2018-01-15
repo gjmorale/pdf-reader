@@ -1,6 +1,6 @@
 class MBI::RFE < MBI::AssetTable
 	def load
-		@name = "fondos extranjeros renta fija"
+    @name = "fondos extranjeros renta fija"
 		@offset = Field.new("Fondos Extranjeros Renta Fija")
 		@table_end = Field.new("Total Fondos Extranjeros Renta Fija")
 		@headers = []

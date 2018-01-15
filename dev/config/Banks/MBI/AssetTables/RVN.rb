@@ -1,6 +1,6 @@
 class MBI::RVN < MBI::AssetTable
 	def load
-		@name = "fondos renta variable nacional"
+    @name = "fondos renta variable nacional"
 		@offset = Field.new("Fondos Nacionales Renta Variable")
 		@table_end = Field.new("Total Fondos Nacionales Renta Variable")
 		@headers = []
