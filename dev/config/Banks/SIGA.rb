@@ -31,6 +31,7 @@ SIGA.class_eval do
 		FLOAT_3 = 	-10
 		FLOAT_4 = 	-11
 		NON_ZERO = 	-12
+		QUANTITY = 	-13
 	end
 
 	def regex(type)
@@ -80,6 +81,8 @@ SIGA.class_eval do
 			'1,000000'
 		when Custom::FLOAT_4
 			'-?((0|[1-9]\d{0,2}(?:,[0-9]{3})*)(\.\d{4})?|0)'
+		when Custom::QUANTITY
+			'-?(0(\.\d{4}|\,\d{6})?|[1-9]\d{0,2})((?:(\.\d{3})*(\,\d{6})?)|(\,\d{3})*(\.\d{4})?)'
 		when Custom::FLOAT_3
 			'-?((0|[1-9]\d{0,2}(?:,[0-9]{3})*)(\.\d{3})?|0)'
 		when Custom::NON_ZERO

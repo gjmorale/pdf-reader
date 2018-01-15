@@ -1,5 +1,6 @@
 class SIGA::Transactions < SIGA::TransactionTable
 	def load
+		@verbose = true
 		@name = "movimientos de titulos"
 		@title = Field.new("Movimientos de Títulos")
 		@iterative_title = true
@@ -15,7 +16,7 @@ class SIGA::Transactions < SIGA::TransactionTable
 			headers << HeaderField.new("P/B", headers.size, Custom::PB) 							# 7
 			headers << HeaderField.new("Mon.", headers.size, Setup::Type::CURRENCY) 				# 8
 			headers << HeaderField.new("Paridad", headers.size, Custom::LONG_ZERO) 					# 9
-			headers << HeaderField.new("Cantidad", headers.size, Custom::FLOAT_4) 					# 10
+			headers << HeaderField.new("Cantidad", headers.size, Custom::QUANTITY) 					# 10
 			headers << HeaderField.new("Precio, TIR", headers.size, Setup::Type::AMOUNT) 			# 11
 			headers << HeaderField.new("Monto Neto", headers.size, Setup::Type::INTEGER) 			# 12
 		@page_end = Field.new("Este estado de cuenta se considerará aprobado si")
@@ -39,7 +40,7 @@ class SIGA::Transactions < SIGA::TransactionTable
 
 	def new_movement args
 		quantity = args[@mov_map[:cantidad1]]
-		quantity &&= quantity.gsub(/,/,'').gsub(/\./,',')
+		quantity &&= quantity.gsub(/,/,'').gsub(/\./,',') unless "#{quantity}"[/(\,\d{6}|\d(\.\d{3})*)$/]
 		args[@mov_map[:cantidad1]] = quantity
 		super args
 	end
