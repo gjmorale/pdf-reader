@@ -232,56 +232,55 @@ PER.class_eval do
 		end
 
 		def analyse_etfs factory
-			return factory::ETFS.new(@reader).analyze
+			return factory::ETFS.new(@reader, true).analyze
 		end
 
 		def analyse_etfs_alt factory
-			return factory::ETFSAlt.new(@reader).analyze
+			return factory::ETFSAlt.new(@reader, true).analyze
 		end
 
 		def analyse_cash_esp factory
-			pos ||= factory::Cash.new(@reader).analyze
-			pos ||= factory::CashAlt.new(@reader).analyze
-			pos ||= factory::CashEmpty.new(@reader).analyze
+			pos ||= factory::Cash.new(@reader, true).analyze
+			pos ||= factory::CashAlt.new(@reader, true).analyze
 			return pos
 		end
 
 		def analyse_cash_eng factory
-			factory::Cash.new(@reader).analyze
+			factory::Cash.new(@reader, true).analyze
 		end
 
 		def analyse_mutual_funds factory
-			return factory::MutualFunds.new(@reader).analyze
+			return factory::MutualFunds.new(@reader, true).analyze
 		end
 
 		def analyse_fixed_income factory
 			pos = new_pos = []
-			new_pos += pos if(pos = factory::Bonds.new(@reader).analyze)
+			new_pos += pos if(pos = factory::Bonds.new(@reader, true).analyze)
 			new_pos
 		end
 
 		def analyse_transactions factory
-			pos ||= factory::Transactions.new(@reader).analyze
-			pos ||= factory::TransactionsAlt.new(@reader).analyze
+			pos ||= factory::Transactions.new(@reader, true).analyze
+			pos ||= factory::TransactionsAlt.new(@reader, true).analyze
 			return pos
 		end
 
 		def analyse_taxes_eng factory
 			pos = new_pos = []
-			new_pos += pos if(pos = factory::Dividends.new(@reader).analyze)
-			unless(pos = factory::Taxes.new(@reader).analyze)
+			new_pos += pos if(pos = factory::Dividends.new(@reader, true).analyze)
+			unless(pos = factory::Taxes.new(@reader, true).analyze)
 				@reader.next_page
-				pos = factory::Taxes.new(@reader).analyze
+				pos = factory::Taxes.new(@reader, true).analyze
 			end
 			new_pos += pos if pos
 			return new_pos
 		end
 
 		def analyse_transactions_eng factory
-			factory::Transactions.new(@reader).analyze
+			factory::Transactions.new(@reader, true).analyze
 		end
 
 		def analyse_cash_transactions factory
-			factory::CashTransactions.new(@reader).analyze
+			factory::CashTransactions.new(@reader, true).analyze
 		end
 	end
