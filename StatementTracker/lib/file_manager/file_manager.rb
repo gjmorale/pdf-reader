@@ -35,7 +35,9 @@ module FileManager
 	end
 
 	def self.exist? path, base_path: Paths::DROPBOX
-		File.exist? base_path + '/' + path
+		#File.exist? base_path + '/' + path 		# Embrassing glob for source path
+		full_path = base_path + '/' + path
+		Dir[full_path].any?
 	end
 
 	def self.digest_this file
@@ -109,20 +111,21 @@ module FileManager
 
 	def self.load_from path, date_from, date_to, key = nil
 		dbox_path = Paths::DROPBOX + '/' + path
-		return false unless Dir.exist? dbox_path
+		return false unless self.exist? dbox_path
 		files = Dir[dbox_path + "**/*.{#{FileFormats::ALL.join(',')}}"]
 		files_with_dates = []
 		files.each do |f|
-			next if key and not f =~ /\/[^\/]*#{Regexp.escape(key)}[^\/]*$/
-			year = get_year f
-			month = get_month f
+			short_f = f.sub(Paths::DROPBOX+'/', '')
+			next if key and not short_f =~ /\/[^\/]*#{Regexp.escape(key)}[^\/]*$/
+			year = get_year short_f
+			month = get_month short_f
 			if year and month
 				date = Date.new(year, month, -1)
 			else
 				date = File.mtime(f)
 			end
 			if date >= date_from and date <= date_to
-				files_with_dates << [f.sub(Paths::DROPBOX+'/',''),date] 
+				files_with_dates << [short_f,date] 
 			end
 		end
 		files_with_dates

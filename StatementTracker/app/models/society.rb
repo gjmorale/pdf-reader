@@ -165,7 +165,7 @@ class Society < ApplicationRecord
 	end
 
 	def path
-		parent_infered = (parent ? "#{parent.path}#{name}" : false)
+		parent_infered = (parent ? "#{parent.path}#{name}/" : false)
 		own_path = (source_path ? source_path.path : false)
 		own_path || parent_infered || (self_and_ancestors.reverse.map{|s| s.name}.join('/')+'/')
 	end
