@@ -3,7 +3,6 @@
     <div class="field">
       <span>Fecha:</span>
       <%= f.date_select :date_from, discard_day: true, selected: search_params.date_from, start_year: 2015, end_year: Date.current.year %>
-
     </div>
 
     <div class="advanced-options">
@@ -19,40 +18,25 @@
       <div class="show-on-click">
         <span class="toggle-on-click" data-toggle="close"><span>&#8711;</span> Periodicidad</span>
         <div class="field show-on-click">
-          <% Tax::Periodicity::ALL.each do |per| %>
-            <%= check_box_tag "search_params[periodicities][]", per, search_params.periodicities.include?(per) %>
-            <%= f.label :periodicities, per %> </br>
-          <% end %> 
+          <%= f.select(:periodicities, Tax::Periodicity::ALL.map{|p| [p,p]},{selected: search_params.periodicities}, {class: 'select2-blank', multiple: 'multiple'}) %>
         </div>
       </div>
       <div class="show-on-click">
         <span class="toggle-on-click" data-toggle="close"><span>&#8711;</span> Operadores</span>
         <div class="field show-on-click">
-          <%= check_box_tag "search_params[handlers][]", nil, (search_params.handlers and search_params.handlers.include?(nil)) %>
-          <%= f.label :handler, "Sin Encargado" %> </br>
-          <% Handler.all.each do |handler| %>
-            <%= check_box_tag "search_params[handlers][]", handler.id, (search_params.handlers and search_params.handlers.include?(handler.id.to_s)) %>
-            <%= f.label :handler, handler.short_name %> </br>
-          <% end %> 
+          <%= f.select(:handlers, Handler.all.map{|h| [h.short_name, h.id]}<<["Sin Encargado",'-1'],{selected: search_params.handlers}, {class: 'select2-blank', multiple: 'multiple'}) %>
         </div>
       </div>
       <div class="show-on-click">
         <span class="toggle-on-click" data-toggle="close"><span>&#8711;</span> Instituciones Financieras</span>
         <div class="field show-on-click">
-          <% Bank.all.each do |bank| %>
-            <%= check_box_tag "search_params[ifs][]", bank.id, (search_params.ifs and search_params.ifs.include?(bank.id.to_s)) %>
-            <%= f.label :ifs, bank.name %> </br>
-          <% end %> 
+          <%= f.select(:ifs, Bank.all.map{|b| [b.name, b.id]},{selected: search_params.ifs}, {class: 'select2-blank', multiple: 'multiple'}) %> 
         </div>  
       </div>
-    </div>
       <div class="show-on-click">
         <span class="toggle-on-click" data-toggle="close"><span>&#8711;</span> Estados</span>
         <div class="field show-on-click">
-        <% StatementStatus.all.each do |status| %>
-          <%= check_box_tag "search_params[statuses][]", status.id, (search_params.statuses and search_params.statuses.include?(status.id.to_s)) %>
-          <%= f.label :statuses, status.message %> </br>
-        <% end %> 
+          <%= f.select(:statuses, StatementStatus.all.map{|s| [s.message, s.id]},{selected: search_params.statuses}, {class: 'select2-blank', multiple: 'multiple'}) %> 
       </div>
     </div>
     <div class="actions">

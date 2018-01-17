@@ -8,6 +8,8 @@ end
 gem 'pdf-reader'
 
 gem 'acts_as_tree'
+# https://github.com/argerim/select2-rails
+gem "select2-rails"
 
 gem 'devise'
 

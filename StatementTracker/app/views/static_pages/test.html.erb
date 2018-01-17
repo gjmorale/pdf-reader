@@ -1,22 +1,3 @@
-<h1>APRENDER DE CARPETA</h1>
-<p>DETECTAR ARCHIVOS</p>
-<% if @prev_dir %>
-	<%= form_tag file_manager_files_path do %>
-		<%= submit_tag FileManagerCommits::OPEN %>
-		<%= submit_tag FileManagerCommits::USE %>
-		<%= hidden_field_tag :route, @prev_dir %>
-		BACK TO <%= File.basename @prev_dir %>
-	<% end %>
-<% end %>
-<ul>
-	<% @files.each do |file| %>
-		<li>
-			<%= form_tag file_manager_files_path do %>
-				<%= submit_tag FileManagerCommits::OPEN %>
-				<%= submit_tag FileManagerCommits::USE, remote: true %>
-				<%= hidden_field_tag :route, file %>
-				<%= File.basename file %>
-			<% end %>
-		</li>
-	<% end %>
-</ul>
+<h1>Prueba de Select 2</h1>
+
+<%= select_tag 'Elements', options_from_collection_for_select(@elements, @element_id, @element_label), class: 'select2-blank', multiple: 'multiple' %>

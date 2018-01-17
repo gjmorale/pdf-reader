@@ -33,7 +33,7 @@
     <%= form_for @tax do |f| %>
 		<%= f.fields_for :source_paths, @tax.source_paths.build do |s| %>
 		    <div class="field xl-field">
-		      <%= s.text_field :path, value: "#{@tax.society.path}/#{@tax.bank}" %>
+		      <%= s.text_field :path, value: "#{@tax.society.path}#{@tax.bank}" %>
 		    </div>
 		<% end %>
 		<div class="actions">

@@ -16,7 +16,7 @@ class Tax < ApplicationRecord
 
   has_many :sequences, dependent: :destroy, inverse_of: :tax
   has_many :statements, through: :sequences, inverse_of: :tax
-  has_many :source_paths, dependent: :destroy, as: :sourceable
+  has_many :source_paths, as: :sourceable, dependent: :destroy, autosave: true
 
   belongs_to :bank
   belongs_to :society
@@ -24,7 +24,6 @@ class Tax < ApplicationRecord
   validates :periodicity, presence: true
   accepts_nested_attributes_for :sequences
   accepts_nested_attributes_for :source_paths, allow_destroy: true
-  validates :source_paths, :length => { :minimum => 1 }
 
   def to_s
     "#{bank} - #{society}"

@@ -36,8 +36,8 @@ module FileManager
 
 	def self.exist? path, base_path: Paths::DROPBOX
 		#File.exist? base_path + '/' + path 		# Embrassing glob for source path
-		full_path = base_path + '/' + path
-		Dir[full_path].any?
+		path = "#{base_path}/#{path}" unless !base_path or path.include? base_path
+		Dir[path].any?
 	end
 
 	def self.digest_this file

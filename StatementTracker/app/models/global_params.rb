@@ -16,13 +16,13 @@ class GlobalParams
 	def initialize(attributes = {})
 		GlobalParams.dated_attributes attributes
 		attributes.each do |name, value|
-			send("#{name}=", value) rescue
+			value = value.select{|v| v and !v.blank?} if value.is_a? Array 
+			send("#{name}=", value)
 			puts "#{name}=#{value}:#{value.class}"
 		end
 		@ifs 						||= []
 		@periodicities 	||= [@periodicity || Tax::Periodicity::MONTHLY]
 		@handlers 			||= []
-		@handlers 			= @handlers.map{|h| h == "on" ? nil : h}
 		@statuses 			||= []
 	end
 
@@ -96,12 +96,9 @@ class GlobalParams
 			query = query.where("((sequences.date <= ? AND sequences.start_date >= ?) #{include_null})", date_to, date_from)
 		end
 		if handlers.size > 0
-			if handlers.any? {|h| h.nil?}
-				ids = handlers.select{|h| !!h}
-				query = query.where("statements.handler_id IN (?) OR statements.handler_id IS NULL", ids)
-			else
-				query = query.where("statements.handler_id IN (?)", handlers)
-			end
+			ids = handlers.select{|h| h != '-1'}
+			or_nil = handlers.include? '-1' ? " OR statements.handler_id IS NULL" : nil
+			query = query.where("statements.handler_id IN (?)#{or_nil}", ids)
 		end
 		query = query.distinct if distinct
 		query

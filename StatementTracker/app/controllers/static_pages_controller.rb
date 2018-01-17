@@ -2,6 +2,9 @@ class StaticPagesController < ApplicationController
   before_action :set_global_params, only: [:activity]
 
   def test
+  	@elements = StatementStatus.all
+  	@element_id = :id
+  	@element_label = :message
   end
 
   def guide
