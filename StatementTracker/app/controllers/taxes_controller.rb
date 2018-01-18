@@ -1,6 +1,6 @@
 class TaxesController < ApplicationController
-  before_action :set_tax, only: [:show, :edit, :update, :destroy, :time_nodes, :progress, :adjust, :close]
-  before_action :set_global_params, only: [:show, :time_nodes]
+  before_action :set_tax, only: [:show, :edit, :update, :destroy, :time_nodes, :progress, :adjust, :close, :assign_all]
+  before_action :set_global_params, only: [:show, :time_nodes, :assign_all]
   before_action :set_date_params, only: [:progress, :adjust, :close]
 
   # GET /taxes
@@ -66,6 +66,25 @@ class TaxesController < ApplicationController
 
   # GET /taxes/1/edit
   def edit
+  end
+
+  # GET /taxes/1/assign_all
+  def assign_all
+    if current_user and current_user.role.is_a? Handler
+      @tax.assign_all(current_user.role, @search_params)
+      respond_to do |format|
+        format.html do 
+          flash[:notice] = "Cartolas asignadas a #{current_user.role.short_name}"
+          redirect_back(fallback_location: sequences_path(@sequence))
+        end
+        format.js do
+          @targets = @tax.dated_statements @search_params
+          render 'nodes/update_statements' 
+        end
+      end     
+    else
+      redirect_to new_user_session_path
+    end
   end
 
   # POST /taxes

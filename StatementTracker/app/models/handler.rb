@@ -5,5 +5,10 @@ class Handler < ApplicationRecord
 	def to_s
 		self.short_name
 	end
-	
+
+	def unassign_all
+    statements.each do |statement|
+      statement.unassign_handler
+    end
+  end
 end

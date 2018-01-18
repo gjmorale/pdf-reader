@@ -1,5 +1,3 @@
 <% @targets.each do |target| %>
-	<% if @new_handler %>
-		$("#<%= target.js_id %>").children("span.statement-handler").html("<%= @new_handler %>")
-	<% end %>
+	$("#<%= target.js_id %>").children("span.statement-handler").html("<%= target.handler.short_name %>")
 <% end %>

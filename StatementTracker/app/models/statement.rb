@@ -63,7 +63,7 @@ class Statement < ApplicationRecord
   end
 
   def assign_to value
-    return nil unless self.handler_id.nil?
+    return nil if self.handler
     return self.update(handler: value)
   end
 

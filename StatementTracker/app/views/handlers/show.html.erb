@@ -12,4 +12,7 @@
 <%= render 'statements/by_status', statements: @handler.statements, edit: false %>
 
 <br>
+<% if @handler.statements.any? %>
+  <%= link_to 'Soltar todas', unassign_all_handler_path(@handler) %> |
+<% end %>
 <%= link_to 'Edit', edit_handler_path(@handler) %>

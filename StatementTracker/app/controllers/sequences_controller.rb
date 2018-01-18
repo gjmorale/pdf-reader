@@ -1,5 +1,5 @@
 class SequencesController < ApplicationController
-  before_action :set_sequence, only: [:show, :edit, :update, :destroy]
+  before_action :set_sequence, only: [:show, :edit, :update, :destroy, :assign_all]
   before_action :set_global_params, only: [:show]
   before_action :date_params, only: [:filter]
 
@@ -34,6 +34,25 @@ class SequencesController < ApplicationController
 
   def filter
     redirect_back(fallback_location: root_url)
+  end
+
+  # GET /sequences/1/assign_all
+  def assign_all
+    if current_user and current_user.role.is_a? Handler
+      @sequence.assign_all(current_user.role)
+      respond_to do |format|
+        format.html do 
+          flash[:notice] = "Cartolas asignadas a #{current_user.role.short_name}"
+          redirect_back(fallback_location: sequences_path(@sequence))
+        end
+        format.js do
+          @targets = @sequence.statements
+          render 'nodes/update_statements' 
+        end
+      end          
+    else
+      redirect_to new_user_session_path
+    end
   end
 
   # POST /sequences
@@ -86,4 +105,5 @@ class SequencesController < ApplicationController
     def sequence_params
       params.require(:sequence).permit(:tax_id, :year, :month, :week, :day)
     end
+    
 end

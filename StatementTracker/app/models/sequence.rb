@@ -55,6 +55,12 @@ class Sequence < ApplicationRecord
     end
   end
 
+  def assign_all role
+    statements.each do |statement|
+      statement.assign_to(role)
+    end
+  end
+
   private
 
     def default_quantities

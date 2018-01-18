@@ -5,6 +5,7 @@
   <span><%= element.periodicity %></span>
   <span><%= element.quantity %> Cartolas - <%= link_to element.society, society_path(element.society) %></span>
   <span class="options-right"><%= element.progress scope %> %</span>
+  <span class="options-right"><%= link_to "Tomar Todo", assign_all_tax_path(element), remote: true %></span>
   <span class="options-right"><%= link_to "Tiempos (#{element.time_nodes(scope).size})", times_tax_path(element), remote: true %></span>
   <span class="options-right"><%= link_to "Cartolas (#{element.filter(scope).size})", element, remote: true %></span>
 </div>

@@ -20,18 +20,24 @@ Rails.application.routes.draw do
       post :batch_update, constraints: StatementsCommit.new(StatementsCommit::BATCH_UPDATE), action: :batch_update
       post :batch_update, constraints: StatementsCommit.new(StatementsCommit::UPGRADE), action: :upgrade
       post :batch_update, constraints: StatementsCommit.new(StatementsCommit::DOWNGRADE), action: :downgrade
-  end
+    end
     member do
       get :open
       get :assign
       get :unassign
     end
   end
-  resources :handlers do 
+  resources :handlers do
+    member do
+      get :unassign_all
+    end
   end
   resources :sequences do
     collection do
       post :filter
+    end
+    member do
+      get :assign_all
     end
   end
   resources :taxes do
@@ -40,6 +46,7 @@ Rails.application.routes.draw do
       get :times, action: :time_nodes
       get :adjust
       get :close
+      get :assign_all
     end
   end
   resources :societies do 

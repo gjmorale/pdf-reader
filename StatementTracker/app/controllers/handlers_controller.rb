@@ -1,5 +1,5 @@
 class HandlersController < ApplicationController
-  before_action :set_handler, only: [:show, :edit, :update, :destroy]
+  before_action :set_handler, only: [:show, :edit, :update, :destroy, :unassign_all]
   before_action :set_statements, only: [:assign]
   before_action :own_statements, only: [:unassign, :update_statements, :auto_statements, :index_statements, :fit_statements, :reload_statements]
   before_action :authenticate_user!, except: [:index, :new, :create, :destroy]
@@ -28,6 +28,18 @@ class HandlersController < ApplicationController
       statement.unassign_handler
     end
     redirect_to @handler
+  end
+
+  def unassign_all
+    if current_user and current_user.role.is_a? Handler
+      @handler.unassign_all
+      respond_to do |format|
+        format.html { redirect_to @handler, notice: 'Las cartolas fueron soltadas' }
+        format.json { render :show, status: :ok, location: @handler }
+      end        
+    else
+      redirect_to new_user_session_path
+    end
   end
 
   def reload_statements

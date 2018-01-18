@@ -5,4 +5,6 @@
   <span><%= link_to "#{element.tax.bank} - #{element.tax.society}", element.tax %></span>
   <span class="options-right"><%= element.progress %> %</span>
   <span class="options-right"><%= "#{element.statements.count} de #{element.tax.quantity}" %></span>
+  <span class="options-right"><%= link_to("Tomar Todo", assign_all_sequence_path(element), remote: true) %></span>
+  <span class="options-right"><%= link_to "Cartolas (#{element.filter(scope).size})", element, remote: true %></span>
 </div>

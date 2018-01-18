@@ -183,4 +183,10 @@ class Tax < ApplicationRecord
     end
   end
 
+  def assign_all role, date_params
+    dated_statements(date_params).each do |statement|
+      statement.assign_to(role)
+    end
+  end
+
 end

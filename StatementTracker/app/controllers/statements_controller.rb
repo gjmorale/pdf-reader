@@ -1,5 +1,5 @@
 class StatementsController < ApplicationController
-  before_action :set_statement, only: [:show, :edit, :update, :destroy, :assign, :unassign, :open]
+  before_action :set_statement, only: [:show, :edit, :update, :destroy, :assign, :assign_all, :unassign, :open]
   before_action :global_params, only: [:filter]
   before_action :set_global_params, only: [:index]
   before_action :set_statements, only: [:batch_update, :upgrade, :downgrade]

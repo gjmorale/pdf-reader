@@ -75,7 +75,7 @@ class Bank < ApplicationRecord
 		targets = tax_included
 		status = StatementStatus.arel_table	
 		query = date_params.filter targets, distinct: false
-		query = query.select(status[:progress].as("status_progress"))
+		query = query.select('IFNULL(statement_statuses.progress, 0) AS status_progress')#status[:progress].as("status_progress"))
 		query.sum(&:status_progress)/n
 	end
 
