@@ -3,7 +3,7 @@ class BC < Bank
 	LEGACY = "Banchile"
 	TABLE_OFFSET = 40
 	VERTICAL_SEARCH_RANGE = 5
-	HORIZONTAL_SEARCH_RANGE = 5
+	HORIZONTAL_SEARCH_RANGE = 10
 end
 
 module BC1
@@ -159,14 +159,13 @@ BC.class_eval do
 		end
 
 		def analyse_position_2 account
-
-			total = SingleField.new("Total Activos", BankUtils.to_arr(Setup::Type::AMOUNT, 2), 3, Setup::Align::LEFT)
+			total = SingleField.new("Total ¶Activos", BankUtils.to_arr(Setup::Type::AMOUNT, 2), 3, Setup::Align::LEFT)
 			total.execute @reader
-			#total.print_results
+			total.print_results
 			total_activos = BankUtils.to_number total.results[1].result.inspect, true
-			total = SingleField.new("Total Pasivos", BankUtils.to_arr(Setup::Type::AMOUNT, 2), 3, Setup::Align::LEFT)
+			total = SingleField.new("Total ¶Pasivos", BankUtils.to_arr(Setup::Type::AMOUNT, 2), 3, Setup::Align::LEFT)
 			total.execute @reader
-			#total.print_results
+			total.print_results
 			total_pasivos = BankUtils.to_number total.results[1].result.inspect, true
 			@total_out = total_activos - total_pasivos
 			account.value = @total_out
@@ -243,6 +242,8 @@ BC.class_eval do
 			new_pos += factory::MutualFundsLP.new(@reader).analyze || []
 			@reader.go_to(@reader.page, 0)
 			new_pos += factory::MutualFundsCP.new(@reader).analyze || []
+			new_pos += factory::MutualFundsCal.new(@reader).analyze || []
+			new_pos += factory::MutualFundsMM.new(@reader).analyze || []
 			@reader.go_to(@reader.page, 0)
 			new_pos
 		end
@@ -252,14 +253,11 @@ BC.class_eval do
 		end
 
 		def analyse_fixed_income_2 factory
-			factory::FixedIncome.new(@reader).analyze
-		end
-
-		def analyse_fixed_income_2 factory
 			new_pos = []
 			pos = nil
-			new_pos += pos if pos = factory::FixedIncome.new(@reader).analyze
+			new_pos += pos if pos = factory::FixedIncomeNac.new(@reader).analyze
 			new_pos += pos if pos = factory::FixedIncomeAlt.new(@reader).analyze
+			new_pos += pos if pos = factory::FixedIncome.new(@reader).analyze
 			return new_pos
 		end
 
