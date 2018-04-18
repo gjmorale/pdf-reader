@@ -4,6 +4,7 @@ class BC < Bank
 	TABLE_OFFSET = 40
 	VERTICAL_SEARCH_RANGE = 5
 	HORIZONTAL_SEARCH_RANGE = 10
+	TEXT_EXPAND = 0
 end
 
 module BC1
@@ -45,7 +46,7 @@ BC.class_eval do
 		when Setup::Type::AMOUNT
 			'((\$|USD)?-?([1-9]\d{0,2}(?:\.[0-9]{3})*|0)(\,[0-9]{1,4})?|--)'
 		when Setup::Type::INTEGER
-			'([1-9]\d{0,2}(?:\.?[0-9]{3})*\)?|0)'
+			'([1-9]\d{0,2}(?:\.?[0-9]{3})*|0)'
 		when Setup::Type::CURRENCY
 			'(CLP|EUR|USD|CAD|JPY|GBP|DOLAR|PESO|DOOBS){1}'
 		when Setup::Type::ASSET
@@ -161,11 +162,11 @@ BC.class_eval do
 		def analyse_position_2 account
 			total = SingleField.new("Total ¶Activos", BankUtils.to_arr(Setup::Type::AMOUNT, 2), 3, Setup::Align::LEFT)
 			total.execute @reader
-			total.print_results
+			#total.print_results
 			total_activos = BankUtils.to_number total.results[1].result.inspect, true
 			total = SingleField.new("Total ¶Pasivos", BankUtils.to_arr(Setup::Type::AMOUNT, 2), 3, Setup::Align::LEFT)
 			total.execute @reader
-			total.print_results
+			#total.print_results
 			total_pasivos = BankUtils.to_number total.results[1].result.inspect, true
 			@total_out = total_activos - total_pasivos
 			account.value = @total_out
