@@ -23,6 +23,9 @@ module Setup
 		PER = "PER"
 		SIGA = "SIGA"
 		MBI = "MBI"
+		SAN1 = "SAN1"
+		SAN2 = "SAN2"
+		SAN3 = "SAN3"
 	end
 
 	# Field text alignment
@@ -114,11 +117,11 @@ module Setup
 
 	# General data types in documents
 	module Type
-		PERCENTAGE = 	1
+		PERCENTAGE = 1
 		AMOUNT = 		2
-		INTEGER = 		3
+		INTEGER = 	3
 		FLOAT = 		4
-		CURRENCY = 		5
+		CURRENCY = 	5
 		ASSET = 		6
 		LABEL = 		7
 		DATE = 			8
@@ -156,6 +159,15 @@ module Setup
 		when Format::MBI
 			puts "MBI selected"
 			@@institution = MBI.new()
+		when Format::SAN1
+			puts "Santander FM 1 selected"
+			@@institution = SAN1.new()
+		when Format::SAN2
+			puts "Santander FM 2 selected"
+			@@institution = SAN2.new()
+		when Format::SAN3
+			puts "Santander 3 selected"
+			@@institution = SAN3.new()
 		else
 			puts "Wrong input, try again or CTRL + C to exit"
 			return false
