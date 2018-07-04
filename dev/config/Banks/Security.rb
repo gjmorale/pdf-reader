@@ -104,6 +104,7 @@ SEC.class_eval do
 			account.add_pos analyse_mutual_funds
 			account.add_pos analyse_investment_funds
 			account.add_pos analyse_stocks
+			account.add_pos analyse_foreign
 			account.add_pos analyse_bonds
 			account.add_pos analyse_cash
 			account.add_pos analyse_others
@@ -142,6 +143,13 @@ SEC.class_eval do
 		def analyse_bonds
 			new_positions = pos = []
 			new_positions += pos if(pos = SEC::BondsCLP.new(@reader).analyze)
+			return new_positions
+		end
+
+		def analyse_foreign
+			new_positions = SEC::MutualFundsForeign.new(@reader).analyze || []
+			new_positions += SEC::StockForeign.new(@reader).analyze || []
+			new_positions += SEC::ETFForeign.new(@reader).analyze || []
 			return new_positions
 		end
 

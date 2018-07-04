@@ -86,3 +86,33 @@ class SEC::MutualFundsOthers < SECAssetTable
 		@alt_currency =		:usd
 	end
 end
+
+class SEC::MutualFundsForeign < SECAssetTable
+	def load
+		@name = "fondos mutuos extranjeros"
+		@title = Field.new("FONDOS MUTUOS")
+		@table_end = Field.new("TOTAL")
+		@headers = []
+			headers << HeaderField.new("INSTRUMENTO", headers.size, Setup::Type::LABEL, true)
+			headers << HeaderField.new("[GESTIONADO|MANDATO]", headers.size, Custom::GEST)
+			headers << HeaderField.new(["NUMERO","CUENTA"], headers.size, Custom::N_CUENTA)
+			headers << HeaderField.new("MONEDA", headers.size, Setup::Type::CURRENCY)
+			headers << HeaderField.new("CANTIDAD", headers.size, Setup::Type::AMOUNT)
+			headers << HeaderField.new(["PRECIO","COMPRA"], headers.size, Setup::Type::AMOUNT, false, 4)
+			headers << HeaderField.new(["MONTO","INVERTIDO"], headers.size, Setup::Type::AMOUNT, false, 4)
+			headers << HeaderField.new(["PRECIO","ACTUAL"], headers.size, Setup::Type::AMOUNT, false, 4)
+			headers << HeaderField.new(["VALOR DE","MERCADO"], headers.size, Setup::Type::AMOUNT, false, 4)
+			headers << HeaderField.new(["UTILIDADES/","PÉRDIDAS"], headers.size, Setup::Type::AMOUNT, false, 4)
+			headers << HeaderField.new(["VALORIZACIÓN","EN USD"], headers.size, Setup::Type::AMOUNT, false, 4)
+			headers << HeaderField.new(["VALORIZACIÓN","EN $"], headers.size, Setup::Type::AMOUNT, false, 4)
+		@total = SingleField.new("TOTAL",
+			[Setup::Type::AMOUNT, 
+			Setup::Type::AMOUNT], 
+			3, Setup::Align::LEFT)
+		@page_end = 		Field.new("Página ")
+		@price_index = 		7
+		@quantity_index = 4
+		@value_index = 		11
+		@total_index = 		1
+	end
+end
